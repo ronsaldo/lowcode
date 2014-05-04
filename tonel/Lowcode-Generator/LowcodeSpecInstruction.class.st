@@ -46,6 +46,11 @@ LowcodeSpecInstruction >> initialize [
 	description := ''
 ]
 
+{ #category : #testing }
+LowcodeSpecInstruction >> isConditional [
+	^ arguments notEmpty and: [ arguments first type = 'condition' ]
+]
+
 { #category : #accessing }
 LowcodeSpecInstruction >> mnemonic [
 	

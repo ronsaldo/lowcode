@@ -8,18 +8,28 @@ Class {
 	#category : #'Lowcode-Generator'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 LowcodeSpec >> addConditionCode: aConditionCode [
 	conditions add: aConditionCode
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 LowcodeSpec >> addInstruction: anInstruction [
 	instructions add: anInstruction
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
+LowcodeSpec >> conditions [
+	^ conditions
+]
+
+{ #category : #initialization }
 LowcodeSpec >> initialize [
 	conditions := OrderedCollection new.
 	instructions := OrderedCollection new.
+]
+
+{ #category : #accessing }
+LowcodeSpec >> instructions [
+	^ instructions
 ]

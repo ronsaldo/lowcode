@@ -22,6 +22,11 @@ LowcodeSpecArgument >> description: anObject [
 ]
 
 { #category : #accessing }
+LowcodeSpecArgument >> name [
+	^ name
+]
+
+{ #category : #accessing }
 LowcodeSpecArgument >> name: anObject [
 	
 	name := anObject

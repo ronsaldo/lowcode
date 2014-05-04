@@ -54,7 +54,7 @@ LowcodeAssemblerGenerator class >> initialize [
 { #category : #generation }
 LowcodeAssemblerGenerator >> compile: code [
 	Author useAuthor: 'Lowcode' during: [ 
-		LowcodeAssembler compileSilently: code classified: self protocolName ].
+		LowcodeAssembler compile: code classified: self protocolName ].
 ]
 
 { #category : #generation }
@@ -174,7 +174,7 @@ LowcodeAssemblerGenerator >> removeOldInstructions [
 	| protocol |
 	protocol := LowcodeAssembler organization protocolNamed: self protocolName.
 	protocol methods do: [ :sel |
-		LowcodeAssembler removeSelectorSilently: sel
+		LowcodeAssembler removeSelector: sel.
 	]
 	
 ]

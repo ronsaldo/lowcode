@@ -35,7 +35,7 @@ LowcodeAssemblerTest >> testInfinite2 [
 LowcodeAssemblerTest >> testSimple [
 	| gen data |
 	gen := LowcodeAssembler new.
-	gen retvm.
+	gen ret.
 	
 	data := gen emit.
 	self assert: data size = 3.

@@ -47,6 +47,11 @@ LowcodeAssembler >> emit [
 ]
 
 { #category : #arguments }
+LowcodeAssembler >> floatRegister: registerIdentifier [
+	^ LowcodeRegisterIdentifier new: registerIdentifier
+]
+
+{ #category : #arguments }
 LowcodeAssembler >> immFloat32: aValue [
 	^ LowcodeImmediateFloat32 new: aValue asFloat
 ]
@@ -101,9 +106,14 @@ LowcodeAssembler >> initialize [
 	streamElements := OrderedCollection new.
 ]
 
+{ #category : #arguments }
+LowcodeAssembler >> intRegister: registerIdentifier [
+	^ LowcodeRegisterIdentifier new: registerIdentifier
+]
+
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> jmp: destLabel [
-	self addInstruction: 346 args: { self labelRef: destLabel }
+LowcodeAssembler >> jmp: a1_dest [
+	self addInstruction: 346 args: { (self labelRef: a1_dest) }
 ]
 
 { #category : #arguments }
@@ -129,12 +139,12 @@ LowcodeAssembler >> nop [
 	self addSistaInstruction: 95
 ]
 
+{ #category : #arguments }
+LowcodeAssembler >> oopRegister: registerIdentifier [
+	^ LowcodeRegisterIdentifier new: registerIdentifier
+]
+
 { #category : #adding }
 LowcodeAssembler >> putLabel: aLabel [
 	self addElement: aLabel
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> retvm [
-	self addInstruction: 352
 ]

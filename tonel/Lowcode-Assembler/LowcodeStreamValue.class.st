@@ -1,3 +1,6 @@
+"
+A Lowcode instruction stream value is used to represent a Lowcode instruction argument.
+"
 Class {
 	#name : #LowcodeStreamValue,
 	#superclass : #Object,

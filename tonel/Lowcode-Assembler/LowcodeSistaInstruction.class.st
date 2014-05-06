@@ -1,3 +1,8 @@
+"
+This represents a Sista instruction.
+
+TODO: This should be merged with the assembler used by Sista.
+"
 Class {
 	#name : #LowcodeSistaInstruction,
 	#superclass : #LowcodeStreamElement,

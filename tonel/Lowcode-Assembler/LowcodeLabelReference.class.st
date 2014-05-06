@@ -1,3 +1,6 @@
+"
+This is a reference to a label. This is an usage of the label as an argument.
+"
 Class {
 	#name : #LowcodeLabelReference,
 	#superclass : #LowcodeStreamValue,

@@ -1,3 +1,6 @@
+"
+This represents a label inside a Lowcode instruction stream. His offset must be computed in a first pass in the whole assembler instruction stream.
+"
 Class {
 	#name : #LowcodeLabel,
 	#superclass : #LowcodeStreamElement,

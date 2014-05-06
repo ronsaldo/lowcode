@@ -1,3 +1,6 @@
+"
+Lowcode assembler instruction stream element
+"
 Class {
 	#name : #LowcodeStreamElement,
 	#superclass : #Object,

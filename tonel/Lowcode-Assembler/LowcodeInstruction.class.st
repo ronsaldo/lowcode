@@ -1,3 +1,6 @@
+"
+This represents a Lowcode instructions that has to be assembled.
+"
 Class {
 	#name : #LowcodeInstruction,
 	#superclass : #LowcodeStreamElement,

@@ -36,7 +36,7 @@ LowcodeAssemblerGenerator class >> initialize [
 		'float-register' floatRegister:
 		'oop-register' oopRegister:
 		label labelRef:
-		'register-list' registerList:
+		'arg-list' argumentList:
 		u8 immUInt8:
 		u16 immUInt16:
 		u32 immUInt32:
@@ -48,6 +48,10 @@ LowcodeAssemblerGenerator class >> initialize [
 		f32 immFloat32:
 		f64 immFloat64:
 		condition conditionCode:
+		'jump-table8' jumpTable8:
+		'jump-table16' jumpTable16:
+		'jump-table32' jumpTable32:
+		'jump-table64' jumpTable64:
 	)
 ]
 

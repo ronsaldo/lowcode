@@ -4,6 +4,9 @@ A LowcodeAssemblerTest is a test class for testing the behavior of LowcodeAssemb
 Class {
 	#name : #LowcodeAssemblerTest,
 	#superclass : #TestCase,
+	#pools : [
+		'LowcodeAssemblerConstants'
+	],
 	#category : #'Lowcode-Test'
 }
 

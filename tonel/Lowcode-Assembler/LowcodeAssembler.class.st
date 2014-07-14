@@ -6,14 +6,20 @@ Class {
 	#name : #LowcodeAssembler,
 	#superclass : #Object,
 	#instVars : [
-		'streamElements'
+		'streamElements',
+		'literalTable'
 	],
 	#category : #'Lowcode-Assembler'
 }
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> add: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 305 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
+LowcodeAssembler >> add32 [
+	self addInstruction: 304
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> add64 [
+	self addInstruction: 312
 ]
 
 { #category : #adding }
@@ -27,8 +33,31 @@ LowcodeAssembler >> addInstruction: opcode [
 ]
 
 { #category : #adding }
-LowcodeAssembler >> addInstruction: opcode args: args [
-	self addElement: (LowcodeInstruction new: opcode args: args)
+LowcodeAssembler >> addInstruction: opcode conditionCode: conditionCode label: label [
+	self addElement: (LowcodeInstruction new: opcode conditionCode: conditionCode label: label)
+]
+
+{ #category : #adding }
+LowcodeAssembler >> addInstruction: opcode extendA: extendA [
+	self addElement: (LowcodeInstruction new: opcode extendA: extendA)
+]
+
+{ #category : #adding }
+LowcodeAssembler >> addInstruction: opcode extendA: extendA extendB: extendB [
+	self addElement: (LowcodeInstruction new: opcode extendA: extendA extendB: extendB)
+]
+
+{ #category : #adding }
+LowcodeAssembler >> addInstruction: opcode label: label [
+	self addElement: (LowcodeInstruction new: opcode label: label)
+]
+
+{ #category : #adding }
+LowcodeAssembler >> addLiteral: literal [
+	^ (literalTable indexOf: literal ifAbsent: [
+	  	literalTable add: literal.
+		^ literalTable size - 1
+	 ]) -1
 ]
 
 { #category : #adding }
@@ -36,139 +65,169 @@ LowcodeAssembler >> addSistaInstruction: opcode [
 	self addElement: (LowcodeSistaInstruction new: opcode)
 ]
 
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> addcs8: a1_dest constant: a2_constant [
-	self addInstruction: 306 args: { (self intRegister: a1_dest) . (self immInt8: a2_constant) }
+{ #category : #adding }
+LowcodeAssembler >> addSistaInstruction: opcode with: arg [ 
+	self addElement: (LowcodeSistaInstruction new: opcode with: arg)
+]
+
+{ #category : #adding }
+LowcodeAssembler >> addSistaInstruction: opcode with: arg with: arg2 [
+	self addElement: (LowcodeSistaInstruction new: opcode with: arg with: arg2)
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> align: a1_alignment [
-	self addInstruction: 370 args: { (self immUInt8: a1_alignment) }
+LowcodeAssembler >> alloca32 [
+	self addInstruction: 401
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> alloca: a1_dest size: a2_size [
-	self addInstruction: 369 args: { (self intRegister: a1_dest) . (self intRegister: a2_size) }
+LowcodeAssembler >> alloca64 [
+	self addInstruction: 402
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> allocaf: a1_dest size: a2_size [
-	self addInstruction: 368 args: { (self intRegister: a1_dest) . (self immUInt32: a2_size) }
+LowcodeAssembler >> and32 [
+	self addInstruction: 321
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> and: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 315 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
+LowcodeAssembler >> and64 [
+	self addInstruction: 328
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> bool2oop: a1_dest source: a2_source [
-	self addInstruction: 336 args: { (self oopRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> arithmeticRightShift32 [
+	self addInstruction: 326
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> breq: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 0 . (self labelRef: a1_dest) }
+LowcodeAssembler >> arithmeticRightShift64 [
+	self addInstruction: 333
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brge: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 5 . (self labelRef: a1_dest) }
+LowcodeAssembler >> beginCall: a1_alignment [
+	self addInstruction: 406  extendA: a1_alignment
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brgt: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 4 . (self labelRef: a1_dest) }
+LowcodeAssembler >> booleanToOop32 [
+	self addInstruction: 355
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brle: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 3 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchEqual: a1_dest [
+	self addInstruction: 372  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brlt: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 2 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchGreatEqual: a1_dest [
+	self addInstruction: 377  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brne: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 1 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchGreater: a1_dest [
+	self addInstruction: 384  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brno: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 11 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchLess: a1_dest [
+	self addInstruction: 382  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brov: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 10 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchLessEqual: a1_dest [
+	self addInstruction: 383  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brpf: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 12 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchNotEqual: a1_dest [
+	self addInstruction: 373  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brps: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 13 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchNotOverflow: a1_dest [
+	self addInstruction: 386  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> bruge: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 9 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchOverflow: a1_dest [
+	self addInstruction: 385  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brugt: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 8 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchPrimitiveFailed: a1_dest [
+	self addInstruction: 387  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brule: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 7 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchPrimitiveSucceed: a1_dest [
+	self addInstruction: 388  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> brult: a1_dest [
-	self addInstruction: 349 args: { self conditionCode: 6 . (self labelRef: a1_dest) }
+LowcodeAssembler >> branchUnsignedGreatEqual: a1_dest [
+	self addInstruction: 381  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> call: a1_function [
-	self addInstruction: 364 args: { (self immUInt64: a1_function) }
+LowcodeAssembler >> branchUnsignedGreater: a1_dest [
+	self addInstruction: 380  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> callc: a1_function args: a2_args [
-	self addInstruction: 354 args: { (self immUInt64: a1_function) . (self argumentList: a2_args) }
+LowcodeAssembler >> branchUnsignedLess: a1_dest [
+	self addInstruction: 378  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> callci: a1_function args: a2_args [
-	self addInstruction: 355 args: { (self intRegister: a1_function) . (self argumentList: a2_args) }
+LowcodeAssembler >> branchUnsignedLessEqual: a1_dest [
+	self addInstruction: 379  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> calli: a1_reg [
-	self addInstruction: 365 args: { (self immUInt8: a1_reg) }
+LowcodeAssembler >> callArgumentFloat32 [
+	self addInstruction: 409
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> chkpltfm: a1_platformCode [
-	self addInstruction: 389 args: { (self immUInt32: a1_platformCode) }
+LowcodeAssembler >> callArgumentFloat64 [
+	self addInstruction: 410
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> cmp: a1_first second: a2_second [
-	self addInstruction: 345 args: { (self intRegister: a1_first) . (self intRegister: a2_second) }
+LowcodeAssembler >> callArgumentInt32 [
+	self addInstruction: 407
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> cmpswp32: a1_dest check: a2_check newValue: a3_newValue oldValue: a4_oldValue [
-	self addInstruction: 363 args: { (self intRegister: a1_dest) . (self intRegister: a2_check) . (self intRegister: a3_newValue) . (self intRegister: a4_oldValue) }
+LowcodeAssembler >> callArgumentInt64 [
+	self addInstruction: 408
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> callInstruction: a1_function [
+	self addInstruction: 429  extendA: a1_function
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> callPhysical: a1_registerID [
+	self addInstruction: 428  extendA: a1_registerID
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> compare32 [
+	self addInstruction: 365
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> compare64 [
+	self addInstruction: 366
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> compareAndSwap32 [
+	self addInstruction: 400
 ]
 
 { #category : #'instruction encoding' }
@@ -187,324 +246,273 @@ LowcodeAssembler >> conditionCode: codeValue [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> decsp: a1_amount [
-	self addInstruction: 386 args: { (self immUInt8: a1_amount) }
+LowcodeAssembler >> div32 [
+	self addInstruction: 308
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> div: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 310 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
+LowcodeAssembler >> div64 [
+	self addInstruction: 316
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> duplicateStackTop [
+	self addSistaInstruction: 83
 ]
 
 { #category : #'instruction encoding' }
 LowcodeAssembler >> emit [
-	| size |
+	| size literals instructions|
 	size := self computeSizes.
-	^ ByteArray new: size streamContents: [ :stream |
+	literals := Array new: literalTable size.
+	literalTable doWithIndex: [ :lit :id |
+		lit isLiteral ifTrue: [ literals at: id put: lit ]
+			ifFalse: [ literals at: id put: lit asLiteral ]
+	].
+	
+	instructions := ByteArray new: size streamContents: [ :stream |
 		streamElements do: [ :el | el emitToStream: stream ]
-	]
+	].
+
+	^ LowcodeAssembledMethod new
+		literals: literals;
+		instructions: instructions.
+
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> enter: a1_intRegisters oopRegisters: a2_oopRegisters floatRegisters: a3_floatRegisters [
-	self addInstruction: 366 args: { (self immUInt8: a1_intRegisters) . (self immUInt8: a2_oopRegisters) . (self immUInt8: a3_floatRegisters) }
+LowcodeAssembler >> endCall [
+	self addInstruction: 413
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fadd: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 320 args: { (self floatRegister: a1_dest) . (self floatRegister: a2_first) . (self floatRegister: a3_second) }
+LowcodeAssembler >> endCallNoCleanup [
+	self addInstruction: 414
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fcmp: a1_first second: a2_second [
-	self addInstruction: 346 args: { (self floatRegister: a1_first) . (self floatRegister: a2_second) }
+LowcodeAssembler >> firstFieldPtr [
+	self addInstruction: 363
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fdiv: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 323 args: { (self floatRegister: a1_dest) . (self floatRegister: a2_first) . (self floatRegister: a3_second) }
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> floatRegister: registerIdentifier [
-	registerIdentifier type ~~ #float ifTrue: [ self error: 'Expected a float register' ].
-	^ registerIdentifier
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> floatRegisterAt: registerId [
-	^ LowcodeRegisterIdentifier new: registerId type: #float
+LowcodeAssembler >> firstIndexPtr [
+	self addInstruction: 364
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fmul: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 322 args: { (self floatRegister: a1_dest) . (self floatRegister: a2_first) . (self floatRegister: a3_second) }
+LowcodeAssembler >> float32Add [
+	self addInstruction: 334
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fp2int: a1_dest source: a2_source [
-	self addInstruction: 304 args: { (self intRegister: a1_dest) . (self floatRegister: a2_source) }
+LowcodeAssembler >> float32Compare [
+	self addInstruction: 367
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fp2oop: a1_dest source: a2_source [
-	self addInstruction: 340 args: { (self oopRegister: a1_dest) . (self floatRegister: a2_source) }
+LowcodeAssembler >> float32Div [
+	self addInstruction: 337
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fp2uint: a1_dest source: a2_source [
-	self addInstruction: 303 args: { (self intRegister: a1_dest) . (self floatRegister: a2_source) }
+LowcodeAssembler >> float32Mul [
+	self addInstruction: 336
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> free: a1_pointer [
-	self addInstruction: 373 args: { (self intRegister: a1_pointer) }
+LowcodeAssembler >> float32Sub [
+	self addInstruction: 335
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> frem: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 324 args: { (self floatRegister: a1_dest) . (self floatRegister: a2_first) . (self floatRegister: a3_second) }
+LowcodeAssembler >> float32ToInt32 [
+	self addInstruction: 300
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fstfld: a1_dest source: a2_source [
-	self addInstruction: 341 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> float32ToInt64 [
+	self addInstruction: 302
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fstidx: a1_dest source: a2_source [
-	self addInstruction: 342 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> float32ToOop [
+	self addInstruction: 361
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> fsub: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 321 args: { (self floatRegister: a1_dest) . (self floatRegister: a2_first) . (self floatRegister: a3_second) }
+LowcodeAssembler >> float64Add [
+	self addInstruction: 338
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> i32c2oop: a1_dest source: a2_source [
-	self addInstruction: 338 args: { (self oopRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> float64Compare [
+	self addInstruction: 368
 ]
 
-{ #category : #arguments }
-LowcodeAssembler >> immFloat32: aValue [
-	^ LowcodeImmediateFloat32 new: aValue asFloat
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> float64Div [
+	self addInstruction: 341
 ]
 
-{ #category : #arguments }
-LowcodeAssembler >> immFloat64: aValue [
-	^ LowcodeImmediateFloat64 new: aValue asFloat
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> float64Mul [
+	self addInstruction: 340
 ]
 
-{ #category : #arguments }
-LowcodeAssembler >> immInt16: aValue [
-	^ LowcodeImmediateInt16 new: aValue asInteger
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> float64Sub [
+	self addInstruction: 339
 ]
 
-{ #category : #arguments }
-LowcodeAssembler >> immInt32: aValue [
-	^ LowcodeImmediateInt32 new: aValue asInteger
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> float64ToInt32 [
+	self addInstruction: 301
 ]
 
-{ #category : #arguments }
-LowcodeAssembler >> immInt64: aValue [
-	^ LowcodeImmediateInt64 new: aValue asInteger
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> float64ToInt64 [
+	self addInstruction: 303
 ]
 
-{ #category : #arguments }
-LowcodeAssembler >> immInt8: aValue [
-	^ LowcodeImmediateInt8 new: aValue asInteger
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> float64ToOop [
+	self addInstruction: 362
 ]
 
-{ #category : #arguments }
-LowcodeAssembler >> immUInt16: aValue [
-	^ LowcodeImmediateInt16 new: aValue asInteger
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> immUInt32: aValue [
-	^ LowcodeImmediateInt32 new: aValue asInteger
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> immUInt64: aValue [
-	^ LowcodeImmediateInt64 new: aValue asInteger
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> immUInt8: aValue [
-	^ LowcodeImmediateInt8 new: aValue asInteger
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> free [
+	self addInstruction: 405
 ]
 
 { #category : #initialization }
 LowcodeAssembler >> initialize [
 	streamElements := OrderedCollection new.
+	literalTable := OrderedCollection new.
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> int2oop: a1_dest source: a2_source [
-	self addInstruction: 337 args: { (self oopRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> intRegister: registerIdentifier [
-	registerIdentifier type ~~ #int ifTrue: [ self error: 'Expected an int register' ].
-	^ registerIdentifier
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> intRegisterAt: registerId [
-	^ LowcodeRegisterIdentifier new: registerId type: #int
+LowcodeAssembler >> int32ToFloat32 [
+	self addInstruction: 294
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> jmp: a1_dest [
-	self addInstruction: 348 args: { (self labelRef: a1_dest) }
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> labelRef: aLabel [
-	^ LowcodeLabelReference new: aLabel
+LowcodeAssembler >> int32ToFloat64 [
+	self addInstruction: 295
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcf32: a1_dest value: a2_value [
-	self addInstruction: 270 args: { (self floatRegister: a1_dest) . (self immFloat32: a2_value) }
+LowcodeAssembler >> int32ToOop [
+	self addInstruction: 357
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcf64: a1_dest value: a2_value [
-	self addInstruction: 271 args: { (self floatRegister: a1_dest) . (self immFloat64: a2_value) }
+LowcodeAssembler >> int64ToFloat32 [
+	self addInstruction: 298
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcs16: a1_dest value: a2_value [
-	self addInstruction: 264 args: { (self intRegister: a1_dest) . (self immInt16: a2_value) }
+LowcodeAssembler >> int64ToFloat64 [
+	self addInstruction: 299
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcs32: a1_dest value: a2_value [
-	self addInstruction: 266 args: { (self intRegister: a1_dest) . (self immInt32: a2_value) }
+LowcodeAssembler >> int64ToOop [
+	self addInstruction: 359
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcs64: a1_dest value: a2_value [
-	self addInstruction: 268 args: { (self intRegister: a1_dest) . (self immInt64: a2_value) }
+LowcodeAssembler >> jump: a1_dest [
+	self addInstruction: 371  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcs8: a1_dest value: a2_value [
-	self addInstruction: 262 args: { (self intRegister: a1_dest) . (self immInt8: a2_value) }
+LowcodeAssembler >> leftShift32 [
+	self addInstruction: 324
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcu16: a1_dest value: a2_value [
-	self addInstruction: 265 args: { (self intRegister: a1_dest) . (self immUInt16: a2_value) }
+LowcodeAssembler >> leftShift64 [
+	self addInstruction: 331
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcu32: a1_dest value: a2_value [
-	self addInstruction: 267 args: { (self intRegister: a1_dest) . (self immUInt32: a2_value) }
+LowcodeAssembler >> loadEffectiveAddress32 [
+	self addInstruction: 258
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcu64: a1_dest value: a2_value [
-	self addInstruction: 269 args: { (self intRegister: a1_dest) . (self immUInt64: a2_value) }
+LowcodeAssembler >> loadFloat32FromMemory [
+	self addInstruction: 268
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldcu8: a1_dest value: a2_value [
-	self addInstruction: 263 args: { (self intRegister: a1_dest) . (self immUInt8: a2_value) }
+LowcodeAssembler >> loadFloat64FromMemory [
+	self addInstruction: 269
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldf32: a1_dest source: a2_source [
-	self addInstruction: 281 args: { (self floatRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> loadInt16FromMemory [
+	self addInstruction: 264
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldf64: a1_dest source: a2_source [
-	self addInstruction: 282 args: { (self floatRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> loadInt32FromMemory [
+	self addInstruction: 265
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldlit: a1_dest index: a2_index [
-	self addInstruction: 261 args: { (self oopRegister: a1_dest) . (self immInt16: a2_index) }
+LowcodeAssembler >> loadInt64FromMemory [
+	self addInstruction: 266
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> lds16: a1_dest source: a2_source [
-	self addInstruction: 275 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> loadInt8FromMemory [
+	self addInstruction: 263
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> lds32: a1_dest source: a2_source [
-	self addInstruction: 277 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> loadPointerFromMemory [
+	self addInstruction: 267
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> lds64: a1_dest source: a2_source [
-	self addInstruction: 279 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> loadUInt16FromMemory [
+	self addInstruction: 260
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> lds8: a1_dest source: a2_source [
-	self addInstruction: 273 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> loadUInt32FromMemory [
+	self addInstruction: 261
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldself: a1_dest [
-	self addInstruction: 257 args: { (self oopRegister: a1_dest) }
+LowcodeAssembler >> loadUInt64FromMemory [
+	self addInstruction: 262
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldspcl: a1_dest [
-	self addInstruction: 256 args: { (self oopRegister: a1_dest) }
+LowcodeAssembler >> loadUInt8FromMemory [
+	self addInstruction: 259
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldu16: a1_dest source: a2_source [
-	self addInstruction: 276 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> lockRegisters [
+	self addInstruction: 416
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ldu32: a1_dest source: a2_source [
-	self addInstruction: 278 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> ldu64: a1_dest source: a2_source [
-	self addInstruction: 280 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> ldu8: a1_dest source: a2_source [
-	self addInstruction: 274 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> lea: a1_dest base: a2_base index: a3_index scale: a4_scale offset: a5_offset [
-	self addInstruction: 272 args: { (self intRegister: a1_dest) . (self intRegister: a2_base) . (self intRegister: a3_index) . (self immUInt8: a4_scale) . (self immUInt64: a5_offset) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> leave [
-	self addInstruction: 367
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> lockregs [
-	self addInstruction: 390
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> lockvm [
-	self addInstruction: 361
+LowcodeAssembler >> lockVM [
+	self addInstruction: 398
 ]
 
 { #category : #adding }
 LowcodeAssembler >> makeLabel [
-	^ LowcodeLabel new.
+	| label |
+	label := LowcodeLabel new.
+	label index: literalTable size.
+	literalTable add: label.
+	^ label
 ]
 
 { #category : #adding }
@@ -516,214 +524,213 @@ LowcodeAssembler >> makeLabelHere [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> malloc: a1_dest size: a2_size [
-	self addInstruction: 372 args: { (self intRegister: a1_dest) . (self intRegister: a2_size) }
+LowcodeAssembler >> malloc32 [
+	self addInstruction: 403
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> mallocf: a1_dest size: a2_size [
-	self addInstruction: 371 args: { (self intRegister: a1_dest) . (self immUInt32: a2_size) }
+LowcodeAssembler >> malloc64 [
+	self addInstruction: 404
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> movf2phy: a1_dest source: a2_source [
-	self addInstruction: 393 args: { (self immUInt8: a1_dest) . (self floatRegister: a2_source) }
+LowcodeAssembler >> moveFloat32ToPhysical: a1_registerID [
+	self addInstruction: 421  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> movf: a1_dest source: a2_source [
-	self addInstruction: 290 args: { (self floatRegister: a1_dest) . (self floatRegister: a2_source) }
+LowcodeAssembler >> moveFloat64ToPhysical: a1_registerID [
+	self addInstruction: 422  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> movi2phy: a1_dest source: a2_source [
-	self addInstruction: 392 args: { (self immUInt8: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> moveInt32ToPhysical: a1_registerID [
+	self addInstruction: 418  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> movi: a1_dest source: a2_source [
-	self addInstruction: 289 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> moveInt64ToPhysical: a1_registerID [
+	self addInstruction: 419  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> movoop: a1_dest source: a2_source [
-	self addInstruction: 291 args: { (self oopRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> movePointerToPhysical: a1_registerID [
+	self addInstruction: 420  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> movphy2f: a1_dest source: a2_source [
-	self addInstruction: 395 args: { (self floatRegister: a1_dest) . (self immUInt8: a2_source) }
+LowcodeAssembler >> mul32 [
+	self addInstruction: 306
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> movphy2i: a1_dest source: a2_source [
-	self addInstruction: 394 args: { (self intRegister: a1_dest) . (self immUInt8: a2_source) }
+LowcodeAssembler >> mul64 [
+	self addInstruction: 314
 ]
 
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> mul: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 308 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> new: a1_dest classOop: a2_classOop [
-	self addInstruction: 343 args: { (self oopRegister: a1_dest) . (self oopRegister: a2_classOop) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> newidx: a1_dest classOop: a2_classOop size: a3_size [
-	self addInstruction: 344 args: { (self oopRegister: a1_dest) . (self oopRegister: a2_classOop) . (self intRegister: a3_size) }
-]
-
-{ #category : #'sista instructions' }
+{ #category : #'sista extended bytecode instructions' }
 LowcodeAssembler >> nop [
 	self addSistaInstruction: 95
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> not: a1_dest source: a2_source [
-	self addInstruction: 314 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> not32 [
+	self addInstruction: 320
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> oop2bool: a1_dest source: a2_source [
-	self addInstruction: 329 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> not64 [
+	self addInstruction: 327
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> oop2fp: a1_dest source: a2_source [
-	self addInstruction: 335 args: { (self floatRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> oopSmallIntToInt32 [
+	self addInstruction: 347
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> oop2i32: a1_dest source: a2_source [
-	self addInstruction: 331 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> oopSmallIntegerToInt64 [
+	self addInstruction: 350
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> oop2i64: a1_dest source: a2_source [
-	self addInstruction: 333 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> oopToBoolean [
+	self addInstruction: 346
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> oop2int: a1_dest source: a2_source [
-	self addInstruction: 330 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> oopToFloat32 [
+	self addInstruction: 353
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> oop2ptr: a1_dest source: a2_source [
-	self addInstruction: 327 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> oopToFloat64 [
+	self addInstruction: 354
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> oop2u32: a1_dest source: a2_source [
-	self addInstruction: 332 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
+LowcodeAssembler >> oopToInt32 [
+	self addInstruction: 348
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> oop2u64: a1_dest source: a2_source [
-	self addInstruction: 334 args: { (self intRegister: a1_dest) . (self oopRegister: a2_source) }
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> oopRegister: registerIdentifier [
-	registerIdentifier type ~~ #oop ifTrue: [ self error: 'Expected an oop register' ].
-	^ registerIdentifier
-]
-
-{ #category : #arguments }
-LowcodeAssembler >> oopRegisterAt: registerId [
-	^ LowcodeRegisterIdentifier new: registerId type: #oop
+LowcodeAssembler >> oopToInt64 [
+	self addInstruction: 351
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> or: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 316 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
+LowcodeAssembler >> oopToPointer [
+	self addInstruction: 344
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> peekvm: a1_dest arg: a2_arg [
-	self addInstruction: 258 args: { (self oopRegister: a1_dest) . (self immUInt8: a2_arg) }
+LowcodeAssembler >> oopToUInt32 [
+	self addInstruction: 349
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pin: a1_object [
-	self addInstruction: 325 args: { (self oopRegister: a1_object) }
+LowcodeAssembler >> oopToUInt64 [
+	self addInstruction: 352
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> popf32: a1_dest [
-	self addInstruction: 384 args: { (self intRegister: a1_dest) }
+LowcodeAssembler >> or32 [
+	self addInstruction: 322
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> popf64: a1_dest [
-	self addInstruction: 385 args: { (self intRegister: a1_dest) }
+LowcodeAssembler >> or64 [
+	self addInstruction: 329
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> popi32: a1_dest [
-	self addInstruction: 380 args: { (self intRegister: a1_dest) }
+LowcodeAssembler >> performCall: a1_function [
+	self addInstruction: 411  extendA: a1_function
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> popi64: a1_dest [
-	self addInstruction: 382 args: { (self intRegister: a1_dest) }
+LowcodeAssembler >> performCallIndirect [
+	self addInstruction: 412
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> popu32: a1_dest [
-	self addInstruction: 381 args: { (self intRegister: a1_dest) }
+LowcodeAssembler >> pin [
+	self addInstruction: 342
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> popu64: a1_dest [
-	self addInstruction: 383 args: { (self intRegister: a1_dest) }
+LowcodeAssembler >> plaftormCode [
+	self addInstruction: 415
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> popvm: a1_nitems [
-	self addInstruction: 259 args: { (self immUInt8: a1_nitems) }
+LowcodeAssembler >> pointerToOop [
+	self addInstruction: 345
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> pushFalse [
+	self addSistaInstruction: 78
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> pushNil [
+	self addSistaInstruction: 79
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> pushOne [
+	self addSistaInstruction: 81
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ptr2oop: a1_dest source: a2_source [
-	self addInstruction: 328 args: { (self oopRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> pushOne32 [
+	self addInstruction: 257
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushf32: a1_value [
-	self addInstruction: 378 args: { (self intRegister: a1_value) }
+LowcodeAssembler >> pushPhysicalFloat32: a1_registerID [
+	self addInstruction: 426  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushf64: a1_value [
-	self addInstruction: 379 args: { (self intRegister: a1_value) }
+LowcodeAssembler >> pushPhysicalFloat64: a1_registerID [
+	self addInstruction: 427  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushi32: a1_value [
-	self addInstruction: 374 args: { (self intRegister: a1_value) }
+LowcodeAssembler >> pushPhysicalInt32: a1_registerID [
+	self addInstruction: 423  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushi64: a1_value [
-	self addInstruction: 376 args: { (self intRegister: a1_value) }
+LowcodeAssembler >> pushPhysicalInt64: a1_registerID [
+	self addInstruction: 424  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushu32: a1_value [
-	self addInstruction: 375 args: { (self intRegister: a1_value) }
+LowcodeAssembler >> pushPhysicalPointer: a1_registerID [
+	self addInstruction: 425  extendA: a1_registerID
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> pushReceiver [
+	self addSistaInstruction: 76
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> pushTrue [
+	self addSistaInstruction: 77
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> pushZero [
+	self addSistaInstruction: 80
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushu64: a1_value [
-	self addInstruction: 377 args: { (self intRegister: a1_value) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> pushvm: a1_item [
-	self addInstruction: 260 args: { (self oopRegister: a1_item) }
+LowcodeAssembler >> pushZero32 [
+	self addInstruction: 256
 ]
 
 { #category : #adding }
@@ -732,206 +739,291 @@ LowcodeAssembler >> putLabel: aLabel [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> rem: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 312 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
+LowcodeAssembler >> rem32 [
+	self addInstruction: 310
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> restoresp: a1_source [
-	self addInstruction: 388 args: { (self intRegister: a1_source) }
+LowcodeAssembler >> rem64 [
+	self addInstruction: 318
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> returnFalse [
+	self addSistaInstruction: 90
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> ret [
+LowcodeAssembler >> returnFloat32 [
+	self addInstruction: 396
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> returnFloat64 [
+	self addInstruction: 397
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> returnInt32 [
+	self addInstruction: 393
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> returnInt64 [
+	self addInstruction: 394
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> returnNil [
+	self addSistaInstruction: 91
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> returnPointer [
+	self addInstruction: 395
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> returnReceiver [
+	self addSistaInstruction: 88
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> returnTop [
+	self addSistaInstruction: 95
+]
+
+{ #category : #'sista extended bytecode instructions' }
+LowcodeAssembler >> returnTrue [
+	self addSistaInstruction: 89
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> rightShift32 [
+	self addInstruction: 325
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> rightShift64 [
+	self addInstruction: 332
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> signExtend32From16 [
+	self addInstruction: 278
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> signExtend32From8 [
+	self addInstruction: 277
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> signExtend64From16 [
+	self addInstruction: 280
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> signExtend64From32 [
+	self addInstruction: 281
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> signExtend64From8 [
+	self addInstruction: 279
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> smallInt32ToOop [
 	self addInstruction: 356
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> retf: a1_code [
-	self addInstruction: 359 args: { (self intRegister: a1_code) }
+LowcodeAssembler >> storeFloat32ToMemory [
+	self addInstruction: 275
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> retif [
+LowcodeAssembler >> storeFloat64ToMemory [
+	self addInstruction: 276
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> storeInt16ToMemory [
+	self addInstruction: 271
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> storeInt32ToMemory [
+	self addInstruction: 272
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> storeInt64ToMemory [
+	self addInstruction: 273
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> storeInt8ToMemory [
+	self addInstruction: 270
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> storePointerToMemory [
+	self addInstruction: 274
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> sub32 [
+	self addInstruction: 305
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> sub64 [
+	self addInstruction: 313
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> test32 [
+	self addInstruction: 369
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> test64 [
+	self addInstruction: 370
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> truncate32To16 [
+	self addInstruction: 288
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> truncate32To8 [
+	self addInstruction: 287
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> truncate64To16 [
+	self addInstruction: 290
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> truncate64To32 [
+	self addInstruction: 291
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> truncate64To8 [
+	self addInstruction: 289
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> udiv32 [
+	self addInstruction: 309
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> udiv64 [
+	self addInstruction: 317
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> uint32ToFloat32 [
+	self addInstruction: 292
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> uint32ToFloat64 [
+	self addInstruction: 293
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> uint32ToOop [
+	self addInstruction: 358
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> uint64ToFloat32 [
+	self addInstruction: 296
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> uint64ToFloat64 [
+	self addInstruction: 297
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> uint64ToOop [
 	self addInstruction: 360
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> retvm: a1_result [
-	self addInstruction: 358 args: { (self oopRegister: a1_result) }
+LowcodeAssembler >> umul32 [
+	self addInstruction: 307
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> retvms [
-	self addInstruction: 357
+LowcodeAssembler >> umul64 [
+	self addInstruction: 315
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> savesp: a1_dest [
-	self addInstruction: 387 args: { (self intRegister: a1_dest) }
+LowcodeAssembler >> unlockRegisters [
+	self addInstruction: 417
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> sext16: a1_dest source: a2_source [
-	self addInstruction: 293 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> unlockVM [
+	self addInstruction: 399
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> sext32: a1_dest source: a2_source [
-	self addInstruction: 294 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> unpin [
+	self addInstruction: 343
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> sext8: a1_dest source: a2_source [
-	self addInstruction: 292 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> urem32 [
+	self addInstruction: 311
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> shlt: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 318 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
+LowcodeAssembler >> urem64 [
+	self addInstruction: 319
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> shrt: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 319 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
+LowcodeAssembler >> xor32 [
+	self addInstruction: 323
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> sint2fp: a1_dest source: a2_source [
-	self addInstruction: 302 args: { (self floatRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> xor64 [
+	self addInstruction: 330
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> stf32: a1_dest source: a2_source [
-	self addInstruction: 287 args: { (self intRegister: a1_dest) . (self floatRegister: a2_source) }
+LowcodeAssembler >> zeroExtend32From16 [
+	self addInstruction: 283
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> stf64: a1_dest source: a2_source [
-	self addInstruction: 288 args: { (self intRegister: a1_dest) . (self floatRegister: a2_source) }
+LowcodeAssembler >> zeroExtend32From8 [
+	self addInstruction: 282
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> sti16: a1_dest source: a2_source [
-	self addInstruction: 284 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> zeroExtend64From16 [
+	self addInstruction: 285
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> sti32: a1_dest source: a2_source [
-	self addInstruction: 285 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> zeroExtend64From32 [
+	self addInstruction: 286
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> sti64: a1_dest source: a2_source [
-	self addInstruction: 286 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> sti8: a1_dest source: a2_source [
-	self addInstruction: 283 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> sub: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 307 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> switch16: a1_value defaultDest: a2_defaultDest jumpTable: a3_jumpTable [
-	self addInstruction: 351 args: { (self intRegister: a1_value) . (self labelRef: a2_defaultDest) . (self jumpTable16: a3_jumpTable) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> switch32: a1_value defaultDest: a2_defaultDest jumpTable: a3_jumpTable [
-	self addInstruction: 352 args: { (self intRegister: a1_value) . (self labelRef: a2_defaultDest) . (self jumpTable32: a3_jumpTable) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> switch64: a1_value defaultDest: a2_defaultDest jumpTable: a3_jumpTable [
-	self addInstruction: 353 args: { (self intRegister: a1_value) . (self labelRef: a2_defaultDest) . (self jumpTable64: a3_jumpTable) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> switch8: a1_value defaultDest: a2_defaultDest jumpTable: a3_jumpTable [
-	self addInstruction: 350 args: { (self intRegister: a1_value) . (self labelRef: a2_defaultDest) . (self jumpTable16: a3_jumpTable) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> test: a1_first second: a2_second [
-	self addInstruction: 347 args: { (self intRegister: a1_first) . (self intRegister: a2_second) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> trunc16: a1_dest source: a2_source [
-	self addInstruction: 299 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> trunc32: a1_dest source: a2_source [
-	self addInstruction: 300 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> trunc8: a1_dest source: a2_source [
-	self addInstruction: 298 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> u32c2oop: a1_dest source: a2_source [
-	self addInstruction: 339 args: { (self oopRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> udiv: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 311 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> uint2fp: a1_dest source: a2_source [
-	self addInstruction: 301 args: { (self floatRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> umul: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 309 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> unlockregs [
-	self addInstruction: 391
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> unlockvm [
-	self addInstruction: 362
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> unpin: a1_object [
-	self addInstruction: 326 args: { (self oopRegister: a1_object) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> urem: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 313 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> xor: a1_dest first: a2_first second: a3_second [
-	self addInstruction: 317 args: { (self intRegister: a1_dest) . (self intRegister: a2_first) . (self intRegister: a3_second) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> zext16: a1_dest source: a2_source [
-	self addInstruction: 296 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> zext32: a1_dest source: a2_source [
-	self addInstruction: 297 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> zext8: a1_dest source: a2_source [
-	self addInstruction: 295 args: { (self intRegister: a1_dest) . (self intRegister: a2_source) }
+LowcodeAssembler >> zeroExtend64From8 [
+	self addInstruction: 284
 ]

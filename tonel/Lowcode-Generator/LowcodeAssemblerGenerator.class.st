@@ -1,22 +1,11 @@
 Class {
 	#name : #LowcodeAssemblerGenerator,
-	#superclass : #Object,
-	#instVars : [
-		'spec'
-	],
+	#superclass : #LowcodeGenerator,
 	#classVars : [
 		'TypeMap'
 	],
 	#category : #'Lowcode-Generator'
 }
-
-{ #category : #initialize }
-LowcodeAssemblerGenerator class >> fromFileNamed: fileName [
-	"
-	self fromFileNamed: '../lowcode.xml'
-	"
-	^ self new spec: (LowcodeSpecLoader fromFileNamed: fileName)
-]
 
 { #category : #generate }
 LowcodeAssemblerGenerator class >> generateFromFileNamed: fileName [
@@ -32,26 +21,10 @@ LowcodeAssemblerGenerator class >> initialize [
 	self initialize
 	"
 	TypeMap := Dictionary newFromPairs: #(
-		'int-register' intRegister:
-		'float-register' floatRegister:
-		'oop-register' oopRegister:
-		label labelRef:
-		'arg-list' argumentList:
-		u8 immUInt8:
-		u16 immUInt16:
-		u32 immUInt32:
-		u64 immUInt64:
-		s8 immInt8:
-		s16 immInt16:
-		s32 immInt32:
-		s64 immInt64:
-		f32 immFloat32:
-		f64 immFloat64:
 		condition conditionCode:
-		'jump-table8' jumpTable8:
-		'jump-table16' jumpTable16:
-		'jump-table32' jumpTable32:
-		'jump-table64' jumpTable64:
+		label label:
+		'extend-a' extendA:
+		'extend-b' extendB:
 	)
 ]
 
@@ -59,6 +32,12 @@ LowcodeAssemblerGenerator class >> initialize [
 LowcodeAssemblerGenerator >> compile: code [
 	Author useAuthor: 'Lowcode' during: [ 
 		LowcodeAssembler compile: code classified: self protocolName ].
+]
+
+{ #category : #generation }
+LowcodeAssemblerGenerator >> compileSista: code [
+	Author useAuthor: 'Lowcode' during: [ 
+		LowcodeAssembler compile: code classified: self sistaProtocolName ].
 ]
 
 { #category : #generation }
@@ -116,31 +95,28 @@ LowcodeAssemblerGenerator >> generateInstructions [
 LowcodeAssemblerGenerator >> generateTo: stream instructionArgument: arg index: index [
 	| map |
 	map := TypeMap at: arg type ifAbsent: [ self error: 'expected a type map' ].
-	stream nextPutAll: 'self ' , map asString , ' a' , index asString, '_'   , arg name
+	stream nextPutAll: map asString , ' a' , index asString, '_'   , arg name
 ]
 
 { #category : #generation }
 LowcodeAssemblerGenerator >> generateTo: stream instructionArguments: arguments [
 	arguments ifEmpty: [ ^ self ].
-	stream nextPutAll: ' args: { '.
+	stream nextPutAll: '  '.
 	
 	arguments doWithIndex: [ :arg :i  |
 		i > 1 ifTrue: [
 			stream nextPutAll: ' . '.
 		].
 	
-		stream nextPutAll: '('.
 		self generateTo: stream instructionArgument: arg index: i.
-		stream nextPutAll: ')'.
 	].
 
-	stream nextPutAll: ' }'.
 ]
 
 { #category : #generation }
 LowcodeAssemblerGenerator >> generateTo: stream instructionArguments: arguments withCondition: condition [
 	arguments ifEmpty: [ ^ self ].
-	stream nextPutAll: ' args: { self conditionCode: ',  condition code printString , ' . '.
+	stream nextPutAll: ' conditionCode: ',  condition code printString , ' . '.
 	
 	arguments doWithIndex: [ :arg :i  |
 		i > 1 ifTrue: [
@@ -183,14 +159,17 @@ LowcodeAssemblerGenerator >> removeOldInstructions [
 	
 ]
 
-{ #category : #accessing }
-LowcodeAssemblerGenerator >> spec [
+{ #category : #cleanup }
+LowcodeAssemblerGenerator >> removeOldSistaInstructions [
+	| protocol |
+	protocol := LowcodeAssembler organization protocolNamed: self sistaProtocolName.
+	protocol methods do: [ :sel |
+		LowcodeAssembler removeSelector: sel.
+	]
 	
-	^ spec
 ]
 
-{ #category : #accessing }
-LowcodeAssemblerGenerator >> spec: anObject [
-	
-	spec := anObject
+{ #category : #generation }
+LowcodeAssemblerGenerator >> sistaProtocolName [
+	^ 'sista extended bytecode instructions'
 ]

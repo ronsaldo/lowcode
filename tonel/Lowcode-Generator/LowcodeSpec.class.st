@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'conditions',
-		'instructions'
+		'instructions',
+		'sistaInstructions'
 	],
 	#category : #'Lowcode-Generator'
 }
@@ -18,6 +19,11 @@ LowcodeSpec >> addInstruction: anInstruction [
 	instructions add: anInstruction
 ]
 
+{ #category : #adding }
+LowcodeSpec >> addSistaInstruction: aSistaInstruction [
+	sistaInstructions add: aSistaInstruction
+]
+
 { #category : #accessing }
 LowcodeSpec >> conditions [
 	^ conditions
@@ -27,9 +33,15 @@ LowcodeSpec >> conditions [
 LowcodeSpec >> initialize [
 	conditions := OrderedCollection new.
 	instructions := OrderedCollection new.
+	sistaInstructions := OrderedCollection new.
 ]
 
 { #category : #accessing }
 LowcodeSpec >> instructions [
 	^ instructions
+]
+
+{ #category : #accessing }
+LowcodeSpec >> sistaInstructions [
+	^ sistaInstructions
 ]

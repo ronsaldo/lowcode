@@ -24,6 +24,15 @@ LowcodeSpecLoader >> assertElement: element name: name [
 	element name ~= name ifTrue: [ self error:  'unexpected element' ]
 ]
 
+{ #category : #parsing }
+LowcodeSpecLoader >> assertElement: element names: names [
+	names do: [:n |
+		n = element name ifTrue: [ ^ self ]
+	].
+
+	self error:  'unexpected element'
+]
+
 { #category : #initialize }
 LowcodeSpecLoader >> fromFileNamed: fileName [
 	| stream |
@@ -79,26 +88,70 @@ LowcodeSpecLoader >> parseInstruction: element [
 	instruction opcode: (element attributeAt: 'opcode') asInteger;
 				mnemonic: (element attributeAt: 'mnemonic').
 	spec addInstruction: instruction.
-	
+
 	element elementsDo: [ :child |
 		child name = 'name' ifTrue: [ instruction name: child innerXML ].
 		child name = 'description' ifTrue: [ instruction description: child innerXML ].
 		child name = 'warning' ifTrue: [ instruction warning: child innerXML ].
-		child name = 'arguments' ifTrue: [ self parseInstruction: instruction arguments: child ]
+		child name = 'arguments' ifTrue: [ self parseInstruction: instruction arguments: child ].
+		child name = 'stack-arguments' ifTrue: [ self parseInstruction: instruction stackArguments: child ].
+		child name = 'stack-results' ifTrue: [ self parseInstruction: instruction stackResults: child ].
+		child name = 'semantic' ifTrue: [ self parseInstruction: instruction semantic: child ]
+	]
+]
+
+{ #category : #parsing }
+LowcodeSpecLoader >> parseInstruction: instruction argumentList: element [
+	^ Array streamContents: [ :stream |
+		element elementsDo: [ :child |
+			stream nextPut: (self parseArgument: child)
+		]
 	]
 ]
 
 { #category : #parsing }
 LowcodeSpecLoader >> parseInstruction: instruction arguments: element [
-	| arguments |
 	self assertElement: element name: 'arguments'.
+	instruction arguments: (self parseInstruction: instruction argumentList: element)
+]
+
+{ #category : #parsing }
+LowcodeSpecLoader >> parseInstruction: instruction semantic: element [
+	| decoded |
+	self assertElement: element name: 'semantic'.
+	decoded := ((element innerXML copyReplaceAll: '&lt;' with: '<') copyReplaceAll: '&gt;' with: '>') copyReplaceAll: '&amp;' with: '&'.
+	instruction semantic:   decoded for: (element attributeAt: 'language')
+]
+
+{ #category : #parsing }
+LowcodeSpecLoader >> parseInstruction: instruction stackArguments: element [
+	self assertElement: element name: 'stack-arguments'.
+	instruction stackArguments: (self parseInstruction: instruction argumentList: element)
+]
+
+{ #category : #parsing }
+LowcodeSpecLoader >> parseInstruction: instruction stackResults: element [
+	self assertElement: element name: 'stack-results'.
+	instruction stackResults: (self parseInstruction: instruction argumentList: element)
+]
+
+{ #category : #parsing }
+LowcodeSpecLoader >> parseSistaInstruction: element [
+	| instruction opcode |
+	self assertElement: element name: 'sista-instruction'.
 	
-	arguments := Array streamContents: [ :stream |
-		element elementsDo: [ :child |
-			stream nextPut: (self parseArgument: child)
-		]
-	].
-	instruction arguments: arguments
+	instruction := LowcodeSpecSistaInstruction new.
+	instruction mnemonic: (element attributeAt: 'mnemonic').
+	opcode := element attributeAt: 'opcode' ifAbsent: [ nil ].
+	opcode ifNil: [ instruction firstOpcode: (element attributeAt: 'firstOpcode') asInteger .
+				instruction lastOpcode: (element attributeAt: 'lastOpcode') asInteger]
+		ifNotNil: [ instruction opcode: opcode asInteger ].
+	spec addSistaInstruction: instruction.
+
+	element elementsDo: [ :child |
+		child name = 'description' ifTrue: [ instruction description: child innerXML ].
+		child name = 'semantic' ifTrue: [ self parseInstruction: instruction semantic: child ]
+	]
 ]
 
 { #category : #parsing }
@@ -114,6 +167,7 @@ LowcodeSpecLoader >> parseSpec [
 	root elementsDo: [ :el |
 		el name = 'conditions' ifTrue: [self parseConditions: el].
 		el name = 'instruction' ifTrue: [self parseInstruction: el].
+		el name = 'sista-instruction' ifTrue: [self parseSistaInstruction: el].
 	].
 	
 	^ spec

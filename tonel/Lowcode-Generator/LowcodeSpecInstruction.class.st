@@ -7,10 +7,25 @@ Class {
 		'name',
 		'description',
 		'warning',
-		'arguments'
+		'arguments',
+		'stackArguments',
+		'stackResults',
+		'semantics',
+		'encodingCode'
 	],
 	#category : #'Lowcode-Generator'
 }
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> argumentEncodingCode [
+	encodingCode ifNil: [
+		encodingCode := ''.
+		arguments do: [ :arg | encodingCode := encodingCode , arg encodingCode ].
+	].
+	
+	^ encodingCode
+	
+]
 
 { #category : #accessing }
 LowcodeSpecInstruction >> arguments [
@@ -40,10 +55,14 @@ LowcodeSpecInstruction >> description: anObject [
 LowcodeSpecInstruction >> initialize [
 	opcode := 0.
 	arguments := #().
+	stackArguments := #().
+	stackResults := #().
 	name := 'Unknown'.
 	mnemonic := 'uknwn'.
 	warning := ''.
-	description := ''
+	description := ''.
+	semantics := Dictionary new.
+	
 ]
 
 { #category : #testing }
@@ -61,6 +80,11 @@ LowcodeSpecInstruction >> mnemonic [
 LowcodeSpecInstruction >> mnemonic: anObject [
 	
 	mnemonic := anObject
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> mnemonicUnderscored [
+	^ mnemonic asUppercase
 ]
 
 { #category : #accessing }
@@ -84,6 +108,41 @@ LowcodeSpecInstruction >> opcode [
 LowcodeSpecInstruction >> opcode: anObject [
 	
 	opcode := anObject
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeSpecInstruction >> printOn: aStream [
+	aStream nextPutAll: mnemonic , ' := ' , opcode printString
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> semantic: semantic for: languageVariant [
+	semantics at: languageVariant put: semantic
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> semanticFor: languageVariant ifAbsent: aBlock [
+	^ semantics at: languageVariant ifAbsent: aBlock 
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> stackArguments [
+	^ stackArguments
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> stackArguments: anArray [
+	stackArguments := anArray
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> stackResults [
+	^ stackResults
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> stackResults: anArray [
+	stackResults := anArray
 ]
 
 { #category : #accessing }

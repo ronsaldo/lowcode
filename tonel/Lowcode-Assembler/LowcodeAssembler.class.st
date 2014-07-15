@@ -77,12 +77,12 @@ LowcodeAssembler >> addSistaInstruction: opcode with: arg with: arg2 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> alloca32 [
-	self addInstruction: 401
+	self addInstruction: 398
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> alloca64 [
-	self addInstruction: 402
+	self addInstruction: 399
 ]
 
 { #category : #'lowcode instructions' }
@@ -107,7 +107,7 @@ LowcodeAssembler >> arithmeticRightShift64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> beginCall: a1_alignment [
-	self addInstruction: 406  extendA: a1_alignment
+	self addInstruction: 403  extendA: a1_alignment
 ]
 
 { #category : #'lowcode instructions' }
@@ -127,17 +127,17 @@ LowcodeAssembler >> branchGreatEqual: a1_dest [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> branchGreater: a1_dest [
-	self addInstruction: 384  label: a1_dest
+	self addInstruction: 376  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> branchLess: a1_dest [
-	self addInstruction: 382  label: a1_dest
+	self addInstruction: 374  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> branchLessEqual: a1_dest [
-	self addInstruction: 383  label: a1_dest
+	self addInstruction: 375  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
@@ -147,22 +147,22 @@ LowcodeAssembler >> branchNotEqual: a1_dest [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> branchNotOverflow: a1_dest [
-	self addInstruction: 386  label: a1_dest
+	self addInstruction: 383  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> branchOverflow: a1_dest [
-	self addInstruction: 385  label: a1_dest
+	self addInstruction: 382  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> branchPrimitiveFailed: a1_dest [
-	self addInstruction: 387  label: a1_dest
+	self addInstruction: 384  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> branchPrimitiveSucceed: a1_dest [
-	self addInstruction: 388  label: a1_dest
+	self addInstruction: 385  label: a1_dest
 ]
 
 { #category : #'lowcode instructions' }
@@ -187,32 +187,32 @@ LowcodeAssembler >> branchUnsignedLessEqual: a1_dest [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> callArgumentFloat32 [
-	self addInstruction: 409
+	self addInstruction: 406
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> callArgumentFloat64 [
-	self addInstruction: 410
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> callArgumentInt32 [
 	self addInstruction: 407
 ]
 
 { #category : #'lowcode instructions' }
+LowcodeAssembler >> callArgumentInt32 [
+	self addInstruction: 404
+]
+
+{ #category : #'lowcode instructions' }
 LowcodeAssembler >> callArgumentInt64 [
-	self addInstruction: 408
+	self addInstruction: 405
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> callInstruction: a1_function [
-	self addInstruction: 429  extendA: a1_function
+	self addInstruction: 426  extendA: a1_function
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> callPhysical: a1_registerID [
-	self addInstruction: 428  extendA: a1_registerID
+	self addInstruction: 425  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
@@ -227,7 +227,7 @@ LowcodeAssembler >> compare64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> compareAndSwap32 [
-	self addInstruction: 400
+	self addInstruction: 397
 ]
 
 { #category : #'instruction encoding' }
@@ -282,12 +282,12 @@ LowcodeAssembler >> emit [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> endCall [
-	self addInstruction: 413
+	self addInstruction: 410
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> endCallNoCleanup [
-	self addInstruction: 414
+	self addInstruction: 411
 ]
 
 { #category : #'lowcode instructions' }
@@ -382,7 +382,7 @@ LowcodeAssembler >> float64ToOop [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> free [
-	self addInstruction: 405
+	self addInstruction: 402
 ]
 
 { #category : #initialization }
@@ -498,12 +498,12 @@ LowcodeAssembler >> loadUInt8FromMemory [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> lockRegisters [
-	self addInstruction: 416
+	self addInstruction: 413
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> lockVM [
-	self addInstruction: 398
+	self addInstruction: 395
 ]
 
 { #category : #adding }
@@ -525,37 +525,37 @@ LowcodeAssembler >> makeLabelHere [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> malloc32 [
-	self addInstruction: 403
+	self addInstruction: 400
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> malloc64 [
-	self addInstruction: 404
+	self addInstruction: 401
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> moveFloat32ToPhysical: a1_registerID [
-	self addInstruction: 421  extendA: a1_registerID
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> moveFloat64ToPhysical: a1_registerID [
-	self addInstruction: 422  extendA: a1_registerID
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> moveInt32ToPhysical: a1_registerID [
 	self addInstruction: 418  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> moveInt64ToPhysical: a1_registerID [
+LowcodeAssembler >> moveFloat64ToPhysical: a1_registerID [
 	self addInstruction: 419  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
+LowcodeAssembler >> moveInt32ToPhysical: a1_registerID [
+	self addInstruction: 415  extendA: a1_registerID
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> moveInt64ToPhysical: a1_registerID [
+	self addInstruction: 416  extendA: a1_registerID
+]
+
+{ #category : #'lowcode instructions' }
 LowcodeAssembler >> movePointerToPhysical: a1_registerID [
-	self addInstruction: 420  extendA: a1_registerID
+	self addInstruction: 417  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
@@ -645,12 +645,12 @@ LowcodeAssembler >> or64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> performCall: a1_function [
-	self addInstruction: 411  extendA: a1_function
+	self addInstruction: 408  extendA: a1_function
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> performCallIndirect [
-	self addInstruction: 412
+	self addInstruction: 409
 ]
 
 { #category : #'lowcode instructions' }
@@ -660,7 +660,7 @@ LowcodeAssembler >> pin [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> plaftormCode [
-	self addInstruction: 415
+	self addInstruction: 412
 ]
 
 { #category : #'lowcode instructions' }
@@ -690,27 +690,27 @@ LowcodeAssembler >> pushOne32 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> pushPhysicalFloat32: a1_registerID [
-	self addInstruction: 426  extendA: a1_registerID
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> pushPhysicalFloat64: a1_registerID [
-	self addInstruction: 427  extendA: a1_registerID
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> pushPhysicalInt32: a1_registerID [
 	self addInstruction: 423  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushPhysicalInt64: a1_registerID [
+LowcodeAssembler >> pushPhysicalFloat64: a1_registerID [
 	self addInstruction: 424  extendA: a1_registerID
 ]
 
 { #category : #'lowcode instructions' }
+LowcodeAssembler >> pushPhysicalInt32: a1_registerID [
+	self addInstruction: 420  extendA: a1_registerID
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> pushPhysicalInt64: a1_registerID [
+	self addInstruction: 421  extendA: a1_registerID
+]
+
+{ #category : #'lowcode instructions' }
 LowcodeAssembler >> pushPhysicalPointer: a1_registerID [
-	self addInstruction: 425  extendA: a1_registerID
+	self addInstruction: 422  extendA: a1_registerID
 ]
 
 { #category : #'sista extended bytecode instructions' }
@@ -755,22 +755,22 @@ LowcodeAssembler >> returnFalse [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> returnFloat32 [
-	self addInstruction: 396
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> returnFloat64 [
-	self addInstruction: 397
-]
-
-{ #category : #'lowcode instructions' }
-LowcodeAssembler >> returnInt32 [
 	self addInstruction: 393
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> returnInt64 [
+LowcodeAssembler >> returnFloat64 [
 	self addInstruction: 394
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> returnInt32 [
+	self addInstruction: 390
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeAssembler >> returnInt64 [
+	self addInstruction: 391
 ]
 
 { #category : #'sista extended bytecode instructions' }
@@ -780,7 +780,7 @@ LowcodeAssembler >> returnNil [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> returnPointer [
-	self addInstruction: 395
+	self addInstruction: 392
 ]
 
 { #category : #'sista extended bytecode instructions' }
@@ -790,7 +790,7 @@ LowcodeAssembler >> returnReceiver [
 
 { #category : #'sista extended bytecode instructions' }
 LowcodeAssembler >> returnTop [
-	self addSistaInstruction: 95
+	self addSistaInstruction: 92
 ]
 
 { #category : #'sista extended bytecode instructions' }
@@ -970,12 +970,12 @@ LowcodeAssembler >> umul64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> unlockRegisters [
-	self addInstruction: 417
+	self addInstruction: 414
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> unlockVM [
-	self addInstruction: 399
+	self addInstruction: 396
 ]
 
 { #category : #'lowcode instructions' }

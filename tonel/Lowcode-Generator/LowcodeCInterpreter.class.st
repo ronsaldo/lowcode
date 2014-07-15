@@ -35,18 +35,18 @@ LowcodeCInterpreter class >> initialize [
 		oop sqInt
 		float32 float
 		float64 double
-		label uint32_t
+		label 'uint8_t*'
 		'extend-a' uint32_t
 		'extend-b' uint32_t
 	).
 	
 	PopForTypes := Dictionary newFromPairs: #(
-		int32 POP_INT32
-		int64 POP_INT64
-		pointer POP_POINTER
-		oop POP_OOP
-		float32 POP_FLOAT32
-		float64 POP_FLOAT64
+		int32 POP_INT32_TO
+		int64 POP_INT64_TO
+		pointer POP_POINTER_TO
+		oop POP_OOP_TO
+		float32 POP_FLOAT32_TO
+		float64 POP_FLOAT64_TO
 	).
 	
 	PushForTypes := Dictionary newFromPairs: #(
@@ -138,6 +138,25 @@ LowcodeCInterpreter >> emitCommon [
 #define POP_FLOAT64_TO(x) POP_VALUE_OF_TYPE(x, double)
 #define POP_POINTER_TO(x) POP_VALUE_OF_TYPE(x, void*)
 
+/* Oop macros */
+#define POP_OOP_TO(x) {x = interpreterProxy->pop(1); oopStackSize--; }
+#define PUSH_OOP(x) { interpreterProxy->push(x); oopStackSize++; }
+#define PUSH_OOP_INTEGER(x) { interpreterProxy->pushInteger(x); oopStackSize++; }
+
+/* Special macros */
+#define LABEL_AT_TO(id, dest) { \
+	sqInt literalOop = interpreterProxy->stObjectat(literals, id + 1); \
+	CHECK_FAILED(); \
+	dest = instructionStream + interpreterProxy->integerValueOf(literalOop); \
+}
+
+/* Utility macros */
+#define CHECK_FAILED() { \
+	if(interpreterProxy->failed()) \
+		return interpreterProxy->primitiveFail(); \
+}
+
+#define RETURN_OOP(oop) return interpreterProxy->popthenPush(oopStackSize, oop);
 '
 ]
 
@@ -173,13 +192,20 @@ LowcodeCInterpreter >> emitInstructions [
 { #category : #accessing }
 LowcodeCInterpreter >> emitInterpreter [
 	out nextPutAll: '
-sqInt LowcodePlugin_InterpretCodeIn(VirtualMachine *interpreterProxy, uint8_t *instructionStream, sqInt currentMethod)
+sqInt LowcodePlugin_InterpretCodeLiteralsReceiverArguments(VirtualMachine *interpreterProxy, uint8_t *instructionStream, sqInt literals, sqInt receiver, sqInt arguments)
 {
 	/* Allocate space for the primitive stack */
 	char* primitiveStack = alloca(DEFAULT_PRIMITIVE_STACK_SIZE);
 	size_t primitiveStackCapacity = DEFAULT_PRIMITIVE_STACK_SIZE;
 	size_t primitiveStackSize = 0;
+
+	/* Oop stack tracking */
+	size_t oopStackSize = interpreterProxy->methodArgumentCount() + 1;
 	
+	/* Some counts */
+	size_t numberLiterals = interpreterProxy->stSizeOf(literals);
+	size_t numberOfArguments = interpreterProxy->stSizeOf(arguments);
+
 	/* Condition Flags */
 	LowcodeConditionFlags currentConditionFlags;
 	
@@ -188,6 +214,16 @@ sqInt LowcodePlugin_InterpretCodeIn(VirtualMachine *interpreterProxy, uint8_t *i
 	uint32_t extA = 0;
 	uint32_t extB = 0;
 
+	{
+		size_t i;
+		/* Push the receiver and arguments in the stack */
+		interpreterProxy->push(receiver);
+		for(i = 0; i < numberOfArguments; ++i)
+			interpreterProxy->push(interpreterProxy->stObjectat(arguments, i + 1));
+		oopStackSize += 1 + numberOfArguments;
+		CHECK_FAILED();
+	}
+	
 	/* Execute all the instructions without verification */
 	for(;;)
 	{
@@ -306,10 +342,16 @@ LowcodeCInterpreter >> fetchArguments: instruction [
 { #category : #accessing }
 LowcodeCInterpreter >> fetchExtendedArgument: arg [
 	| value |
-	(arg type = 'label' or: [arg type = 'extend-a']) ifTrue: [ value := 'extA' ].
+	arg type = 'label' ifTrue: [
+		out nextPutAll:
+'				LABEL_AT_TO(extA, ' , arg name , ');' ; lf.
+		^ self
+	].
+
+	arg type = 'extend-a' ifTrue: [ value := 'extA' ].
 	arg type = 'extend-b' ifTrue: [ value := 'extB' ].
 	out nextPutAll: 
-'				' , arg name , ' = ' , value; lf
+'				' , arg name , ' = ' , value, ';' ; lf
 ]
 
 { #category : #accessing }

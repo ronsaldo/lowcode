@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'literals',
 		'instructions',
-		'originalMethod'
+		'stackFrameSize',
+		'originalMethod',
+		'numberOfTemporals'
 	],
 	#category : #'Lowcode-Execution'
 }
@@ -22,6 +24,13 @@ LowcodeAssembledMethod >> failureWith: errorCode [
 
 { #category : #compatibility }
 LowcodeAssembledMethod >> flushCache [
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeAssembledMethod >> initialize [
+	super initialize.
+	stackFrameSize := 0.
+	numberOfTemporals := 0
 ]
 
 { #category : #installing }
@@ -66,6 +75,17 @@ LowcodeAssembledMethod >> methodClass [
 LowcodeAssembledMethod >> methodClass: methodClass [
 ]
 
+{ #category : #accessing }
+LowcodeAssembledMethod >> numberOfTemporals [
+	^ numberOfTemporals
+]
+
+{ #category : #accessing }
+LowcodeAssembledMethod >> numberOfTemporals: anInteger [
+	"The number of temporaries"
+	numberOfTemporals := anInteger
+]
+
 { #category : #compatibility }
 LowcodeAssembledMethod >> origin [
 	^ originalMethod ifNil: [ self class ] ifNotNil: [ originalMethod origin ]
@@ -88,11 +108,14 @@ LowcodeAssembledMethod >> pragmas [
 
 { #category : #running }
 LowcodeAssembledMethod >> run: oldSelector with: arguments in: aReceiver [
-	^ self runIn: aReceiver with: arguments
+	| temporals |
+	temporals := Array new: numberOfTemporals.
+	arguments doWithIndex: [ :a :i | temporals at: i put: a ].
+	^ self runIn: aReceiver with: temporals
 ]
 
 { #category : #running }
-LowcodeAssembledMethod >> runIn: receiver with: arguments [
+LowcodeAssembledMethod >> runIn: receiver with: temporals [
 	<primitive: #primitiveInterpretLowcodeMethod module: #LowcodeInterpreterPlugin error: errorCode>
 	self failureWith: errorCode
 ]
@@ -104,6 +127,17 @@ LowcodeAssembledMethod >> selector [
 
 { #category : #running }
 LowcodeAssembledMethod >> selector: aSymbol [
+]
+
+{ #category : #accessing }
+LowcodeAssembledMethod >> stackFrameSize [
+	^ stackFrameSize
+]
+
+{ #category : #accessing }
+LowcodeAssembledMethod >> stackFrameSize: stackFrameSizeInBytes [
+	"The size of the stack frame in bytes."
+	stackFrameSize := stackFrameSizeInBytes
 ]
 
 { #category : #installing }

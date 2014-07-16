@@ -14,7 +14,9 @@ LowcodeInterpreterEngine class >> isSupported [
 LowcodeInterpreterEngine >> emit: aBlock on: aContext [
 	| assembler |
 	assembler := LowcodeAssembler new.
+	assembler argumentCount: aContext method numArgs.
 	aBlock value: assembler.
+	
 	self install: assembler emit inContext: aContext.
 	self retryContext: aContext
 ]

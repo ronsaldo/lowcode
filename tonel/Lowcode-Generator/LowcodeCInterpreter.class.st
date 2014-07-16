@@ -90,6 +90,7 @@ LowcodeCInterpreter >> emitCommon [
 #include <string.h>
 #include <math.h>
 #include "LowcodeInterpreterPlugin.h"
+#include "LowcodeInterpreterPluginFFI.h"
 
 /* Sista bytecode decoding constants */
 #define SISTA_OPCODE_ONE_BYTE_LAST 223
@@ -111,7 +112,7 @@ LowcodeCInterpreter >> emitCommon [
 	if(primitiveStackSize < size) { \
 		fprintf(stderr, "FATAL ERROR: Lowcode Primitive Stack Underflow\n"); \
 		abort();\
-	}\
+	} \
 }
 
 #define PUSH_VALUE_OF_TYPE(x, type) {\
@@ -139,9 +140,19 @@ LowcodeCInterpreter >> emitCommon [
 #define POP_POINTER_TO(x) POP_VALUE_OF_TYPE(x, void*)
 
 /* Oop macros */
-#define POP_OOP_TO(x) {x = interpreterProxy->pop(1); oopStackSize--; }
-#define PUSH_OOP(x) { interpreterProxy->push(x); oopStackSize++; }
-#define PUSH_OOP_INTEGER(x) { interpreterProxy->pushInteger(x); oopStackSize++; }
+#define POP_OOP_TO(x) { \
+	x = interpreterProxy->stackValue(0); \
+	interpreterProxy->pop(1);  \
+	oopStackSize--; \
+}
+#define PUSH_OOP(x) { \
+	interpreterProxy->push(x); \
+	oopStackSize++; \
+}
+#define PUSH_OOP_INTEGER(x) { \
+	interpreterProxy->pushInteger(x); \
+	oopStackSize++; \
+}
 
 /* Special macros */
 #define LABEL_AT_TO(id, dest) { \
@@ -151,6 +162,16 @@ LowcodeCInterpreter >> emitCommon [
 }
 
 /* Utility macros */
+#define UNIMPLEMENTED() { \
+	fprintf(stderr, "Unimplemented Lowcode instruction at %s line %d\n", __FILE__, __LINE__); \
+	abort(); \
+}
+
+#define UNSUPPORTED() { \
+	fprintf(stderr, "Unimplemented Lowcode instruction at %s line %d\n", __FILE__, __LINE__); \
+	abort(); \
+}
+
 #define CHECK_FAILED() { \
 	if(interpreterProxy->failed()) \
 		return interpreterProxy->primitiveFail(); \
@@ -192,19 +213,22 @@ LowcodeCInterpreter >> emitInstructions [
 { #category : #accessing }
 LowcodeCInterpreter >> emitInterpreter [
 	out nextPutAll: '
-sqInt LowcodePlugin_InterpretCodeLiteralsReceiverArguments(VirtualMachine *interpreterProxy, uint8_t *instructionStream, sqInt literals, sqInt receiver, sqInt arguments)
+sqInt LowcodePlugin_InterpretCodeLiteralsReceiverTemporalsStackFrame(VirtualMachine *interpreterProxy, uint8_t *instructionStream, sqInt literals, sqInt receiver, sqInt temporals, int stackFrameSize)
 {
 	/* Allocate space for the primitive stack */
-	char* primitiveStack = alloca(DEFAULT_PRIMITIVE_STACK_SIZE);
+	char* primitiveStack = (char*)alloca(DEFAULT_PRIMITIVE_STACK_SIZE);
 	size_t primitiveStackCapacity = DEFAULT_PRIMITIVE_STACK_SIZE;
 	size_t primitiveStackSize = 0;
+	
+	/* Allocate space for the stack frame base. */
+	char* basePointer = (char*)alloca(stackFrameSize);
 
 	/* Oop stack tracking */
 	size_t oopStackSize = interpreterProxy->methodArgumentCount() + 1;
 	
 	/* Some counts */
 	size_t numberLiterals = interpreterProxy->stSizeOf(literals);
-	size_t numberOfArguments = interpreterProxy->stSizeOf(arguments);
+	size_t numberOfTemporals = interpreterProxy->stSizeOf(temporals);
 
 	/* Condition Flags */
 	LowcodeConditionFlags currentConditionFlags;
@@ -213,16 +237,9 @@ sqInt LowcodePlugin_InterpretCodeLiteralsReceiverArguments(VirtualMachine *inter
 	uint8_t *pc = instructionStream;
 	uint32_t extA = 0;
 	uint32_t extB = 0;
-
-	{
-		size_t i;
-		/* Push the receiver and arguments in the stack */
-		interpreterProxy->push(receiver);
-		for(i = 0; i < numberOfArguments; ++i)
-			interpreterProxy->push(interpreterProxy->stObjectat(arguments, i + 1));
-		oopStackSize += 1 + numberOfArguments;
-		CHECK_FAILED();
-	}
+	
+	/* For calling*/
+	LOWCODE_FFI_COMMON();
 	
 	/* Execute all the instructions without verification */
 	for(;;)
@@ -351,7 +368,8 @@ LowcodeCInterpreter >> fetchExtendedArgument: arg [
 	arg type = 'extend-a' ifTrue: [ value := 'extA' ].
 	arg type = 'extend-b' ifTrue: [ value := 'extB' ].
 	out nextPutAll: 
-'				' , arg name , ' = ' , value, ';' ; lf
+'				' , arg name , ' = ' , value, ';' ; lf; nextPutAll: 
+'				' , value , ' = 0;'; lf
 ]
 
 { #category : #accessing }

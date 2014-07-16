@@ -32,6 +32,17 @@ LowcodeAssemblerTest >> testInfinite2 [
 ]
 
 { #category : #tests }
+LowcodeAssemblerTest >> testReturnOne [
+	| gen data |
+	gen := LowcodeAssembler new.
+	gen pushOne32;
+		returnInt32.
+	
+	data := gen emit.
+	self assert: data instructions size = 6.
+]
+
+{ #category : #tests }
 LowcodeAssemblerTest >> testSimple [
 	| gen data |
 	gen := LowcodeAssembler new.

@@ -14,12 +14,17 @@ Class {
 
 { #category : #'instance creation' }
 LowcodeInstruction class >> new: opcode [
-	^ self new: opcode args: #()
+	^ self new opcode: opcode
 ]
 
 { #category : #'instance creation' }
 LowcodeInstruction class >> new: opcode conditionCode: aConditionCode label: aLabel [
 	^ self new opcode: opcode; conditionCode: aConditionCode; label: aLabel
+]
+
+{ #category : #'instance creation' }
+LowcodeInstruction class >> new: opcode extendA: extendA [
+	^ self new opcode: opcode; extendA: extendA; yourself
 ]
 
 { #category : #'instance creation' }

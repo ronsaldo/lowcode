@@ -11,6 +11,18 @@ Class {
 	#category : #'Lowcode-Execution'
 }
 
+{ #category : #uninstall }
+LowcodeAssembledMethod class >> uninstallOfAll [
+	Object withAllSubclassesDo: [ :sc | self uninstallOfClass: sc ]
+]
+
+{ #category : #uninstall }
+LowcodeAssembledMethod class >> uninstallOfClass: aClass [
+	aClass methodDict valuesDo: [ :val |
+		val isLowcodeMethod ifTrue: [ val uninstall ]
+	]
+]
+
 { #category : #compatibility }
 LowcodeAssembledMethod >> doesNotUnderstand: aMessage [
 	originalMethod ifNotNil: [ ^ aMessage sendTo: originalMethod ].
@@ -26,7 +38,7 @@ LowcodeAssembledMethod >> failureWith: errorCode [
 LowcodeAssembledMethod >> flushCache [
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 LowcodeAssembledMethod >> initialize [
 	super initialize.
 	stackFrameSize := 0.
@@ -52,6 +64,11 @@ LowcodeAssembledMethod >> instructions [
 LowcodeAssembledMethod >> instructions: anObject [
 	
 	instructions := anObject
+]
+
+{ #category : #testing }
+LowcodeAssembledMethod >> isLowcodeMethod [
+	^ true
 ]
 
 { #category : #accessing }

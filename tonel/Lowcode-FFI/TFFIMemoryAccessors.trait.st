@@ -1,4 +1,4 @@
 Trait {
 	#name : #TFFIMemoryAccessors,
-	#category : #'Lowcode-FFI'
+	#category : #'Lowcode-FFI-Objects'
 }

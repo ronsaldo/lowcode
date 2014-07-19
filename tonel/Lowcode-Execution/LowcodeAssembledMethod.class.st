@@ -30,7 +30,11 @@ LowcodeAssembledMethod >> doesNotUnderstand: aMessage [
 ]
 
 { #category : #running }
-LowcodeAssembledMethod >> failureWith: errorCode [
+LowcodeAssembledMethod >> failure: errorCode in: receiver with: temporals [
+	errorCode = LowcodeConstants errorSessionChanged ifTrue: [ 
+		^ self retryCompiling: receiver with: temporals.
+	].
+
 	self error: 'Primitive Failed'
 ]
 
@@ -124,6 +128,16 @@ LowcodeAssembledMethod >> pragmas [
 ]
 
 { #category : #running }
+LowcodeAssembledMethod >> retryCompiling: receiver with: temporals [
+	| oldSelector args |
+	oldSelector := self selector.
+	args := temporals first: originalMethod numArgs.
+	self uninstall.
+	^ receiver perform: oldSelector withArguments: args.
+
+]
+
+{ #category : #running }
 LowcodeAssembledMethod >> run: oldSelector with: arguments in: aReceiver [
 	| temporals |
 	temporals := Array new: numberOfTemporals.
@@ -134,7 +148,7 @@ LowcodeAssembledMethod >> run: oldSelector with: arguments in: aReceiver [
 { #category : #running }
 LowcodeAssembledMethod >> runIn: receiver with: temporals [
 	<primitive: #primitiveInterpretLowcodeMethod module: #LowcodeInterpreterPlugin error: errorCode>
-	self failureWith: errorCode
+	^ self failure: errorCode in: receiver with: temporals
 ]
 
 { #category : #compatibility }

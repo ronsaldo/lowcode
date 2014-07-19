@@ -12,32 +12,22 @@ LowcodeInterpreterEngine class >> isSupported [
 
 { #category : #interpret }
 LowcodeInterpreterEngine >> emit: aBlock on: aContext [
+	self emit: aBlock onMethod: aContext method.
+	^ Lowcode retryContext: aContext
+]
+
+{ #category : #interpret }
+LowcodeInterpreterEngine >> emit: aBlock onMethod: aCompiledMethod [
 	| assembler |
 	assembler := LowcodeAssembler new.
-	assembler argumentCount: aContext method numArgs.
+	assembler argumentCount: aCompiledMethod numArgs.
 	aBlock value: assembler.
 	
-	self install: assembler emit inContext: aContext.
-	self retryContext: aContext
+	self install: assembler emit inMethod: aCompiledMethod.
 ]
 
 { #category : #interpret }
-LowcodeInterpreterEngine >> install: code inContext: aContext [
-	code installReplacing: aContext method.
-
-]
-
-{ #category : #interpret }
-LowcodeInterpreterEngine >> retryContext: aContext [
-	"Taken from NativeBoost retrySend:"
-
-	| method args |
-	method := aContext method.
-	
-	args := Array new: method numArgs.
-	1 to: args size do: [ :i |  args at: i put: (aContext tempAt: i) ].
-
-	thisContext terminateTo: aContext sender. 
-	^ aContext receiver perform: method selector withArguments: args.
+LowcodeInterpreterEngine >> install: code inMethod: aCompiledMethod [
+	code installReplacing: aCompiledMethod.
 
 ]

@@ -89,6 +89,7 @@ LowcodeCInterpreter >> emitCommon [
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <time.h>
 #include "LowcodeInterpreterPlugin.h"
 #include "LowcodeInterpreterPluginFFI.h"
 
@@ -101,18 +102,19 @@ LowcodeCInterpreter >> emitCommon [
 /* Primitive types stack. */
 #define DEFAULT_PRIMITIVE_STACK_SIZE 256
 
+#define FATAL_ERROR(message) {  \
+		fprintf(stderr, "FATAL ERROR: " message " in %s at line %d\n", __FILE__, __LINE__); \
+		abort(); \
+}
+
 #define STACK_CHECK_REMAINING_CAPACITY(size) {\
-	if(primitiveStackCapacity - primitiveStackSize < size) { \
-		fprintf(stderr, "FATAL ERROR: Lowcode Primitive Stack Overflow\n"); \
-		abort();\
-	}\
+	if(primitiveStackCapacity - primitiveStackSize < size) \
+		FATAL_ERROR("Lowcode Primitive Stack Overflow"); \
 }
 
 #define STACK_CHECK_MINIMAL_SIZE(size) {\
-	if(primitiveStackSize < size) { \
-		fprintf(stderr, "FATAL ERROR: Lowcode Primitive Stack Underflow\n"); \
-		abort();\
-	} \
+	if(primitiveStackSize < size)  \
+		FATAL_ERROR("Lowcode Primitive Stack Underflow"); \
 }
 
 #define PUSH_VALUE_OF_TYPE(x, type) {\
@@ -178,6 +180,7 @@ LowcodeCInterpreter >> emitCommon [
 }
 
 #define RETURN_OOP(oop) return interpreterProxy->popthenPush(oopStackSize, oop);
+
 '
 ]
 
@@ -187,6 +190,22 @@ LowcodeCInterpreter >> emitDisclaimer [
  * WARNING: This file was automatically generated. DO NOT MODIFY.
  */
 '
+]
+
+{ #category : #accessing }
+LowcodeCInterpreter >> emitInitialization [
+	out nextPutAll: '
+static int Lowcode_sessionInitialized = 0;
+static uint32_t Lowcode_sessionIdentifier; /* Must be keep uninitialized for more randomness */
+
+static void Lowcode_initializeSession() { 
+	uint32_t *p = (uint32_t*)malloc(4);
+	/* Produce a random value for the session identifier */
+	Lowcode_sessionIdentifier ^= ((uint32_t)((size_t)p)) ^ (uint32_t)time(NULL) ^ *p;
+	free(p);
+	Lowcode_sessionInitialized = 1;
+}
+	'
 ]
 
 { #category : #accessing }
@@ -395,6 +414,7 @@ LowcodeCInterpreter >> generate. [
 		self emitDisclaimer;
 			emitCommon;
 			emitOpcodeConstants;
+			emitInitialization;
 			emitInterpreter
 	] ensure: [ out close ]
 ]

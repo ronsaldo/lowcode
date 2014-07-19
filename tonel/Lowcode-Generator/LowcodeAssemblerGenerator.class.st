@@ -43,6 +43,8 @@ LowcodeAssemblerGenerator >> compileSista: code [
 { #category : #generation }
 LowcodeAssemblerGenerator >> generate [
 	self removeOldInstructions.
+	self removeOldTables.
+	self generateTables.
 	self generateInstructions.
 ]
 
@@ -89,6 +91,43 @@ LowcodeAssemblerGenerator >> generateInstruction: inst withCondition: condition 
 { #category : #generation }
 LowcodeAssemblerGenerator >> generateInstructions [
 	spec instructions do: [ :inst | self generateInstruction: inst ]
+]
+
+{ #category : #generation }
+LowcodeAssemblerGenerator >> generateTables [
+	| code |
+	code := ByteString streamContents: [ :stream |
+		stream nextPutAll: 
+'initMnemonicTables
+	LowcodeMnemonics := IdentityDictionary newFromPairs: #(
+'.
+		spec instructions do: [ :ins |
+			stream nextPutAll: '			' , ins opcode asString , ' ' , ins mnemonic; cr
+		].
+
+		stream nextPutAll: ').
+	SistaExtendedBytecodeMnemonics := IdentityDictionary newFromPairs: #(
+'.
+
+	spec sistaInstructions do: [ :ins |
+		ins firstOpcode = ins lastOpcode ifTrue: [ 
+			stream nextPutAll: '			' , ins firstOpcode asString , ' ' , ins mnemonic; cr			
+		]
+		ifFalse: [
+				(ins firstOpcode to: ins lastOpcode) do: [ :i |
+					stream nextPutAll: '			' , i asString , ' ''' , ins mnemonic , ': ', (i - ins firstOpcode) asString, ''''; cr
+			] 
+		]
+	].
+
+	stream nextPutAll: '
+)
+'
+		 ].
+
+	Author useAuthor: 'Lowcode' during: [ 
+		LowcodeStreamElement class compile: code classified: self protocolName ].
+	LowcodeStreamElement initMnemonicTables
 ]
 
 { #category : #generation }
@@ -165,6 +204,16 @@ LowcodeAssemblerGenerator >> removeOldSistaInstructions [
 	protocol := LowcodeAssembler organization protocolNamed: self sistaProtocolName.
 	protocol methods do: [ :sel |
 		LowcodeAssembler removeSelector: sel.
+	]
+	
+]
+
+{ #category : #cleanup }
+LowcodeAssemblerGenerator >> removeOldTables [
+	| protocol |
+	protocol := LowcodeStreamElement class organization protocolNamed: self protocolName.
+	protocol methods do: [ :sel |
+		LowcodeStreamElement class removeSelector: sel.
 	]
 	
 ]

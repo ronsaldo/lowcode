@@ -76,6 +76,14 @@ LowcodeSistaInstruction >> opcode: anObject [
 	opcode := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeSistaInstruction >> printOn: aStream [
+	aStream nextPutAll: (self sistaExtendedBytecodeMnemonicFor: opcode).
+	first ifNotNil: [ aStream nextPutAll: ' ' , first printString ].
+	second ifNotNil: [ aStream nextPutAll: ' ' , second printString ].
+	aStream cr
+]
+
 { #category : #accessing }
 LowcodeSistaInstruction >> second [
 	

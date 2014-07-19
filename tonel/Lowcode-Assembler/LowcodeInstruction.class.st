@@ -41,8 +41,8 @@ LowcodeInstruction >> computeSizeForOffset: anOffset [
 LowcodeInstruction >> elementSize [
 	| size |
 	size := 3.
-	extendA ifNotNil: [ size  := size + (self bytesFor: extendA) * 2 ].
-	extendB ifNotNil: [ size  := size + (self bytesFor: extendB) * 2 ].
+	extendA ifNotNil: [ size  := size + ((self bytesFor: extendA) * 2) ].
+	extendB ifNotNil: [ size  := size + ((self bytesFor: extendB) * 2) ].
 	^ size
 ]
 
@@ -98,4 +98,12 @@ LowcodeInstruction >> opcode [
 LowcodeInstruction >> opcode: anObject [
 	
 	opcode := anObject
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeInstruction >> printOn: aStream [
+	aStream nextPutAll: (self lowcodeMnemonicFor: opcode).
+	extendA ifNotNil: [ aStream nextPutAll: ' ' , extendA printString ].
+	extendB ifNotNil: [ aStream nextPutAll: ' ' , extendB printString ].
+	aStream cr
 ]

@@ -10,11 +10,11 @@ FFIUInt32Type >> accept: visitor [
 ]
 
 { #category : #visitor }
-FFIUInt32Type >> lowcodeCoerceArgumentValue: gen [
+FFIUInt32Type >> lowcode: gen coerceArgumentValue: calloutSpec [
 	gen oopToUInt32.
 ]
 
 { #category : #'as yet unclassified' }
-FFIUInt32Type >> lowcodeReturnValue: gen [
-	gen returnUInt32
+FFIUInt32Type >> lowcode: gen returnValue: calloutSpec [
+	gen returnUInt32AsOop
 ]

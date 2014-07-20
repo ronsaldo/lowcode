@@ -10,26 +10,21 @@ FFIInt64Type >> accept: visitor [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIInt64Type >> lowcode: gen performCallWithValueResult: functionAddress [
-	gen performCallInt64: functionAddress value
-]
-
-{ #category : #'lowcode marshalling' }
-FFIInt64Type >> lowcodeCallArgument: gen [
+FFIInt64Type >> lowcode: gen callArgumentValue: calloutSpec [
 	gen callArgumentInt64
 ]
 
 { #category : #'lowcode marshalling' }
-FFIInt64Type >> lowcodeCallArgumentValue: gen [
-	gen callArgumentInt64
-]
-
-{ #category : #'lowcode marshalling' }
-FFIInt64Type >> lowcodeCoerceArgumentValue: gen [
+FFIInt64Type >> lowcode: gen coerceArgumentValue: calloutSpec [
 	gen oopToInt64.
 ]
 
 { #category : #'lowcode marshalling' }
-FFIInt64Type >> lowcodeReturnValue: gen [
-	gen returnInt64
+FFIInt64Type >> lowcode: gen performCallWithValueResult: calloutSpec [
+	gen performCallInt64: calloutSpec functionAddress
+]
+
+{ #category : #'lowcode marshalling' }
+FFIInt64Type >> lowcode: gen returnValue: calloutSpec [
+	gen returnInt64AsOop
 ]

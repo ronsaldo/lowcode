@@ -8,13 +8,67 @@ Class {
 		'receiver',
 		'originalMethod',
 		'originalMethodArguments',
-		'functionHandle'
+		'functionHandle',
+		'options'
 	],
 	#classVars : [
 		'TypeAliases'
 	],
 	#category : #'Lowcode-FFI-API'
 }
+
+{ #category : #'as yet unclassified' }
+FFICalllout class >> defaultOptions [
+	"see #allOptions on my instance side"
+	^ #(
+	
+	"#optCoerceNilToNull"
+	"passing nil as a pointer-type argument, converts it to C NULL "
+		
+	#optAllowExternalAddressPtr
+	"for a pointer-type argument, accept an instance of NBExternalAddress "
+	
+	"for a pointer-type argument, allow passing a pointer to byte arrays"
+	#optAllowByteArraysPtr 
+	
+	"if function returns a pointer, return nil if pointer is null"
+	#optReturnNullAsNil  
+		
+	"If function returns a pointer, fail primitive if pointer is null.
+	Takes preference over #returnNullAsNil 
+	Default: disabled. "
+	"#optFailOnReturnNull"	
+
+	"if function returns a pointer, convert it to unsigned integer object.
+	Default: disabled
+	#optReturnPtrAsInt "
+	
+	"If function returns a pointer, convert it to an instance of NBExternalAddress.
+	Takes preference over #returnPtrAsInt.
+	Default: enabled.  "
+	#optReturnPtrAsExternalAddress
+		
+	"directly convert between C integers and Smallintegers instead of using proxy 	functions. perform no range checking"
+	"#optQuickSmi --  not yet done	" 
+
+	"directly convert between C integers and Smallintegers instead of using proxy 	functions. include range checking"
+	"#optQuickSmiSafe --  not yet done	" 
+				
+	"string conversion"
+	
+	"for char* parameter type, when passed an instance of ByteString, 
+	copy a ByteString's contents on a stack, append null character and pass a pointer to it"
+	"#optAcceptStringForCharPtr ---  not yet implemented"	
+		
+	"for a function returning char* type, convert it to an instance of ByteString"
+	"#optReturnCharPtrAsString -- not yet implemented"
+
+	"for a function spec taking arguments indirectly from an array using the x@index convention
+	check that the index is not outside x''s bounds "
+	#optCheckIndirectArgBounds
+	)
+
+]
 
 { #category : #'as yet unclassified' }
 FFICalllout class >> initTypeAliases [
@@ -153,6 +207,25 @@ FFICalllout >> convention: callingConventionToken [
 	convention := callingConventionToken
 ]
 
+{ #category : #'as yet unclassified' }
+FFICalllout >> defaultOptions [
+	^ self class defaultOptions
+]
+
+{ #category : #'as yet unclassified' }
+FFICalllout >> doesNotUnderstand: message [
+
+	(message selector isUnary and: [ message selector beginsWith: 'opt'] )
+		ifTrue: [ ^ options includes: message selector ].
+		
+	^ super doesNotUnderstand: message
+]
+
+{ #category : #accessing }
+FFICalllout >> functionAddress [
+	^ functionHandle value
+]
+
 { #category : #accessing }
 FFICalllout >> functionHandle [
 	^ functionHandle
@@ -170,6 +243,13 @@ FFICalllout >> generateFunction: functionSpecString module: aModuleNameOrHandle 
 	functionSpec := parser parseNamedFunction: functionSpecString.
 	functionHandle := requestor ffiGetSymbolAddress: functionSpec functionName module: aModuleNameOrHandle.
 	FFIPlatform current generateCallout: self
+]
+
+{ #category : #'as yet unclassified' }
+FFICalllout >> initialize [
+	options := Set new.
+	self parseOptions: self defaultOptions.
+
 ]
 
 { #category : #'instance creation' }
@@ -190,8 +270,31 @@ FFICalllout >> originalMethod: aCompiledMethod [
 ]
 
 { #category : #accessing }
-FFICalllout >> parseOptions [
-	self shouldBeImplemented
+FFICalllout >> parseOptions: optionsArray [
+
+	"parse an array, which is a sequence of options in a form of: 
+	
+	#( + option1 option2 - option3 ... )
+	
+	each time the #+ is seen, the options which follow it will be subject for inclusion
+	and, correspondingly, if #- seen, then they will be excluded	.
+
+	By default, (if none of #+ or #- specified initially), all options are subject for inclusion.
+	"
+	| include |
+	
+	include := true.
+	
+	optionsArray do: [:option |
+		option == #+ 
+			ifTrue: [ include := true ]
+			ifFalse: [
+				option == #- 
+					ifTrue: [ include := false ]
+					ifFalse: [ 
+						include ifTrue: [ options add: option ] 
+						ifFalse: [ options remove: option ifAbsent:[] ]]]
+		].
 ]
 
 { #category : #accessing }

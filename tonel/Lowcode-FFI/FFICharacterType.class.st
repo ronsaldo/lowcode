@@ -4,23 +4,18 @@ Class {
 	#category : #'Lowcode-FFI-Types'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #visitor }
 FFICharacterType >> accept: aVisitor [
 	^ aVisitor visitCharacterType: self
 ]
 
 { #category : #'lowcode marshalling' }
-FFICharacterType >> lowcode: gen performCallWithValueResult: functionAddress [
-	gen performCallInt32: functionAddress
-]
-
-{ #category : #'lowcode marshalling' }
-FFICharacterType >> lowcodeCallArgumentValue: gen [
+FFICharacterType >> lowcode: gen callArgumentValue: calloutSpec [
 	gen callArgumentInt32
 ]
 
 { #category : #'lowcode marshalling' }
-FFICharacterType >> lowcodeCoerceArgumentValue: gen [
+FFICharacterType >> lowcode: gen coerceArgumentValue: calloutSpec [
 	"Extract the character value"
 	gen firstFieldPointer;
 		loadPointerFromMemory;
@@ -28,4 +23,9 @@ FFICharacterType >> lowcodeCoerceArgumentValue: gen [
 		pushOne32;
 		rightShift32
 		
+]
+
+{ #category : #'lowcode marshalling' }
+FFICharacterType >> lowcode: gen performCallWithValueResult: calloutSpec [
+	gen performCallInt32: calloutSpec functionAddress
 ]

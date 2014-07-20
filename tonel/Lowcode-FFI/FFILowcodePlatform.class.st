@@ -16,7 +16,7 @@ FFILowcodePlatform >> emitLowcode: gen callout: calloutSpec [
 FFILowcodePlatform >> emitLowcodeCdecl: gen callout: calloutSpec [
 	self emitLowcodeConventionCommon: gen callout: calloutSpec.
 	gen endCall.
-	calloutSpec functionSpec returnType lowcodeReturn: gen
+	calloutSpec functionSpec returnType lowcode: gen return: calloutSpec
 ]
 
 { #category : #'callout generation' }
@@ -27,15 +27,15 @@ FFILowcodePlatform >> emitLowcodeConventionCommon: gen callout: calloutSpec [
 	returnType := functionSpec returnType.
 	
 	functionSpec arguments do: [ :arg |
-		arg lowcodeCoerceArgument: gen.
+		arg lowcode: gen coerceArgument: calloutSpec
 	].
 
 	gen beginCall: self stackAlignment.
 	functionSpec arguments reverseDo: [ :arg |
-		arg lowcodeCallArgument: gen.
+		arg lowcode:gen callArgument: calloutSpec.
 	].
 	
-	returnType lowcode: gen performCall: calloutSpec functionHandle value.
+	returnType lowcode: gen performCall: calloutSpec.
 
 ]
 

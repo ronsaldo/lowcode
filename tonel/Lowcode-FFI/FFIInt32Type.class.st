@@ -10,12 +10,12 @@ FFIInt32Type >> accept: visitor [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIInt32Type >> lowcodeCoerceArgumentValue: gen [
+FFIInt32Type >> lowcode: gen coerceArgumentValue: calloutSpec [
 	gen oopToInt32
 
 ]
 
 { #category : #'lowcode marshalling' }
-FFIInt32Type >> lowcodeReturnValue: gen [
-	gen returnInt32
+FFIInt32Type >> lowcode: gen returnValue: calloutSpec [
+	gen returnInt32AsOop
 ]

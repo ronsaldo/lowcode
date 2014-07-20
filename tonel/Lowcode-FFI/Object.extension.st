@@ -44,6 +44,11 @@ Object >> ffiCallingConvention [
 ]
 
 { #category : #'*Lowcode-FFI' }
+Object >> ffiCallout [
+	^ self ffiCalloutIn: thisContext sender
+]
+
+{ #category : #'*Lowcode-FFI' }
 Object >> ffiCalloutIn: aMethodContext [
 	^ FFICallloutAPI inContext: aMethodContext
 ]

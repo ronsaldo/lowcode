@@ -11,7 +11,7 @@ ByteArray >> ffiFloat32AtOffset: zeroBasedOffset [
 			pointerOffset32;
 			
 			loadFloat32FromMemory;
-			returnFloat32
+			returnFloat32AsOop
 	]
 ]
 
@@ -43,7 +43,7 @@ ByteArray >> ffiFloat64AtOffset: zeroBasedOffset [
 			pointerOffset32;
 			
 			loadFloat64FromMemory;
-			returnFloat64
+			returnFloat64AsOop
 	]
 ]
 
@@ -107,7 +107,7 @@ ByteArray >> ffiInt32AtOffset: zeroBasedOffset [
 			pointerOffset32;
 			
 			loadInt32FromMemory;
-			returnInt32
+			returnInt32AsOop
 	]
 ]
 
@@ -139,7 +139,7 @@ ByteArray >> ffiInt64AtOffset: zeroBasedOffset [
 			pointerOffset32;
 			
 			loadInt64FromMemory;
-			returnInt64
+			returnInt64AsOop
 	]
 ]
 
@@ -205,7 +205,7 @@ ByteArray >> ffiLongAt: zeroBasedOffset [
 			pointerOffset32;
 			
 			loadInt32FromMemory;
-			returnInt32
+			returnInt32AsOop
 	]
 ]
 
@@ -271,7 +271,7 @@ ByteArray >> ffiUInt32AtOffset: zeroBasedOffset [
 			pointerOffset32;
 			
 			loadUInt32FromMemory;
-			returnUInt32
+			returnUInt32AsOop
 	]
 ]
 
@@ -303,7 +303,7 @@ ByteArray >> ffiUInt64AtOffset: zeroBasedOffset [
 			pointerOffset32;
 			
 			loadUInt64FromMemory;
-			returnUInt64
+			returnUInt64AsOop
 	]
 ]
 
@@ -369,7 +369,7 @@ ByteArray >> ffiULongAt: zeroBasedOffset [
 			pointerOffset32;
 			
 			loadUInt32FromMemory;
-			returnUInt32
+			returnUInt32AsOop
 	]
 ]
 

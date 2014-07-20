@@ -23,13 +23,13 @@ FFIFunctionSpecArgument >> isReceiverArgument [
 ]
 
 { #category : #'lowcode generation' }
-FFIFunctionSpecArgument >> lowcodeCallArgument: gen [
+FFIFunctionSpecArgument >> lowcode: gen callArgument: calloutSpec [
 	"This is to emit the lowcode call argument family of instructions"
-	type lowcodeCallArgument: gen
+	type lowcode: gen callArgument: calloutSpec
 ]
 
 { #category : #'lowcode generation' }
-FFIFunctionSpecArgument >> lowcodeCoerceArgument: gen [
+FFIFunctionSpecArgument >> lowcode: gen coerceArgument: calloutSpec [
 	"This is used to emit the conversion from Oop to primitive types."
 	self subclassResponsibility.
 ]

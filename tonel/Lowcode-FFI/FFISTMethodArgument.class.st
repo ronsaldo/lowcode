@@ -23,7 +23,7 @@ FFISTMethodArgument >> isMethodArgument [
 ]
 
 { #category : #testing }
-FFISTMethodArgument >> lowcodeCoerceArgument: gen [
+FFISTMethodArgument >> lowcode: gen coerceArgument: calloutSpec [
 	gen pushTemp: index.
-	type lowcodeCoerceArgument: gen
+	type lowcode: gen coerceArgument: calloutSpec
 ]

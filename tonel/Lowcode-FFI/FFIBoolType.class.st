@@ -10,22 +10,22 @@ FFIBoolType >> accept: visitor [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIBoolType >> lowcode: gen performCallWithValueResult: functionAddress [
-	gen performCallInt32: functionAddress
-]
-
-{ #category : #'lowcode marshalling' }
-FFIBoolType >> lowcodeCallArgumentValue: gen [
+FFIBoolType >> lowcode: gen callArgumentValue: calloutSpec [
 	gen callArgumentInt32
 ]
 
 { #category : #'lowcode marshalling' }
-FFIBoolType >> lowcodeCoerceArgumentValue: gen [
+FFIBoolType >> lowcode: gen coerceArgumentValue: calloutSpec [
 	"Extract the character value"
 	gen oopToBoolean32
 ]
 
 { #category : #'lowcode marshalling' }
-FFIBoolType >> lowcodeReturnValue: gen [
-	gen returnBoolean32
+FFIBoolType >> lowcode: gen performCallWithValueResult: calloutSpec [
+	gen performCallInt32: calloutSpec functionAddress
+]
+
+{ #category : #'lowcode marshalling' }
+FFIBoolType >> lowcode: gen returnValue: calloutSpec [
+	gen returnBoolean32AsOop
 ]

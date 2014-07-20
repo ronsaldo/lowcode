@@ -51,3 +51,8 @@ LowcodeLabel >> offset [
 LowcodeLabel >> offset: anObject [
 	offset := anObject
 ]
+
+{ #category : #accessing }
+LowcodeLabel >> value [
+	^ offset
+]

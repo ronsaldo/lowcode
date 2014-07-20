@@ -36,6 +36,7 @@ LowcodeCInterpreter class >> initialize [
 		float32 float
 		float64 double
 		label 'uint8_t*'
+		literal sqInt
 		'extend-a' uint32_t
 		'extend-b' uint32_t
 	).
@@ -157,9 +158,14 @@ LowcodeCInterpreter >> emitCommon [
 }
 
 /* Special macros */
-#define LABEL_AT_TO(id, dest) { \
-	sqInt literalOop = interpreterProxy->stObjectat(literals, id + 1); \
+#define LITERAL_AT_TO(id, dest) { \
+	dest = interpreterProxy->fetchPointerofObject(id, literals); \
 	CHECK_FAILED(); \
+}
+
+#define LABEL_AT_TO(id, dest) { \
+	sqInt literalOop; \
+	LITERAL_AT_TO(id, literalOop); \
 	dest = instructionStream + interpreterProxy->integerValueOf(literalOop); \
 }
 
@@ -249,9 +255,6 @@ sqInt LowcodePlugin_InterpretCodeLiteralsReceiverTemporalsStackFrame(VirtualMach
 	size_t numberLiterals = interpreterProxy->stSizeOf(literals);
 	size_t numberOfTemporals = interpreterProxy->stSizeOf(temporals);
 
-	/* Condition Flags */
-	LowcodeConditionFlags currentConditionFlags;
-	
 	/* The current program counter. */
 	uint8_t *pc = instructionStream;
 	uint32_t extA = 0;
@@ -380,7 +383,14 @@ LowcodeCInterpreter >> fetchExtendedArgument: arg [
 	| value |
 	arg type = 'label' ifTrue: [
 		out nextPutAll:
-'				LABEL_AT_TO(extA, ' , arg name , ');' ; lf.
+'				LABEL_AT_TO(extA, ' , arg name , ');
+				extA = 0;' ; lf.
+		^ self
+	].
+	arg type = 'literal' ifTrue: [
+		out nextPutAll:
+'				LITERAL_AT_TO(extA, ' , arg name , ');
+				extA = 0;' ; lf.
 		^ self
 	].
 

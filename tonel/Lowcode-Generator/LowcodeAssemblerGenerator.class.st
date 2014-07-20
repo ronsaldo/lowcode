@@ -23,6 +23,7 @@ LowcodeAssemblerGenerator class >> initialize [
 	TypeMap := Dictionary newFromPairs: #(
 		condition conditionCode:
 		label label:
+		literal extendA:
 		'extend-a' extendA:
 		'extend-b' extendB:
 	)

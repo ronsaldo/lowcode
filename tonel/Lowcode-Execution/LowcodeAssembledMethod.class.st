@@ -31,11 +31,12 @@ LowcodeAssembledMethod >> doesNotUnderstand: aMessage [
 
 { #category : #running }
 LowcodeAssembledMethod >> failure: errorCode in: receiver with: temporals [
+
 	errorCode = LowcodeConstants errorSessionChanged ifTrue: [ 
 		^ self retryCompiling: receiver with: temporals.
 	].
 
-	self error: 'Primitive Failed'
+	self error: 'Primitive Failed errorCode: ' , errorCode printString
 ]
 
 { #category : #compatibility }

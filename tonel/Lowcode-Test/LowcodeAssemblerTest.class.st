@@ -36,7 +36,7 @@ LowcodeAssemblerTest >> testReturnOne [
 	| gen data |
 	gen := LowcodeAssembler new.
 	gen pushOne32;
-		returnInt32.
+		returnInt32AsOop.
 	
 	data := gen emit.
 	self assert: data instructions size = 6.

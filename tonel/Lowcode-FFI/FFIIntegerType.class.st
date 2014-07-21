@@ -15,6 +15,16 @@ FFIIntegerType >> lowcode:gen coerceArgumentValue: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
+FFIIntegerType >> lowcode: gen convertToValueFromOop: calloutSpec [
+	gen oopSmallIntegerToInt32.
+]
+
+{ #category : #'lowcode marshalling' }
+FFIIntegerType >> lowcode: gen convertValueToOop: calloutSpec [
+	gen smallInt32ToOop
+]
+
+{ #category : #'lowcode marshalling' }
 FFIIntegerType >> lowcode: gen performCallWithValueResult: calloutSpec [
 	gen performCallInt32: calloutSpec functionAddress
 ]

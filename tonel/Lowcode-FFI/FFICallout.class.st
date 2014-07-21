@@ -1,5 +1,5 @@
 Class {
-	#name : #FFICalllout,
+	#name : #FFICallout,
 	#superclass : #Object,
 	#instVars : [
 		'functionSpec',
@@ -18,7 +18,7 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-FFICalllout class >> defaultOptions [
+FFICallout class >> defaultOptions [
 	"see #allOptions on my instance side"
 	^ #(
 	
@@ -71,7 +71,7 @@ FFICalllout class >> defaultOptions [
 ]
 
 { #category : #'as yet unclassified' }
-FFICalllout class >> initTypeAliases [
+FFICallout class >> initTypeAliases [
 	"self initTypeAliases"
 	
 	TypeAliases := Dictionary newFromPairs:
@@ -138,7 +138,7 @@ FFICalllout class >> initTypeAliases [
 ]
 
 { #category : #'as yet unclassified' }
-FFICalllout class >> initialize [
+FFICallout class >> initialize [
 
 	Smalltalk removeFromStartUpList: self .
 	
@@ -146,7 +146,7 @@ FFICalllout class >> initialize [
 ]
 
 { #category : #accessing }
-FFICalllout >> aliasForType: typeName [
+FFICallout >> aliasForType: typeName [
 
 	| alias |
 	alias := typeName.
@@ -160,7 +160,7 @@ FFICalllout >> aliasForType: typeName [
 ]
 
 { #category : #accessing }
-FFICalllout >> argument: argumentName type: typeName pointerArity: pointerArity [
+FFICallout >> argument: argumentName type: typeName pointerArity: pointerArity [
 	| type index argNameSymbol |
 	type := self typeName: typeName pointerArity: pointerArity.
 	argNameSymbol := argumentName asSymbol.
@@ -178,42 +178,33 @@ FFICalllout >> argument: argumentName type: typeName pointerArity: pointerArity 
 ]
 
 { #category : #'callout generation' }
-FFICalllout >> callFunction: functionSpecString module: aModuleNameOrHandle [
-	| parser |
-	parser := self newSpecParser.
-	functionSpec := parser parseNamedFunction: functionSpecString.
-	functionHandle := requestor ffiGetSymbolAddress: functionSpec functionName module: aModuleNameOrHandle.
-	^ FFIPlatform current generateCallout: self
-]
-
-{ #category : #'callout generation' }
-FFICalllout >> callFunction: functionSpecString module: aModuleNameOrHandle andRetry: context [
+FFICallout >> callFunction: functionSpecString module: aModuleNameOrHandle andRetry: context [
 	self generateFunction: functionSpecString module: aModuleNameOrHandle.
 	Lowcode retryContext: context
 ]
 
 { #category : #accessing }
-FFICalllout >> cdecl [
+FFICallout >> cdecl [
 	self convention: #cdecl
 ]
 
 { #category : #accessing }
-FFICalllout >> convention [
+FFICallout >> convention [
 	^ convention
 ]
 
 { #category : #accessing }
-FFICalllout >> convention: callingConventionToken [
+FFICallout >> convention: callingConventionToken [
 	convention := callingConventionToken
 ]
 
-{ #category : #'as yet unclassified' }
-FFICalllout >> defaultOptions [
+{ #category : #options }
+FFICallout >> defaultOptions [
 	^ self class defaultOptions
 ]
 
-{ #category : #'as yet unclassified' }
-FFICalllout >> doesNotUnderstand: message [
+{ #category : #'reflective operations' }
+FFICallout >> doesNotUnderstand: message [
 
 	(message selector isUnary and: [ message selector beginsWith: 'opt'] )
 		ifTrue: [ ^ options includes: message selector ].
@@ -222,55 +213,71 @@ FFICalllout >> doesNotUnderstand: message [
 ]
 
 { #category : #accessing }
-FFICalllout >> functionAddress [
+FFICallout >> functionAddress [
 	^ functionHandle value
 ]
 
 { #category : #accessing }
-FFICalllout >> functionHandle [
+FFICallout >> functionHandle [
 	^ functionHandle
 ]
 
 { #category : #accessing }
-FFICalllout >> functionSpec [
+FFICallout >> functionSpec [
 	^ functionSpec
 ]
 
 { #category : #'callout generation' }
-FFICalllout >> generateFunction: functionSpecString module: aModuleNameOrHandle [
+FFICallout >> genFunction: functionSpecString emit: aBlock andCall: context [
+	self generateFunction: functionSpecString emit: aBlock.
+	Lowcode retryContext: context
+]
+
+{ #category : #'callout generation' }
+FFICallout >> generateFunction: functionSpecString emit: aBlock [
+	| parser |
+	parser := self newSpecParser.
+	functionSpec := parser parseAnonFunction: functionSpecString.
+	FFIPlatform current generateCallout: self emit: aBlock
+]
+
+{ #category : #'callout generation' }
+FFICallout >> generateFunction: functionSpecString module: aModuleNameOrHandle [
 	| parser |
 	parser := self newSpecParser.
 	functionSpec := parser parseNamedFunction: functionSpecString.
 	functionHandle := requestor ffiGetSymbolAddress: functionSpec functionName module: aModuleNameOrHandle.
+	functionHandle ifNil: [ self error: 'Failed to find function ''' , functionSpec functionName , ''' in module ' , aModuleNameOrHandle printString  ].
+
 	FFIPlatform current generateCallout: self
 ]
 
-{ #category : #'as yet unclassified' }
-FFICalllout >> initialize [
+{ #category : #initialization }
+FFICallout >> initialize [
 	options := Set new.
 	self parseOptions: self defaultOptions.
 
 ]
 
 { #category : #'instance creation' }
-FFICalllout >> newSpecParser [
+FFICallout >> newSpecParser [
 	 ^ FFIFunctionSpecParser new requestor: self.
 ]
 
 { #category : #accessing }
-FFICalllout >> originalMethod [
+FFICallout >> originalMethod [
 	^ originalMethod
 ]
 
 { #category : #accessing }
-FFICalllout >> originalMethod: aCompiledMethod [
+FFICallout >> originalMethod: aCompiledMethod [
 	originalMethod := aCompiledMethod.
 	originalMethodArguments := originalMethod ffiArgumentNames.
 	self assert: originalMethodArguments size = originalMethod numArgs
 ]
 
 { #category : #accessing }
-FFICalllout >> parseOptions: optionsArray [
+FFICallout >> parseOptions: optionsArray [
 
 	"parse an array, which is a sequence of options in a form of: 
 	
@@ -298,17 +305,22 @@ FFICalllout >> parseOptions: optionsArray [
 ]
 
 { #category : #accessing }
-FFICalllout >> receiver [
+FFICallout >> receiver [
 	^ receiver
 ]
 
 { #category : #accessing }
-FFICalllout >> receiver: anObject [
+FFICallout >> receiver: anObject [
 	receiver := anObject
 ]
 
 { #category : #accessing }
-FFICalllout >> requestor: aRequestor [
+FFICallout >> requestor [
+	^ requestor
+]
+
+{ #category : #accessing }
+FFICallout >> requestor: aRequestor [
 	requestor := aRequestor.
 	
 	(requestor respondsTo: #ffiCalloutOptions) ifTrue: [
@@ -318,7 +330,7 @@ FFICalllout >> requestor: aRequestor [
 ]
 
 { #category : #accessing }
-FFICalllout >> resolveType: typeName [
+FFICallout >> resolveType: typeName [
 	" a type name could be
 	 - a class variable name
 	- a class name
@@ -350,31 +362,31 @@ FFICalllout >> resolveType: typeName [
 ]
 
 { #category : #accessing }
-FFICalllout >> returnType: typePointerPair [
+FFICallout >> returnType: typePointerPair [
 	^self typeName: typePointerPair first pointerArity: typePointerPair second
 ]
 
 { #category : #accessing }
-FFICalllout >> sender: aSenderContext [
+FFICallout >> sender: aSenderContext [
 	self requestor: aSenderContext method methodClass.
 	self receiver: aSenderContext receiver.
 	self originalMethod:  aSenderContext method.
 ]
 
 { #category : #accessing }
-FFICalllout >> stdcall [
+FFICallout >> stdcall [
 	self convention: #stdcall
 ]
 
 { #category : #accessing }
-FFICalllout >> typeName: typeName pointerArity: pointerArity [
+FFICallout >> typeName: typeName pointerArity: pointerArity [
 	^ (self resolveType: typeName) pointerArity: pointerArity
 ]
 
 { #category : #accessing }
-FFICalllout >> variableArgument: argumentName [
+FFICallout >> variableArgument: argumentName [
 	"Special variable argument"
-	argumentName = 'self' ifTrue: [ ^ FFISTReceiverArgument new ].
+	argumentName = 'self' ifTrue: [ ^ FFISTReceiverArgument new type: (requestor asFFIExternalType: self) ].
 	
 	self error: 'Unexpected argument of name ' , argumentName
 ]

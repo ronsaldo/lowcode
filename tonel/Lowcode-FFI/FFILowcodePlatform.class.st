@@ -13,6 +13,26 @@ FFILowcodePlatform >> emitLowcode: gen callout: calloutSpec [
 ]
 
 { #category : #'callout generation' }
+FFILowcodePlatform >> emitLowcode: gen callout: calloutSpec body: aBlock [
+	|functionSpec returnType |
+	
+	functionSpec := calloutSpec functionSpec.
+	returnType := functionSpec returnType.
+
+	returnType lowcode: gen prepareReturn: calloutSpec.
+	"Coerce argument."	
+	functionSpec arguments do: [ :arg |
+		arg lowcode: gen coerceArgument: calloutSpec
+	].
+
+	"Generate the body"
+	aBlock value: gen value: calloutSpec.
+
+	"Return"
+	calloutSpec functionSpec returnType lowcode: gen return: calloutSpec
+]
+
+{ #category : #'callout generation' }
 FFILowcodePlatform >> emitLowcodeCdecl: gen callout: calloutSpec [
 	self emitLowcodeConventionCommon: gen callout: calloutSpec.
 	gen endCall.
@@ -25,6 +45,7 @@ FFILowcodePlatform >> emitLowcodeConventionCommon: gen callout: calloutSpec [
 	
 	functionSpec := calloutSpec functionSpec.
 	returnType := functionSpec returnType.
+	returnType lowcode: gen prepareReturn: calloutSpec.
 	
 	functionSpec arguments do: [ :arg |
 		arg lowcode: gen coerceArgument: calloutSpec
@@ -50,5 +71,12 @@ FFILowcodePlatform >> emitLowcodeStdcall: gen callout: calloutSpec [
 FFILowcodePlatform >> generateCallout: calloutSpec [
 	^ Lowcode emit: [ :gen |
 		self emitLowcode: gen callout: calloutSpec 
+	] onMethod: calloutSpec originalMethod 
+]
+
+{ #category : #'callout generation' }
+FFILowcodePlatform >> generateCallout: calloutSpec emit: aBlock [
+	^ Lowcode emit: [ :gen |
+		self emitLowcode: gen callout: calloutSpec body: aBlock
 	] onMethod: calloutSpec originalMethod 
 ]

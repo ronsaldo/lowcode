@@ -6,12 +6,19 @@ Class {
 
 { #category : #'memory management' }
 FFI class >> allocate: size [
-	^ self ffiCall: #(void* malloc(size_t size)) module: 0
+	^ self ffiCallout
+		function: #(void* (size_t size)) emit:  [ :gen :calloutSpec |
+		self pointerSize = 4 ifTrue: [ gen malloc32 ]
+			ifFalse: [ gen malloc32  ]
+	]
 ]
 
 { #category : #'memory management' }
 FFI class >> free: pointer [
-	^ self ffiCall: #(void free(void* pointer)) module: 0
+	^ self ffiCallout
+		function: #(void (void *pointer)) emit:  [ :gen :calloutSpec |
+			gen free
+		]
 ]
 
 { #category : #'retrieving symbols' }
@@ -24,6 +31,15 @@ FFI class >> loadFunction: aName from: aPluginName [
 FFI class >> loadSymbol: aName fromModule: aModuleNameOrHandle [
 	"FIXME: Use a proper interpreter plugin."
 	^ NativeBoost loadSymbol: aName fromModule: aModuleNameOrHandle
+]
+
+{ #category : #'memory management' }
+FFI class >> memCopy: source to: dest size: size [
+	^ self ffiCallout
+		function: #( void (void* dest, void* source, size_t size) ) emit: [ :gen :cs |
+			self pointerSize = 4 ifTrue: [ self memcpy32 ]
+				ifFalse: [ self memcpy64 ]
+		]
 ]
 
 { #category : #'platform querying' }

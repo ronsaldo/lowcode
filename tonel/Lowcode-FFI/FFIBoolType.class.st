@@ -21,6 +21,11 @@ FFIBoolType >> lowcode: gen coerceArgumentValue: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
+FFIBoolType >> lowcode: gen convertToValueFromOop: calloutSpec [
+	gen oopToBoolean32
+]
+
+{ #category : #'lowcode marshalling' }
 FFIBoolType >> lowcode: gen performCallWithValueResult: calloutSpec [
 	gen performCallInt32: calloutSpec functionAddress
 ]
@@ -28,4 +33,9 @@ FFIBoolType >> lowcode: gen performCallWithValueResult: calloutSpec [
 { #category : #'lowcode marshalling' }
 FFIBoolType >> lowcode: gen returnValue: calloutSpec [
 	gen returnBoolean32AsOop
+]
+
+{ #category : #accessing }
+FFIBoolType >> valueSize [
+	^ 1
 ]

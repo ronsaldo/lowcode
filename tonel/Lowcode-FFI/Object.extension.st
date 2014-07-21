@@ -50,7 +50,7 @@ Object >> ffiCallout [
 
 { #category : #'*Lowcode-FFI' }
 Object >> ffiCalloutIn: aMethodContext [
-	^ FFICallloutAPI inContext: aMethodContext
+	^ FFICalloutAPI inContext: aMethodContext
 ]
 
 { #category : #'*Lowcode-FFI' }

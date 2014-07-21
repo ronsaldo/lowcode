@@ -11,13 +11,19 @@ Class {
 	#category : #'Lowcode-FFI-Tests'
 }
 
+{ #category : #'as yet unclassified' }
+FFIFunctionSpecParserTest class >> asFFIExternalType: gen [
+	"Not actually used."
+	^ FFIVoidType new
+]
+
 { #category : #running }
 FFIFunctionSpecParserTest >> dummyMethod: a b: b c: c [
 ]
 
 { #category : #running }
 FFIFunctionSpecParserTest >> setUp [
-	requestor := FFICalllout new.
+	requestor := FFICallout new.
 	requestor requestor: self class;
 				originalMethod: (self class >> #dummyMethod:b:c: ).
 	parser := requestor newSpecParser

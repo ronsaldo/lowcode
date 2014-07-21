@@ -34,7 +34,17 @@ FFICallsTest >> memcpy: dest src: src n: n [
 ]
 
 { #category : #'callout functions' }
+FFICallsTest >> str: largeString str: smallerString [
+	^ self ffiCall: #(String strstr(String largeString, String smallerString)) module: 0
+]
+
+{ #category : #'callout functions' }
 FFICallsTest >> strlen: str [
+	^ self ffiCall: #(size_t strlen(String str)) module: 0
+]
+
+{ #category : #'callout functions' }
+FFICallsTest >> strlenArray: str [
 	^ self ffiCall: #(size_t strlen(const char * str)) module: 0
 ]
 
@@ -46,6 +56,8 @@ FFICallsTest >> testAbs [
 
 { #category : #'as yet unclassified' }
 FFICallsTest >> testIsDigit [
+	self assert: (self isDigit: $1 charCode).
+	self deny: (self isDigit: $a charCode).
 	self assert: (self isDigit: $1).
 	self deny: (self isDigit: $a).
 
@@ -71,9 +83,22 @@ FFICallsTest >> testMemcpy [
 
 { #category : #'callout functions' }
 FFICallsTest >> testStlen [
+	self assert: (self strlen: '') equals: 0.
+	self assert: (self strlen: 'abc') equals: 3.
+	self assert: (self strlen: 'abcasas') equals: 7
+]
+
+{ #category : #'callout functions' }
+FFICallsTest >> testStlenArray [
 	| strEmpty strA |
 	strEmpty := #[0].
 	strA := #[90 45 60 0].
-	self assert: (self strlen: strEmpty) equals: 0.
-	self assert: (self strlen: strA) equals: 3
+	self assert: (self strlenArray: strEmpty) equals: 0.
+	self assert: (self strlenArray: strA) equals: 3
+]
+
+{ #category : #'callout functions' }
+FFICallsTest >> testStrStr [
+	self assert: (self str: 'ababaab' str: 'c' ) equals: nil.
+	self assert: (self str: 'ababaab' str: 'baa' ) equals: 'baab'.
 ]

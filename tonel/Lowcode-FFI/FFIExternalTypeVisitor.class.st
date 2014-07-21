@@ -1,3 +1,6 @@
+"
+This is a base class for a visitor that has to resolve FFIExternalTypes.
+"
 Class {
 	#name : #FFIExternalTypeVisitor,
 	#superclass : #Object,
@@ -10,6 +13,22 @@ FFIExternalTypeVisitor >> visitBoolType: type [
 
 { #category : #'as yet unclassified' }
 FFIExternalTypeVisitor >> visitCharacterType: type [
+]
+
+{ #category : #'as yet unclassified' }
+FFIExternalTypeVisitor >> visitExternalAddressType: type [
+]
+
+{ #category : #'as yet unclassified' }
+FFIExternalTypeVisitor >> visitExternalObjectType: type [
+]
+
+{ #category : #'as yet unclassified' }
+FFIExternalTypeVisitor >> visitExternalStructureType: type [
+]
+
+{ #category : #'as yet unclassified' }
+FFIExternalTypeVisitor >> visitExternalUnionType: type [
 ]
 
 { #category : #visitor }

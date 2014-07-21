@@ -18,6 +18,11 @@ FFIFunctionSpecArgument >> isMethodArgument [
 ]
 
 { #category : #testing }
+FFIFunctionSpecArgument >> isReceiver [
+	^ self isReceiverArgument
+]
+
+{ #category : #testing }
 FFIFunctionSpecArgument >> isReceiverArgument [
 	^ false
 ]
@@ -41,5 +46,6 @@ FFIFunctionSpecArgument >> type [
 
 { #category : #accessing }
 FFIFunctionSpecArgument >> type: aFFIExternalTypeInstance [
-	type := aFFIExternalTypeInstance
+	type := aFFIExternalTypeInstance.
+	type loader: self
 ]

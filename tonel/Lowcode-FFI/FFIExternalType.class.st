@@ -1,8 +1,16 @@
+"
+This is an abstract class used to perform a mapping between Smalltalk classes and C types.
+
+This class and its subclasses are used by the Lowcode based FFI, by providing methods to perform marshalling between the Smalltalk and the C world using Lowcode.
+
+This class hierarchy is based in a similar mechanism used by NativeBoost for type marshalling, which can be found in NBExternalType. The main difference is in the use of Lowcode and the provision of a visitor pattern to allow more potential backends.
+"
 Class {
 	#name : #FFIExternalType,
 	#superclass : #Object,
 	#instVars : [
-		'pointerArity'
+		'pointerArity',
+		'loader'
 	],
 	#category : #'Lowcode-FFI-Types'
 }
@@ -32,6 +40,21 @@ FFIExternalType >> isPlatformDependent [
 FFIExternalType >> isPrimitiveType [
 	"This method tells if this type represents a primitive type."
 	^ false
+]
+
+{ #category : #testing }
+FFIExternalType >> isReceiver [
+	^ loader ~~ nil and: [ loader isReceiver ]
+]
+
+{ #category : #accessing }
+FFIExternalType >> loader [
+	^ loader
+]
+
+{ #category : #accessing }
+FFIExternalType >> loader: aLoader [
+	loader := aLoader
 ]
 
 { #category : #'lowcode marshalling' }
@@ -92,7 +115,8 @@ FFIExternalType >> lowcode: gen coerceArgumentPointer: calloutSpec [
 			oopNotEqual;
 			branchTrue32: cont;
 			oopToPointer;
-			jump: done
+			jump: done;
+			putLabel: cont
 	].
 
 	"The last case is a byte/word array, 
@@ -117,9 +141,83 @@ FFIExternalType >> lowcode: gen coerceArgumentValue: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIExternalType >> lowcode: gen performCall: functionAddress [
-	pointerArity > 0 ifTrue: [ self lowcode: gen performCallWithPointerResult: functionAddress  ]
-		ifFalse: [ self lowcode: gen performCallWithValueResult: functionAddress  ]
+FFIExternalType >> lowcode: gen convertFromOop: calloutSpec [
+	pointerArity > 0 ifTrue: [ self lowcode: gen convertToPointerFromOop: calloutSpec ]
+		ifFalse: [ self lowcode: gen convertToValueFromOop: calloutSpec ]
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen convertPointerToOop: calloutSpec [
+	| failedLabel cont done |
+	
+	failedLabel := gen makeLabel: 'failed'.
+	cont := gen makeLabel: 'cont'.
+	done := gen makeLabel: 'done'.
+		
+	(calloutSpec optReturnNullAsNil or: [calloutSpec optFailOnReturnNull ]) ifTrue: [
+		gen duplicatePointer;
+			pushNullPointer;
+			pointerEqual.
+			
+		calloutSpec optFailOnReturnNull 
+			ifTrue: [ gen branchTrue32: failedLabel. ]
+			ifFalse: [ 
+				gen branchFalse32: cont;
+					pushNil;
+					jump: done
+			]
+	].
+
+	gen putLabel: cont.
+	calloutSpec optReturnPtrAsExternalAddress 
+		ifTrue: [ 
+			(FFIExternalAddress asFFIExternalType: gen) lowcode: gen convertValueToOop: calloutSpec.
+			gen jump: done ]
+		ifFalse: [
+			calloutSpec optReturnPtrAsInt ifFalse: [
+				self error: 'Function returns a pointer, but returning raw pointer value is prohibited by options' ].
+			FFI pointerSize = 4 ifTrue: [ 
+					gen pointerToInt32;
+						uint32ToOop;
+						jump: done
+				]
+				ifFalse: [
+					gen pointerToInt64;
+						uint64ToOop;
+						jump: done
+				]
+		].
+
+	gen putLabel: failedLabel;
+		fail;
+		putLabel: done
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen convertToOop: calloutSpec [
+	self pointerArity > 0 ifTrue: [ self lowcode: gen convertPointerToOop: calloutSpec ]
+		ifFalse: [ self lowcode: gen convertValueToOop: calloutSpec ]
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen convertToPointerFromOop: calloutSpec [
+	self lowcode: gen coerceArgumentPointer: calloutSpec
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen convertToValueFromOop: calloutSpec [
+	self subclassResponsibility
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen convertValueToOop: calloutSpec [
+	self subclassResponsibility
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen performCall: calloutSpec [
+	pointerArity > 0 ifTrue: [ self lowcode: gen performCallWithPointerResult: calloutSpec ]
+		ifFalse: [ self lowcode: gen performCallWithValueResult: calloutSpec ]
 ]
 
 { #category : #'lowcode marshalling' }
@@ -128,7 +226,33 @@ FFIExternalType >> lowcode: gen performCallWithPointerResult: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIExternalType >> lowcode: gen performCallWithValueResult: functionAddress [
+FFIExternalType >> lowcode: gen performCallWithValueResult: calloutSpec [
+	self subclassResponsibility
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen prepareReturn: calloutSpec [
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen readFromMemory: calloutSpec [
+	pointerArity > 0 ifTrue: [ self lowcode: gen readPointerFromMemory: calloutSpec ]
+		ifFalse: [ self lowcode: gen readValueFromMemory: calloutSpec ]
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen readOopFromMemory: calloutSpec [
+	self lowcode: gen readFromMemory: calloutSpec;
+		lowcode: gen convertToOop: calloutSpec
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen readPointerFromMemory: calloutSpec [
+	gen loadPointerFromMemory
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen readValueFromMemory: calloutSpec [
 	self subclassResponsibility
 ]
 
@@ -182,6 +306,41 @@ FFIExternalType >> lowcode: gen returnValue: calloutSpec [
 	self subclassResponsibility
 ]
 
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen verifyClassOfIs: aClass spec: calloutSpec [
+	| classOk |
+	classOk := gen makeLabel: 'classOk'.
+	gen duplicateStackTop;
+		sendSpecialMessageClass;
+		pushLiteral: (gen addLiteral: aClass);
+		oopEqual;
+		branchTrue32: classOk;
+		fail;
+		putLabel: classOk
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen writeOopToMemory: calloutSpec [
+	self lowcode: gen convertFromOop: calloutSpec;
+		lowcode: gen writeToMemory: calloutSpec
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen writePointerToMemory: calloutSpec [
+	gen storePointerToMemory		
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen writeToMemory: calloutSpec [
+	pointerArity > 0 ifTrue: [ self lowcode: gen writePointerToMemory: calloutSpec ]
+		ifFalse: [ self lowcode: gen writeValueToMemory: calloutSpec ]
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalType >> lowcode: gen writeValueToMemory: calloutSpec [
+	self subclassResponsibility
+]
+
 { #category : #accessing }
 FFIExternalType >> pointerArity [
 	^ pointerArity
@@ -190,6 +349,17 @@ FFIExternalType >> pointerArity [
 { #category : #accessing }
 FFIExternalType >> pointerArity: moreArity [
 	pointerArity := pointerArity + moreArity
+]
+
+{ #category : #accessing }
+FFIExternalType >> pointerSize [
+	^ FFI pointerSize
+]
+
+{ #category : #accessing }
+FFIExternalType >> typeSize [
+	pointerArity > 0 ifTrue: [  ^ self pointerSize ]
+		ifFalse: [ ^ self valueSize]
 ]
 
 { #category : #accessing }

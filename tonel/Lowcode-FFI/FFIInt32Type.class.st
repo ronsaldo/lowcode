@@ -16,6 +16,31 @@ FFIInt32Type >> lowcode: gen coerceArgumentValue: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
+FFIInt32Type >> lowcode: gen convertToValueFromOop: calloutSpec [
+	gen oopToInt32
+]
+
+{ #category : #'lowcode marshalling' }
+FFIInt32Type >> lowcode: gen convertValueToOop: calloutSpec [
+	gen int32ToOop
+]
+
+{ #category : #'lowcode marshalling' }
+FFIInt32Type >> lowcode: gen readValueFromMemory: calloutSpec [
+	gen loadInt32FromMemory
+]
+
+{ #category : #'lowcode marshalling' }
 FFIInt32Type >> lowcode: gen returnValue: calloutSpec [
 	gen returnInt32AsOop
+]
+
+{ #category : #'lowcode marshalling' }
+FFIInt32Type >> lowcode: gen writeValueToMemory: calloutSpec [
+	gen storeInt32ToMemory
+]
+
+{ #category : #accessing }
+FFIInt32Type >> valueSize [
+	^ 4
 ]

@@ -21,3 +21,9 @@ FFISTInstanceVariableArgument >> index: anInteger [
 FFISTInstanceVariableArgument >> isInstanceVariableArgument [
 	^ true
 ]
+
+{ #category : #'lowcode generation' }
+FFISTInstanceVariableArgument >> lowcode: gen coerceArgument: calloutSpec [
+	gen pushReceiverVariable: index.
+	type lowcode: gen coerceArgument: calloutSpec
+]

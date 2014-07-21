@@ -9,7 +9,7 @@ FFISTReceiverArgument >> isReceiverArgument [
 	^ true
 ]
 
-{ #category : #testing }
+{ #category : #'lowcode generation' }
 FFISTReceiverArgument >> lowcode: gen coerceArgument: calloutSpec [
 	gen pushReceiver.
 	type lowcode: gen coerceArgument: calloutSpec

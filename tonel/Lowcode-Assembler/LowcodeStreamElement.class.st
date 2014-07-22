@@ -396,6 +396,16 @@ LowcodeStreamElement class >> initMnemonicTables [
 
 ]
 
+{ #category : #'lowcode instructions' }
+LowcodeStreamElement class >> lowcodeMnemonicFor: opcode [
+	^ LowcodeMnemonics at: opcode
+]
+
+{ #category : #'lowcode instructions' }
+LowcodeStreamElement class >> sistaExtendedBytecodeMnemonicFor: opcode [
+	^ SistaExtendedBytecodeMnemonics at: opcode
+]
+
 { #category : #'instruction encoding' }
 LowcodeStreamElement >> bytesFor: uint [
 	uint > 16rFFFFFF ifTrue: [ ^ 4 ].

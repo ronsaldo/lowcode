@@ -11,7 +11,8 @@ Class {
 		'stackArguments',
 		'stackResults',
 		'semantics',
-		'encodingCode'
+		'encodingCode',
+		'kind'
 	],
 	#category : #'Lowcode-Generator'
 }
@@ -62,12 +63,22 @@ LowcodeSpecInstruction >> initialize [
 	warning := ''.
 	description := ''.
 	semantics := Dictionary new.
-	
+	kind := #operation.
 ]
 
 { #category : #testing }
 LowcodeSpecInstruction >> isConditional [
 	^ arguments notEmpty and: [ arguments first type = 'condition' ]
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> kind [
+	^ kind
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> kind: aKind [
+	kind := aKind
 ]
 
 { #category : #accessing }

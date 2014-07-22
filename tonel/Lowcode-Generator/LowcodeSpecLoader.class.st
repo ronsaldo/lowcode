@@ -86,7 +86,8 @@ LowcodeSpecLoader >> parseInstruction: element [
 	
 	instruction := LowcodeSpecInstruction new.
 	instruction opcode: (element attributeAt: 'opcode') asInteger;
-				mnemonic: (element attributeAt: 'mnemonic').
+				mnemonic: (element attributeAt: 'mnemonic');
+				kind: (element attributeAt: 'kind' ifAbsent: [ #operation ]) asSymbol.
 	spec addInstruction: instruction.
 
 	element elementsDo: [ :child |
@@ -142,6 +143,8 @@ LowcodeSpecLoader >> parseSistaInstruction: element [
 	
 	instruction := LowcodeSpecSistaInstruction new.
 	instruction mnemonic: (element attributeAt: 'mnemonic').
+	instruction kind: (element attributeAt: 'kind' ifAbsent: [ #operation ]) asSymbol.
+	
 	opcode := element attributeAt: 'opcode' ifAbsent: [ nil ].
 	opcode ifNil: [ instruction firstOpcode: (element attributeAt: 'firstOpcode') asInteger .
 				instruction lastOpcode: (element attributeAt: 'lastOpcode') asInteger]
@@ -150,6 +153,8 @@ LowcodeSpecLoader >> parseSistaInstruction: element [
 
 	element elementsDo: [ :child |
 		child name = 'description' ifTrue: [ instruction description: child innerXML ].
+		child name = 'stack-arguments' ifTrue: [ self parseInstruction: instruction stackArguments: child ].
+		child name = 'stack-results' ifTrue: [ self parseInstruction: instruction stackResults: child ].
 		child name = 'semantic' ifTrue: [ self parseInstruction: instruction semantic: child ]
 	]
 ]

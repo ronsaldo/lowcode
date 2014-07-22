@@ -6,7 +6,10 @@ Class {
 		'lastOpcode',
 		'mnemonic',
 		'description',
-		'semantics'
+		'semantics',
+		'kind',
+		'stackArguments',
+		'stackResults'
 	],
 	#category : #'Lowcode-Generator'
 }
@@ -39,10 +42,22 @@ LowcodeSpecSistaInstruction >> firstOpcode: anObject [
 LowcodeSpecSistaInstruction >> initialize [
 	firstOpcode := 0.
 	lastOpcode := 0.
+	stackArguments := #().
+	stackResults := #().
 	mnemonic := 'uknwn'.
 	description := ''.
 	semantics := Dictionary new.
 	
+]
+
+{ #category : #accessing }
+LowcodeSpecSistaInstruction >> kind [
+	^ kind
+]
+
+{ #category : #accessing }
+LowcodeSpecSistaInstruction >> kind: aInstructionKind [
+	kind := aInstructionKind
 ]
 
 { #category : #accessing }
@@ -92,4 +107,28 @@ LowcodeSpecSistaInstruction >> semantic: semantic for: languageVariant [
 { #category : #'as yet unclassified' }
 LowcodeSpecSistaInstruction >> semanticFor: languageVariant ifAbsent: aBlock [
 	^ semantics at: languageVariant ifAbsent: aBlock 
+]
+
+{ #category : #accessing }
+LowcodeSpecSistaInstruction >> stackArguments [
+	
+	^ stackArguments
+]
+
+{ #category : #accessing }
+LowcodeSpecSistaInstruction >> stackArguments: anObject [
+	
+	stackArguments := anObject
+]
+
+{ #category : #accessing }
+LowcodeSpecSistaInstruction >> stackResults [
+	
+	^ stackResults
+]
+
+{ #category : #accessing }
+LowcodeSpecSistaInstruction >> stackResults: anObject [
+	
+	stackResults := anObject
 ]

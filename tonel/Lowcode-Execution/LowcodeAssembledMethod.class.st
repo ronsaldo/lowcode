@@ -6,7 +6,8 @@ Class {
 		'instructions',
 		'stackFrameSize',
 		'originalMethod',
-		'numberOfTemporals'
+		'numberOfTemporals',
+		'numberOfArguments'
 	],
 	#category : #'Lowcode-Execution'
 }
@@ -95,6 +96,17 @@ LowcodeAssembledMethod >> methodClass [
 
 { #category : #running }
 LowcodeAssembledMethod >> methodClass: methodClass [
+]
+
+{ #category : #accessing }
+LowcodeAssembledMethod >> numberOfArguments [
+	^ numberOfArguments
+]
+
+{ #category : #accessing }
+LowcodeAssembledMethod >> numberOfArguments: anInteger [
+	"The number of arguments"
+	numberOfArguments := anInteger
 ]
 
 { #category : #accessing }

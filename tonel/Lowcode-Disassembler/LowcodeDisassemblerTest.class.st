@@ -47,7 +47,6 @@ LowcodeDisassemblerTest >> testLowcodeLoop [
 
 	self assert: method basicBlocks size equals: 4.
 	self assert: method isValid.
-	self halt.
 ]
 
 { #category : #tests }

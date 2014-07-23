@@ -11,7 +11,10 @@ Class {
 		'currentPosition',
 		'currentInstructionPosition',
 		'blockEntries',
-		'disassembledMethod'
+		'disassembledMethod',
+		'numberOfArguments',
+		'numberOfTemporals',
+		'stackFrameSize'
 	],
 	#category : #'Lowcode-Disassembler'
 }
@@ -53,14 +56,21 @@ LowcodeDisassembler >> addInstruction: instruction [
 
 { #category : #accessing }
 LowcodeDisassembler >> assembledMethod: assembledMethod [
-	self rawInstructions: assembledMethod instructions.
-	self literals: assembledMethod literals.
+	self rawInstructions: assembledMethod instructions;
+		literals: assembledMethod literals;
+		numberOfArguments: assembledMethod numberOfArguments;
+		numberOfTemporals: assembledMethod numberOfTemporals;
+		stackFrameSize: assembledMethod stackFrameSize
 ]
 
 { #category : #'basic block detection' }
 LowcodeDisassembler >> decodeBlocks [
 	disassembledMethod := LowcodeDisassembledMethod new.
-	disassembledMethod literals: literals.
+	disassembledMethod 
+		numberOfArguments: numberOfArguments;
+		numberOfTemporals: numberOfTemporals;
+		stackFrameSize: stackFrameSize;
+		literals: literals.
 	
 	self detectBlockEntries;
 		putInstructionsInBlocks.
@@ -163,6 +173,30 @@ LowcodeDisassembler >> literals: arrayWithLiterals [
 	
 ]
 
+{ #category : #accessing }
+LowcodeDisassembler >> numberOfArguments [
+	
+	^ numberOfArguments
+]
+
+{ #category : #accessing }
+LowcodeDisassembler >> numberOfArguments: anObject [
+	
+	numberOfArguments := anObject
+]
+
+{ #category : #accessing }
+LowcodeDisassembler >> numberOfTemporals [
+	
+	^ numberOfTemporals
+]
+
+{ #category : #accessing }
+LowcodeDisassembler >> numberOfTemporals: anObject [
+	
+	numberOfTemporals := anObject
+]
+
 { #category : #'basic block detection' }
 LowcodeDisassembler >> putInstructionsInBlocks [
 	| currentBlock ownerBlock |
@@ -183,4 +217,16 @@ LowcodeDisassembler >> putInstructionsInBlocks [
 { #category : #accessing }
 LowcodeDisassembler >> rawInstructions: rawInstructions [
 	rawStream := rawInstructions readStream
+]
+
+{ #category : #accessing }
+LowcodeDisassembler >> stackFrameSize [
+	
+	^ stackFrameSize
+]
+
+{ #category : #accessing }
+LowcodeDisassembler >> stackFrameSize: anObject [
+	
+	stackFrameSize := anObject
 ]

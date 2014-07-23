@@ -5,7 +5,10 @@ Class {
 		'basicBlocks',
 		'literals',
 		'hasBeenValidated',
-		'isValid'
+		'isValid',
+		'numberOfArguments',
+		'numberOfTemporals',
+		'stackFrameSize'
 	],
 	#category : #'Lowcode-Disassembler'
 }
@@ -44,4 +47,40 @@ LowcodeDisassembledMethod >> literals [
 { #category : #accessing }
 LowcodeDisassembledMethod >> literals: anArrayWithLiterals [
 	literals := anArrayWithLiterals
+]
+
+{ #category : #accessing }
+LowcodeDisassembledMethod >> numberOfArguments [
+	
+	^ numberOfArguments
+]
+
+{ #category : #accessing }
+LowcodeDisassembledMethod >> numberOfArguments: anObject [
+	
+	numberOfArguments := anObject
+]
+
+{ #category : #accessing }
+LowcodeDisassembledMethod >> numberOfTemporals [
+	
+	^ numberOfTemporals
+]
+
+{ #category : #accessing }
+LowcodeDisassembledMethod >> numberOfTemporals: anObject [
+	
+	numberOfTemporals := anObject
+]
+
+{ #category : #accessing }
+LowcodeDisassembledMethod >> stackFrameSize [
+	
+	^ stackFrameSize
+]
+
+{ #category : #accessing }
+LowcodeDisassembledMethod >> stackFrameSize: anObject [
+	
+	stackFrameSize := anObject
 ]

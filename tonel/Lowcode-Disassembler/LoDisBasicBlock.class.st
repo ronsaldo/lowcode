@@ -7,7 +7,8 @@ Class {
 		'index',
 		'validationStatus',
 		'entryStackSignature',
-		'exitStackSignature'
+		'exitStackSignature',
+		'compiledBlock'
 	],
 	#category : #'Lowcode-Disassembler'
 }
@@ -15,6 +16,18 @@ Class {
 { #category : #adding }
 LoDisBasicBlock >> addInstruction: anInstruction [
 	instructions add: anInstruction
+]
+
+{ #category : #validation }
+LoDisBasicBlock >> compiledBlock [
+	"This is used by some lowcode backends"
+	^ compiledBlock
+]
+
+{ #category : #validation }
+LoDisBasicBlock >> compiledBlock: aCompiledBlock [
+	"This is used by some lowcode backends"
+	compiledBlock := aCompiledBlock
 ]
 
 { #category : #accessing }

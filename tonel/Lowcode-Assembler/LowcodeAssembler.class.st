@@ -9,7 +9,8 @@ Class {
 		'streamElements',
 		'literalTable',
 		'stackFrameAllocated',
-		'numberOfTemporals'
+		'numberOfTemporals',
+		'numberOfArguments'
 	],
 	#category : #'Lowcode-Assembler'
 }
@@ -145,7 +146,8 @@ LowcodeAssembler >> and64 [
 
 { #category : #'local variables' }
 LowcodeAssembler >> argumentCount: count [
-	numberOfTemporals := numberOfTemporals + count
+	numberOfArguments := count.
+	numberOfTemporals := numberOfTemporals + count.
 ]
 
 { #category : #'lowcode instructions' }
@@ -326,8 +328,8 @@ LowcodeAssembler >> emit [
 		literals: literals;
 		instructions: instructions;
 		stackFrameSize: stackFrameAllocated;
-		numberOfTemporals: numberOfTemporals.
-
+		numberOfTemporals: numberOfTemporals;
+		numberOfArguments: numberOfArguments.
 ]
 
 { #category : #utilities }
@@ -513,6 +515,7 @@ LowcodeAssembler >> initialize [
 	literalTable := OrderedCollection new.
 	stackFrameAllocated := 0.
 	numberOfTemporals := 0.
+	numberOfArguments := 0.
 ]
 
 { #category : #'lowcode instructions' }

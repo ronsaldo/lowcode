@@ -192,6 +192,13 @@ LoDisInstruction >> printOn: aStream [
 	].
 ]
 
+{ #category : #accessing }
+LoDisInstruction >> successors [
+	self isJump ifTrue: [ ^ { self jumpBlock } ].
+	self isBranch ifTrue: [ ^ { self nextBlock . self branchBlock } ].
+	^ #()
+]
+
 { #category : #validation }
 LoDisInstruction >> validate: stack forMethod: method [
 	(self performValidation: stack forMethod: method) ifFalse: [^ false].

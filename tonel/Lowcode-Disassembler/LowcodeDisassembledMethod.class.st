@@ -8,7 +8,8 @@ Class {
 		'isValid',
 		'numberOfArguments',
 		'numberOfTemporals',
-		'stackFrameSize'
+		'stackFrameSize',
+		'blockPCMap'
 	],
 	#category : #'Lowcode-Disassembler'
 }
@@ -18,7 +19,7 @@ LowcodeDisassembledMethod >> addBasicBlock: aBasicBlock [
 	basicBlocks add: aBasicBlock.
 	aBasicBlock index: basicBlocks size;
 		method: self.
-		
+	blockPCMap at: aBasicBlock pc put: aBasicBlock
 ]
 
 { #category : #accessing }
@@ -26,10 +27,16 @@ LowcodeDisassembledMethod >> basicBlocks [
 	^ basicBlocks
 ]
 
+{ #category : #accessing }
+LowcodeDisassembledMethod >> blockAtPC: pc [
+	^ blockPCMap at: pc
+]
+
 { #category : #initialization }
 LowcodeDisassembledMethod >> initialize [
 	basicBlocks := OrderedCollection new.
-	hasBeenValidated := false
+	hasBeenValidated := false.
+	blockPCMap := IdentityDictionary new.
 ]
 
 { #category : #validation }

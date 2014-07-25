@@ -8,7 +8,9 @@ Class {
 		'validationStatus',
 		'entryStackSignature',
 		'exitStackSignature',
-		'compiledBlock'
+		'compiledBlock',
+		'predecessors',
+		'pc'
 	],
 	#category : #'Lowcode-Disassembler'
 }
@@ -16,6 +18,11 @@ Class {
 { #category : #adding }
 LoDisBasicBlock >> addInstruction: anInstruction [
 	instructions add: anInstruction
+]
+
+{ #category : #adding }
+LoDisBasicBlock >> addPredecessor: predecessor [
+	predecessors add: predecessor
 ]
 
 { #category : #validation }
@@ -43,6 +50,7 @@ LoDisBasicBlock >> index: anIndex [
 { #category : #initialization }
 LoDisBasicBlock >> initialize [
 	instructions := OrderedCollection new.
+	predecessors := OrderedCollection new.
 	validationStatus := #notValidated.
 
 ]
@@ -72,11 +80,34 @@ LoDisBasicBlock >> name [
 	^ 'basicBlock' , index printString
 ]
 
+{ #category : #accessing }
+LoDisBasicBlock >> pc [
+	
+	^ pc
+]
+
+{ #category : #accessing }
+LoDisBasicBlock >> pc: anObject [
+	
+	pc := anObject
+]
+
+{ #category : #accessing }
+LoDisBasicBlock >> predecessors [
+	^ predecessors
+]
+
 { #category : #printing }
 LoDisBasicBlock >> printOn: aStream [
 	aStream nextPutAll: self name, ': '.
 	validationStatus == #valid ifTrue: [ aStream nextPutAll: '(' , entryStackSignature , ' -> ' , exitStackSignature , ')' ].
 	instructions do: [ :ins | aStream tab. ins printOn: aStream. aStream cr ]
+]
+
+{ #category : #accessing }
+LoDisBasicBlock >> successors [
+	^ instructions last successors
+
 ]
 
 { #category : #validation }

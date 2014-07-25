@@ -30,6 +30,8 @@ LowcodeDisassembler >> addBlockEntry: pc [
 	blockEntries at: pc ifPresent: [:b | ^ b ].
 
 	block := LoDisBasicBlock new.
+	block pc: pc.
+	
 	disassembledMethod addBasicBlock: block.
 	(self instructionAtPC: pc) ownerBlock: block.
 	blockEntries at: pc put: block.
@@ -54,6 +56,13 @@ LowcodeDisassembler >> addInstruction: instruction [
 	currentInstructionPosition := currentPosition.
 ]
 
+{ #category : #'basic block detection' }
+LowcodeDisassembler >> addPredecessors [
+	disassembledMethod basicBlocks do: [ :bb |
+		bb successors do: [ :succ | succ addPredecessor: bb ]
+	]
+]
+
 { #category : #accessing }
 LowcodeDisassembler >> assembledMethod: assembledMethod [
 	self rawInstructions: assembledMethod instructions;
@@ -73,7 +82,8 @@ LowcodeDisassembler >> decodeBlocks [
 		literals: literals.
 	
 	self detectBlockEntries;
-		putInstructionsInBlocks.
+		putInstructionsInBlocks;
+		addPredecessors.
 	
 	^ disassembledMethod
 ]

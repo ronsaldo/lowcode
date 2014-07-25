@@ -14,6 +14,11 @@ LoDisNextBlock >> isJump [
 	^ true
 ]
 
+{ #category : #validation }
+LoDisNextBlock >> mnemonic [
+	^ 'nextBlock'
+]
+
 { #category : #printing }
 LoDisNextBlock >> printOn: aStream [
 	aStream nextPutAll: 'nextBlock ', jumpBlock name

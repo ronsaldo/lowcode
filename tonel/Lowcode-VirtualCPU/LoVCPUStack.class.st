@@ -92,3 +92,11 @@ LoVCPUStack >> pushOop: word [
 LoVCPUStack >> pushPointer: word [
 	self push: word type: #pointer
 ]
+
+{ #category : #'as yet unclassified' }
+LoVCPUStack >> variables [
+	| variables |
+	variables := Array new: stack size.
+	1 to: variables size do: [ :i | variables at: i put: (stack at: i) first ].
+	^ variables
+]

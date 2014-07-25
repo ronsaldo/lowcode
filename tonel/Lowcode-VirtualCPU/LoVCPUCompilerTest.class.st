@@ -21,6 +21,34 @@ LoVCPUCompilerTest >> generate: aBlock [
 ]
 
 { #category : #'as yet unclassified' }
+LoVCPUCompilerTest >> testLowcodeLoop [
+	| method start done compiler|
+	method := self generate: [ :gen |
+		start := gen makeLabel: 'start'.
+		done := gen makeLabel: 'done'.
+		gen pushZero32;
+
+			"Compare with 10"
+			putLabel: start;
+			duplicateInt32;
+			pushConstantUInt32: 10;
+			int32Equal;
+			branchTrue32: done;
+			
+			"Increment"
+			pushOne32;
+			add32;
+			jump: start;
+			
+			"Return 10"
+			putLabel: done;
+			returnInt32AsOop.
+	].
+	compiler := LoVCPUCompiler default.
+	compiler compileDisassembledMethod: method
+]
+
+{ #category : #'as yet unclassified' }
 LoVCPUCompilerTest >> testSimple [
 	| method compiler |
 	method := self generate: [ :gen |

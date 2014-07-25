@@ -120,7 +120,11 @@ LowcodeSpecLoader >> parseInstruction: instruction arguments: element [
 LowcodeSpecLoader >> parseInstruction: instruction semantic: element [
 	| decoded |
 	self assertElement: element name: 'semantic'.
-	decoded := ((element innerXML copyReplaceAll: '&lt;' with: '<') copyReplaceAll: '&gt;' with: '>') copyReplaceAll: '&amp;' with: '&'.
+	decoded := element innerXML copyReplaceAll: '&lt;' with: '<'.
+	decoded := decoded copyReplaceAll: '&gt;' with: '>'.
+	decoded := decoded copyReplaceAll: '&amp;' with: '&'.
+	decoded := decoded copyReplaceAll: '&apos;' with: ''''.
+	decoded := decoded copyReplaceAll: '&quot;' with: '"'.
 	instruction semantic:   decoded for: (element attributeAt: 'language')
 ]
 

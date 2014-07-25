@@ -18,6 +18,11 @@ Class {
 }
 
 { #category : #accessing }
+LowcodeSpecInstruction >> allArguments [
+	^ self arguments , self stackArguments , self stackResults
+]
+
+{ #category : #accessing }
 LowcodeSpecInstruction >> argumentEncodingCode [
 	encodingCode ifNil: [
 		encodingCode := ''.

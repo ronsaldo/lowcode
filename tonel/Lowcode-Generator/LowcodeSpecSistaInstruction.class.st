@@ -14,6 +14,16 @@ Class {
 	#category : #'Lowcode-Generator'
 }
 
+{ #category : #'as yet unclassified' }
+LowcodeSpecSistaInstruction >> allArguments [
+	^ self arguments , self stackArguments , self stackResults
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeSpecSistaInstruction >> arguments [
+	^ #()
+]
+
 { #category : #accessing }
 LowcodeSpecSistaInstruction >> description [
 	

@@ -5,6 +5,11 @@ Class {
 }
 
 { #category : #testing }
+LowcodeInterpreterEngine class >> isSuitable [
+	^ false
+]
+
+{ #category : #testing }
 LowcodeInterpreterEngine class >> isSupported [
 	<primitive: #primitiveIsSupported module: #LowcodeInterpreterPlugin error:errorCode>
 	^ false

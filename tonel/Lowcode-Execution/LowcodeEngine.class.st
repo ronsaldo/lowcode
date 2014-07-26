@@ -19,12 +19,18 @@ LowcodeEngine class >> current [
 ]
 
 { #category : #testing }
+LowcodeEngine class >> isSuitable [
+	^ false
+]
+
+{ #category : #testing }
 LowcodeEngine class >> isSupported [
 	^ false
 ]
 
 { #category : #private }
 LowcodeEngine class >> pickEngine [
+	self allSubclassesDo: [ :sc | sc isSuitable ifTrue: [^ sc new] ].
 	self allSubclassesDo: [ :sc | sc isSupported ifTrue: [^ sc new] ].
 	self error: 'No Lowcode execution engine available.'
 ]

@@ -5,9 +5,9 @@ Class {
 		'literals',
 		'instructions',
 		'stackFrameSize',
-		'originalMethod',
 		'numberOfTemporals',
-		'numberOfArguments'
+		'numberOfArguments',
+		'originalMethod'
 	],
 	#category : #'Lowcode-Execution'
 }

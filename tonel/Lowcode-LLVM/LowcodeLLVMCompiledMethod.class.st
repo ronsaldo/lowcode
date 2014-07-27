@@ -20,7 +20,16 @@ LowcodeLLVMCompiledMethod >> addFailureCode: builder [
 
 { #category : #calling }
 LowcodeLLVMCompiledMethod >> callReplacing: originalMethod failedWithError: errorCode [
-	self halt.
+	^ self callReplacing: originalMethod failedWithError: errorCode onContext: thisContext sender
+]
+
+{ #category : #calling }
+LowcodeLLVMCompiledMethod >> callReplacing: originalMethod failedWithError: errorCode onContext: context [
+	errorCode == LowcodeConstants errorSessionChanged ifTrue: [
+		^ self retry: originalMethod onContext: context
+	].
+
+	self error: 'Failed to call Lowcode LLVM method ' , errorCode printString
 ]
 
 { #category : #'calling method construction' }
@@ -87,8 +96,19 @@ LowcodeLLVMCompiledMethod >> destroy [
 LowcodeLLVMCompiledMethod >> dummyMethod [
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #dumping }
 LowcodeLLVMCompiledMethod >> dump [
 	<primitive: #primitiveDumpCompiledMethod module: #LowcodeLLVMPlugin error: errorCode>
 	self error: 'Failed to dump Lowcode LLVM compiled method'
+]
+
+{ #category : #calling }
+LowcodeLLVMCompiledMethod >> retry: originalMethod onContext: context [
+	self uninstall: originalMethod.
+	^ Lowcode retryContext: context
+]
+
+{ #category : #calling }
+LowcodeLLVMCompiledMethod >> uninstall: originalMethod [
+	originalMethod methodClass methodDict at: originalMethod selector put: originalMethod
 ]

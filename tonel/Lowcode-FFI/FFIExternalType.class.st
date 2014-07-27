@@ -44,7 +44,7 @@ FFIExternalType >> isPrimitiveType [
 
 { #category : #testing }
 FFIExternalType >> isReceiver [
-	^ loader ~~ nil and: [ loader isReceiver ]
+	^ loader ~~ nil and: [ loader isReceiverArgument ]
 ]
 
 { #category : #accessing }

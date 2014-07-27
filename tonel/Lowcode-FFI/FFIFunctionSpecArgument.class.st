@@ -18,11 +18,6 @@ FFIFunctionSpecArgument >> isMethodArgument [
 ]
 
 { #category : #testing }
-FFIFunctionSpecArgument >> isReceiver [
-	^ self isReceiverArgument
-]
-
-{ #category : #testing }
 FFIFunctionSpecArgument >> isReceiverArgument [
 	^ false
 ]

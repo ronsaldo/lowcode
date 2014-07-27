@@ -183,13 +183,20 @@ FFIStructure >> emit: gen read: aFieldName spec: cs [
 
 { #category : #'initialize-release' }
 FFIStructure >> emit: gen write: aFieldName spec: cs [
-	| type offset |
+	| type offset temp |
 	type := self class fields typeOf: aFieldName.
 	offset := self class fields offsetOf: aFieldName.
+
+	"Store the Oop"
+	temp := gen allocateTemp.
+	gen popAndStoreTemp: temp.
 
 	"Compute the value pointer"
 	gen pushConstantUInt32: offset;
 		pointerOffset32.
+
+	"Load the Oop"
+	gen pushTemp: temp.
 	
 	"write the value"	
 	type lowcode: gen writeOopToMemory: cs.

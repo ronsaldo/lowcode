@@ -134,8 +134,7 @@ FFIExternalStructureType >> lowcode: gen performCallWithValueResult: calloutSpec
 		self valueSize <= 4 ifTrue: [ gen performCallInt32: calloutSpec functionAddress ]
 			ifFalse: [ gen performCallInt64: calloutSpec functionAddress ]
 	] ifFalse: [ 
-		gen callArgumentPointer; "Hidden argument"
-			performCallPointer: calloutSpec functionAddress
+		gen performCallStructure: calloutSpec functionAddress structureSize: self valueSize
 	]
 	
 ]

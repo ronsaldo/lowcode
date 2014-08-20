@@ -13,9 +13,9 @@ FFICallsTest >> abs: x [
 	^ self ffiCall: #(int abs(int x)) module: 0
 ]
 
-{ #category : #'as yet unclassified' }
-FFICallsTest >> branchSample: a [
-	a ifTrue: [ ^ 1 ] ifFalse: [ ^ 0 ]
+{ #category : #'callout functions' }
+FFICallsTest >> cLibraryName [
+	^ 0
 ]
 
 { #category : #'callout functions' }
@@ -34,8 +34,14 @@ FFICallsTest >> memcpy: dest src: src n: n [
 ]
 
 { #category : #'callout functions' }
+FFICallsTest >> nbStr: largeString str: smallerString [
+	<primitive: #primitiveNativeCall module: #NativeBoostPlugin>
+	^ self nbCall: #(String strstr(String largeString, String smallerString)) module: self cLibraryName
+]
+
+{ #category : #'callout functions' }
 FFICallsTest >> str: largeString str: smallerString [
-	^ self ffiCall: #(String strstr(String largeString, String smallerString)) module: 0
+	^ self ffiCall: #(String strstr(String largeString, String smallerString)) module: self cLibraryName
 ]
 
 { #category : #'callout functions' }

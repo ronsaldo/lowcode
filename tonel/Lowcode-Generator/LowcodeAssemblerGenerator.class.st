@@ -145,7 +145,7 @@ LowcodeAssemblerGenerator >> generateTo: stream instructionArguments: arguments 
 	
 	arguments doWithIndex: [ :arg :i  |
 		i > 1 ifTrue: [
-			stream nextPutAll: ' . '.
+			stream nextPutAll: '  '.
 		].
 	
 		self generateTo: stream instructionArgument: arg index: i.

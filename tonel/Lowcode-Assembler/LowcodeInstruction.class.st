@@ -28,6 +28,11 @@ LowcodeInstruction class >> new: opcode extendA: extendA [
 ]
 
 { #category : #'instance creation' }
+LowcodeInstruction class >> new: opcode extendA: extendA extendB: extendB [
+	^ self new opcode: opcode; extendA: extendA; extendB: extendB; yourself
+]
+
+{ #category : #'instance creation' }
 LowcodeInstruction class >> new: opcode label: aLabel [
 	^ self new opcode: opcode; label: aLabel
 ]

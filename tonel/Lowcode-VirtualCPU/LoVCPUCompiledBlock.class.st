@@ -294,9 +294,9 @@ LoVCPUCompiledBlock >> checkSessionIdentifierCompilation: instruction withStack:
 
 { #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> compareAndSwap32Compilation: instruction withStack: stack [
-	|check newValue oldValue value  |
-	oldValue := stack popInt32.
+	|check oldValue newValue value  |
 	newValue := stack popInt32.
+	oldValue := stack popInt32.
 	check := stack popPointer.
 self shouldBeImplemented.
 	stack pushInt32: value.
@@ -347,7 +347,9 @@ LoVCPUCompiledBlock >> div32Compilation: instruction withStack: stack [
 	|first second result  |
 	second := stack popInt32.
 	first := stack popInt32.
-self shouldBeImplemented.
+
+            result := first / second.
+        
 	stack pushInt32: result.
 
 ]
@@ -621,6 +623,15 @@ self shouldBeImplemented.
 ]
 
 { #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> float32ToFloat64Compilation: instruction withStack: stack [
+	|value result  |
+	value := stack popFloat32.
+self shouldBeImplemented.
+	stack pushFloat64: result.
+
+]
+
+{ #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> float32ToInt32Compilation: instruction withStack: stack [
 	|value result  |
 	value := stack popFloat32.
@@ -644,6 +655,24 @@ LoVCPUCompiledBlock >> float32ToOopCompilation: instruction withStack: stack [
 	value := stack popFloat32.
 self shouldBeImplemented.
 	stack pushOop: object.
+
+]
+
+{ #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> float32ToUInt32Compilation: instruction withStack: stack [
+	|value result  |
+	value := stack popFloat32.
+self shouldBeImplemented.
+	stack pushInt32: result.
+
+]
+
+{ #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> float32ToUInt64Compilation: instruction withStack: stack [
+	|value result  |
+	value := stack popFloat32.
+self shouldBeImplemented.
+	stack pushInt64: result.
 
 ]
 
@@ -748,6 +777,15 @@ self shouldBeImplemented.
 ]
 
 { #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> float64ToFloat32Compilation: instruction withStack: stack [
+	|value result  |
+	value := stack popFloat64.
+self shouldBeImplemented.
+	stack pushFloat32: result.
+
+]
+
+{ #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> float64ToInt32Compilation: instruction withStack: stack [
 	|value result  |
 	value := stack popFloat64.
@@ -771,6 +809,24 @@ LoVCPUCompiledBlock >> float64ToOopCompilation: instruction withStack: stack [
 	value := stack popFloat64.
 self shouldBeImplemented.
 	stack pushOop: object.
+
+]
+
+{ #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> float64ToUInt32Compilation: instruction withStack: stack [
+	|value result  |
+	value := stack popFloat64.
+self shouldBeImplemented.
+	stack pushInt32: result.
+
+]
+
+{ #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> float64ToUInt64Compilation: instruction withStack: stack [
+	|value result  |
+	value := stack popFloat64.
+self shouldBeImplemented.
+	stack pushInt64: result.
 
 ]
 
@@ -1474,7 +1530,9 @@ LoVCPUCompiledBlock >> mul32Compilation: instruction withStack: stack [
 	|first second result  |
 	second := stack popInt32.
 	first := stack popInt32.
-self shouldBeImplemented.
+
+            result := first * second.
+        
 	stack pushInt32: result.
 
 ]
@@ -1766,6 +1824,17 @@ self shouldBeImplemented.
 ]
 
 { #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> performCallIndirectStructureCompilation: instruction withStack: stack [
+	|structureSize function result resultPointer  |
+	structureSize := instruction extendA.
+	result := stack popPointer.
+	function := stack popPointer.
+self shouldBeImplemented.
+	stack pushPointer: resultPointer.
+
+]
+
+{ #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> performCallInt32Compilation: instruction withStack: stack [
 	|function result  |
 	function := instruction extendA.
@@ -1789,6 +1858,17 @@ LoVCPUCompiledBlock >> performCallPointerCompilation: instruction withStack: sta
 	function := instruction extendA.
 self shouldBeImplemented.
 	stack pushPointer: result.
+
+]
+
+{ #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> performCallStructureCompilation: instruction withStack: stack [
+	|function structureSize result resultPointer  |
+	function := instruction extendA.
+	structureSize := instruction extendB.
+	result := stack popPointer.
+self shouldBeImplemented.
+	stack pushPointer: resultPointer.
 
 ]
 
@@ -2249,14 +2329,6 @@ self shouldBeImplemented.
 ]
 
 { #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnBoolean32AsOopCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popInt32.
-self shouldBeImplemented.
-
-]
-
-{ #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> returnBoolean64AsOopCompilation: instruction withStack: stack [
 	|value  |
 	value := stack popInt64.
@@ -2273,40 +2345,6 @@ LoVCPUCompiledBlock >> returnFalseCompilation: instruction withStack: stack [
 
 ]
 
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnFloat32AsOopCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popFloat32.
-self shouldBeImplemented.
-
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnFloat64AsOopCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popFloat64.
-self shouldBeImplemented.
-
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnInt32AsOopCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popInt32.
-
-            self returnOop: (self interpreterProxy signed32BitIntegerFor: value).
-        
-
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnInt64AsOopCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popInt64.
-self shouldBeImplemented.
-
-]
-
 { #category : #'sista extended bytecode instructions' }
 LoVCPUCompiledBlock >> returnNilCompilation: instruction withStack: stack [
 	| |
@@ -2319,15 +2357,6 @@ LoVCPUCompiledBlock >> returnNilCompilation: instruction withStack: stack [
 { #category : #'common operations' }
 LoVCPUCompiledBlock >> returnOop: word [
 	^ compiler returnOop: word
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnPointerAsOopCompilation: instruction withStack: stack [
-	|pointerClassLiteral pointer  |
-	pointerClassLiteral := compiler literalAt: instruction extendA.
-	pointer := stack popPointer.
-self shouldBeImplemented.
-
 ]
 
 { #category : #'sista extended bytecode instructions' }
@@ -2363,22 +2392,6 @@ LoVCPUCompiledBlock >> returnTrueCompilation: instruction withStack: stack [
 
             self returnOop: self trueObject.
         
-
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnUInt32AsOopCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popInt32.
-self shouldBeImplemented.
-
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnUInt64AsOopCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popInt64.
-self shouldBeImplemented.
 
 ]
 
@@ -2444,7 +2457,7 @@ self shouldBeImplemented.
 { #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> signExtend64From32Compilation: instruction withStack: stack [
 	|value result  |
-	value := stack popInt64.
+	value := stack popInt32.
 self shouldBeImplemented.
 	stack pushInt64: result.
 
@@ -2637,7 +2650,9 @@ LoVCPUCompiledBlock >> sub32Compilation: instruction withStack: stack [
 	|first second result  |
 	second := stack popInt32.
 	first := stack popInt32.
-self shouldBeImplemented.
+
+            result := first - second.
+        
 	stack pushInt32: result.
 
 ]
@@ -2685,7 +2700,7 @@ LoVCPUCompiledBlock >> truncate64To16Compilation: instruction withStack: stack [
 	|value result  |
 	value := stack popInt64.
 self shouldBeImplemented.
-	stack pushInt64: result.
+	stack pushInt32: result.
 
 ]
 
@@ -2694,7 +2709,7 @@ LoVCPUCompiledBlock >> truncate64To32Compilation: instruction withStack: stack [
 	|value result  |
 	value := stack popInt64.
 self shouldBeImplemented.
-	stack pushInt64: result.
+	stack pushInt32: result.
 
 ]
 
@@ -2703,7 +2718,7 @@ LoVCPUCompiledBlock >> truncate64To8Compilation: instruction withStack: stack [
 	|value result  |
 	value := stack popInt64.
 self shouldBeImplemented.
-	stack pushInt64: result.
+	stack pushInt32: result.
 
 ]
 
@@ -2712,7 +2727,9 @@ LoVCPUCompiledBlock >> udiv32Compilation: instruction withStack: stack [
 	|first second result  |
 	second := stack popInt32.
 	first := stack popInt32.
-self shouldBeImplemented.
+
+            result := first / second.
+        
 	stack pushInt32: result.
 
 ]
@@ -2866,7 +2883,9 @@ LoVCPUCompiledBlock >> umul32Compilation: instruction withStack: stack [
 	|first second result  |
 	second := stack popInt32.
 	first := stack popInt32.
-self shouldBeImplemented.
+
+            result := first * second.
+        
 	stack pushInt32: result.
 
 ]
@@ -2973,7 +2992,7 @@ self shouldBeImplemented.
 { #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> zeroExtend64From32Compilation: instruction withStack: stack [
 	|value result  |
-	value := stack popInt64.
+	value := stack popInt32.
 self shouldBeImplemented.
 	stack pushInt64: result.
 

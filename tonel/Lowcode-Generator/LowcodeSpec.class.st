@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'instructions',
-		'sistaInstructions'
+		'sistaInstructions',
+		'description'
 	],
 	#category : #'Lowcode-Generator'
 }
@@ -18,6 +19,16 @@ LowcodeSpec >> addSistaInstruction: aSistaInstruction [
 	sistaInstructions add: aSistaInstruction
 ]
 
+{ #category : #accessing }
+LowcodeSpec >> description [
+	^ description
+]
+
+{ #category : #accessing }
+LowcodeSpec >> description: aString [
+	description := aString
+]
+
 { #category : #initialization }
 LowcodeSpec >> initialize [
 	conditions := OrderedCollection new.
@@ -28,6 +39,24 @@ LowcodeSpec >> initialize [
 { #category : #accessing }
 LowcodeSpec >> instructions [
 	^ instructions
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeSpec >> makeXML [
+	| dom root |
+	dom := XMLDocument new encoding: 'utf-8'; version: '1.0'.
+	dom addNode: (XMLPI target: 'xml-stylesheet' data: 'href="documentation.xslt" type="text/xsl"').
+	root := XMLElement name: 'lowcode'.
+	dom addNode: root.
+	
+	root addNode: (XMLElement new name: 'description'; innerXML: description asString);
+		addNode: (XMLComment string: 'Sista extended bytecode instructions').
+	sistaInstructions do: [ :ins | root addNode: ins asXMLElement ].
+
+	root addNode: (XMLComment string: 'Lowcode  instructions').
+	instructions do: [ :ins | root addNode: ins asXMLElement ].
+	
+	^dom
 ]
 
 { #category : #accessing }

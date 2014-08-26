@@ -45,6 +45,41 @@ LowcodeSpecInstruction >> arguments: anObject [
 	arguments := anObject
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeSpecInstruction >> asXMLElement [
+	| element argumentsElement  stackArgumentsElement stackResultsElement |
+	element := XMLElement name: 'instruction'.
+	element attributeAt: 'opcode' put: opcode printString;
+		attributeAt: 'mnemonic' put: mnemonic.
+
+	element addNode: ((XMLElement name: 'description')
+				contentString: description).
+	warning ifNotEmpty: [
+		element addNode: ((XMLElement name: 'warning')
+			contentString: description).
+	].
+
+	argumentsElement := XMLElement name: 'arguments'.
+	element addNode: argumentsElement.
+	arguments do: [ :arg | argumentsElement addNode: arg asXMLElement].
+
+	stackArgumentsElement := XMLElement name: 'stack-arguments'.
+	element addNode: stackArgumentsElement.
+	stackArguments do: [ :arg | stackArgumentsElement addNode: arg asXMLElement].
+
+	stackResultsElement := XMLElement name: 'stack-results'.
+	element addNode: stackResultsElement.
+	stackResults do: [ :arg | stackResultsElement addNode: arg asXMLElement].
+	
+	semantics keysAndValuesDo: [ :k :v |
+		element addNode: ((XMLElement name: 'semantic') 
+			attributeAt: 'language' put: k;
+			contentString: v)
+	].
+	
+	^ element
+]
+
 { #category : #accessing }
 LowcodeSpecInstruction >> description [
 	

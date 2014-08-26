@@ -9,6 +9,15 @@ Class {
 	#category : #'Lowcode-Generator'
 }
 
+{ #category : #'as yet unclassified' }
+LowcodeSpecArgument >> asXMLElement [
+	| element |
+	element := XMLElement name: type.
+	element attributeAt: 'name' put: name.
+	description ifNotEmpty: [ element contentString: description ].
+	^ element
+]
+
 { #category : #accessing }
 LowcodeSpecArgument >> description [
 	

@@ -174,7 +174,7 @@ LowcodeSpecLoader >> parseSpec [
 	
 	"Parse the elements"
 	root elementsDo: [ :el |
-		el name = 'conditions' ifTrue: [self parseConditions: el].
+		el name = 'description' ifTrue: [spec description: el innerXML].
 		el name = 'instruction' ifTrue: [self parseInstruction: el].
 		el name = 'sista-instruction' ifTrue: [self parseSistaInstruction: el].
 	].

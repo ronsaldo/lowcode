@@ -24,6 +24,31 @@ LowcodeSpecSistaInstruction >> arguments [
 	^ #()
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeSpecSistaInstruction >> asXMLElement [
+	| element stackArgumentsElement stackResultsElement |
+	element := XMLElement name: 'sista-instruction'.
+	element attributeAt: 'firstOpcode' put: firstOpcode printString;
+		attributeAt: 'lastOpcode' put: lastOpcode printString;
+		attributeAt: 'mnemonic' put: mnemonic.
+
+	stackArgumentsElement := XMLElement name: 'stack-arguments'.
+	element addNode: stackArgumentsElement.
+	stackArguments do: [ :arg | stackArgumentsElement addNode: arg asXMLElement].
+
+	stackResultsElement := XMLElement name: 'stack-results'.
+	element addNode: stackResultsElement.
+	stackResults do: [ :arg | stackResultsElement addNode: arg asXMLElement].
+
+	semantics keysAndValuesDo: [ :k :v |
+		element addNode: ((XMLElement name: 'semantic') 
+			attributeAt: 'language' put: k;
+			contentString: v)
+	].
+	
+	^ element
+]
+
 { #category : #accessing }
 LowcodeSpecSistaInstruction >> description [
 	

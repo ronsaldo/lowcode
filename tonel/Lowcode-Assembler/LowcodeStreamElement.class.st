@@ -37,8 +37,8 @@ LowcodeStreamElement class >> initMnemonicTables [
 			276 pushNullPointer
 			277 pushSessionIdentifier
 			278 checkSessionIdentifier
-			279 pointerOffset32
-			280 pointerOffset64
+			279 pointerAddOffset32
+			280 pointerAddOffset64
 			281 effectiveAddress32
 			282 effectiveAddress64
 			283 loadUInt8FromMemory
@@ -238,65 +238,55 @@ LowcodeStreamElement class >> initMnemonicTables [
 			477 branchFalse32
 			478 branchTrue64
 			479 branchFalse64
-			484 returnSmallInteger
-			485 returnBoolean32AsOop
-			486 returnBoolean64AsOop
-			487 returnInt32AsOop
-			488 returnInt64AsOop
-			489 returnUInt32AsOop
-			490 returnUInt64AsOop
-			491 returnPointerAsOop
-			492 returnFloat32AsOop
-			493 returnFloat64AsOop
-			494 fail
-			495 failWithCode
-			496 lockVM
-			497 unlockVM
-			498 compareAndSwap32
-			499 alloca32
-			500 alloca64
-			501 malloc32
-			502 malloc64
-			503 free
-			504 memcpyFixed
-			505 memcpy32
-			506 memcpy64
-			507 beginCall
-			508 callArgumentInt32
-			509 callArgumentInt64
-			510 callArgumentPointer
-			511 callArgumentStructure
-			512 callArgumentFloat32
-			513 callArgumentFloat64
-			514 performCallInt32
-			515 performCallInt64
-			516 performCallPointer
-			517 performCallStructure
-			518 performCallFloat32
-			519 performCallFloat64
-			520 performCallIndirectInt32
-			521 performCallIndirectInt64
-			522 performCallIndirectPointer
-			523 performCallIndirectStructure
-			524 performCallIndirectFloat32
-			525 performCallIndirectFloat64
-			526 endCall
-			527 endCallNoCleanup
-			528 plaftormCode
-			529 lockRegisters
-			530 unlockRegisters
-			531 moveInt32ToPhysical
-			532 moveInt64ToPhysical
-			533 movePointerToPhysical
-			534 moveFloat32ToPhysical
-			535 moveFloat64ToPhysical
-			536 pushPhysicalInt32
-			537 pushPhysicalInt64
-			538 pushPhysicalPointer
-			539 pushPhysicalFloat32
-			540 pushPhysicalFloat64
-			541 callPhysical
-			542 callInstruction
+			484 fail
+			485 failWithCode
+			486 lockVM
+			487 unlockVM
+			488 compareAndSwap32
+			489 alloca32
+			490 alloca64
+			491 malloc32
+			492 malloc64
+			493 free
+			494 memcpyFixed
+			495 memcpy32
+			496 memcpy64
+			497 beginCall
+			498 callArgumentInt32
+			499 callArgumentInt64
+			500 callArgumentPointer
+			501 callArgumentStructure
+			502 callArgumentFloat32
+			503 callArgumentFloat64
+			504 performCallInt32
+			505 performCallInt64
+			506 performCallPointer
+			507 performCallStructure
+			508 performCallFloat32
+			509 performCallFloat64
+			510 performCallIndirectInt32
+			511 performCallIndirectInt64
+			512 performCallIndirectPointer
+			513 performCallIndirectStructure
+			514 performCallIndirectFloat32
+			515 performCallIndirectFloat64
+			516 endCall
+			517 endCallNoCleanup
+			518 plaftormCode
+			519 lockRegisters
+			520 unlockRegisters
+			521 moveInt32ToPhysical
+			522 moveInt64ToPhysical
+			523 movePointerToPhysical
+			524 moveFloat32ToPhysical
+			525 moveFloat64ToPhysical
+			526 pushPhysicalInt32
+			527 pushPhysicalInt64
+			528 pushPhysicalPointer
+			529 pushPhysicalFloat32
+			530 pushPhysicalFloat64
+			531 callPhysical
+			532 callInstruction
 ).
 	SistaExtendedBytecodeMnemonics := IdentityDictionary newFromPairs: #(
 			0 'pushReceiverVariableSmallIndex: 0'

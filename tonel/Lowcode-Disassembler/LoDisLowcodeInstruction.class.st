@@ -27,9 +27,9 @@ LoDisLowcodeInstruction class >> initializeInstructionKindMap [
 10 operation
 11 operation
 12 operation
-13 operation
-14 operation
-15 operation
+13 terminator
+14 terminator
+15 jump
 16 operation
 17 operation
 18 operation
@@ -73,10 +73,10 @@ LoDisLowcodeInstruction class >> initializeInstructionKindMap [
 1070 operation
 1071 operation
 1072 operation
-1073 operation
-1074 operation
-1075 operation
-1076 operation
+1073 branch
+1074 branch
+1075 branch
+1076 branch
 1077 operation
 1078 operation
 1079 operation

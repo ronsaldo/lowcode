@@ -18,7 +18,7 @@ LowcodeSpec class >> generateClassComments [
 	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
 	^ ByteString streamContents: [ :out |
 		spec instructions do: [ :ins |
-			out nextPutAll: ins opcode printString; tab; nextPutAll: ins name; tab; nextPutAll: ins description; cr
+			out nextPutAll: ins opcode printString; tab; nextPutAll: ins mnemonic; tab; nextPutAll: ins description; cr
 		]
 	]
 ]

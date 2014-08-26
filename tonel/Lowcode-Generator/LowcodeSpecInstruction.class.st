@@ -50,7 +50,8 @@ LowcodeSpecInstruction >> asXMLElement [
 	| element argumentsElement  stackArgumentsElement stackResultsElement |
 	element := XMLElement name: 'instruction'.
 	element attributeAt: 'opcode' put: opcode printString;
-		attributeAt: 'mnemonic' put: mnemonic.
+		attributeAt: 'mnemonic' put: mnemonic;
+		attributeAt: 'kind' put: kind.
 
 	element addNode: ((XMLElement name: 'name')
 				contentString: name);

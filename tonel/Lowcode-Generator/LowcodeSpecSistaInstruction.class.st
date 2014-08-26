@@ -30,7 +30,8 @@ LowcodeSpecSistaInstruction >> asXMLElement [
 	element := XMLElement name: 'sista-instruction'.
 	element attributeAt: 'firstOpcode' put: firstOpcode printString;
 		attributeAt: 'lastOpcode' put: lastOpcode printString;
-		attributeAt: 'mnemonic' put: mnemonic.
+		attributeAt: 'mnemonic' put: mnemonic;
+		attributeAt: 'kind' put: kind.
 
 	stackArgumentsElement := XMLElement name: 'stack-arguments'.
 	element addNode: stackArgumentsElement.

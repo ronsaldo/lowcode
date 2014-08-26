@@ -43,6 +43,7 @@ Lowcode class >> retryContext: aContext [
 Lowcode class >> uniqueSessionIdentifier [
 	^ Lowcode here: [ :gen |
 		gen pushSessionIdentifier;
-			returnUInt32AsOop
+			uint32ToOop;
+			returnTop
 	]
 ]

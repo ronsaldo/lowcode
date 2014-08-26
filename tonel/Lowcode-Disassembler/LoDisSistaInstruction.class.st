@@ -112,11 +112,11 @@ LoDisSistaInstruction class >> initializeInstructionKindMap [
 81 operation
 82 operation
 83 operation
-88 terminator
-89 terminator
-90 terminator
-91 terminator
-92 terminator
+88 operation
+89 operation
+90 operation
+91 operation
+92 operation
 95 operation
 119 operation
 208 operation

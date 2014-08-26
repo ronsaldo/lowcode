@@ -21,279 +21,279 @@ LoDisLowcodeInstruction class >> initialize [
 { #category : #initialization }
 LoDisLowcodeInstruction class >> initializeInstructionKindMap [
 	InstructionKinds := IdentityDictionary newFromPairs: #(
-256 operation
-257 operation
-258 operation
-259 operation
-260 operation
-261 operation
-262 operation
-263 operation
-264 operation
-265 operation
-266 operation
-267 operation
-268 operation
-269 operation
-270 operation
-271 operation
-272 operation
-273 operation
-274 operation
-275 operation
-276 operation
-277 operation
-278 operation
-279 operation
-280 operation
-281 operation
-282 operation
-283 operation
-284 operation
-285 operation
-286 operation
-287 operation
-288 operation
-289 operation
-290 operation
-291 operation
-292 operation
-293 operation
-294 operation
-295 operation
-296 operation
-297 operation
-298 operation
-299 operation
-300 operation
-301 operation
-302 operation
-303 operation
-304 operation
-305 operation
-306 operation
-307 operation
-308 operation
-309 operation
-310 operation
-311 operation
-312 operation
-313 operation
-314 operation
-315 operation
-316 operation
-317 operation
-318 operation
-319 operation
-320 operation
-321 operation
-322 operation
-323 operation
-324 operation
-325 operation
-326 operation
-327 operation
-328 operation
-329 operation
-330 operation
-331 operation
-332 operation
-333 operation
-334 operation
-335 operation
-336 operation
-337 operation
-338 operation
-339 operation
-340 operation
-341 operation
-342 operation
-343 operation
-344 operation
-345 operation
-346 operation
-347 operation
-348 operation
-349 operation
-350 operation
-351 operation
-352 operation
-353 operation
-354 operation
-355 operation
-356 operation
-357 operation
-358 operation
-359 operation
-360 operation
-361 operation
-362 operation
-363 operation
-364 operation
-365 operation
-366 operation
-367 operation
-368 operation
-369 operation
-370 operation
-371 operation
-372 operation
-373 operation
-374 operation
-375 operation
-376 operation
-377 operation
-378 operation
-379 operation
-380 operation
-381 operation
-382 operation
-383 operation
-384 operation
-385 operation
-386 operation
-387 operation
-388 operation
-389 operation
-390 operation
-391 operation
-392 operation
-393 operation
-394 operation
-395 operation
-396 operation
-397 operation
-398 operation
-399 operation
-400 operation
-401 operation
-402 operation
-403 operation
-404 operation
-405 operation
-406 operation
-407 operation
-408 operation
-409 operation
-410 operation
-411 operation
-412 operation
-413 operation
-414 operation
-415 operation
-416 operation
-417 operation
-418 operation
-419 operation
-420 operation
-421 operation
-422 operation
-423 operation
-424 operation
-425 operation
-426 operation
-427 operation
-428 operation
-429 operation
-430 operation
-431 operation
-432 operation
-433 operation
-434 operation
-435 operation
-436 operation
-437 operation
-438 operation
-439 operation
-440 operation
-441 operation
-442 operation
-443 operation
-444 operation
-445 operation
-446 operation
-447 operation
-448 operation
-449 operation
-450 operation
-451 operation
-452 operation
-453 operation
-454 operation
-455 operation
-456 operation
-457 operation
-458 operation
-459 operation
-460 operation
-461 operation
-462 operation
-463 operation
-464 operation
-465 operation
-466 operation
-467 operation
-468 operation
-469 operation
-470 operation
-471 operation
-472 operation
-473 operation
-474 operation
-475 jump
-476 branch
-477 branch
-478 branch
-479 branch
-484 terminator
-485 terminator
-486 operation
-487 operation
-488 operation
-489 operation
-490 operation
-491 operation
-492 operation
-493 operation
-494 operation
-495 operation
-496 operation
-497 operation
-498 operation
-499 operation
-500 operation
-501 operation
-502 operation
-503 operation
-504 operation
-505 operation
-506 operation
-507 operation
-508 operation
-509 operation
-510 operation
-511 operation
-512 operation
-513 operation
-514 operation
-515 operation
-516 operation
-517 operation
-518 operation
-519 operation
-520 operation
-521 operation
-522 operation
-523 operation
-524 operation
-525 operation
-526 operation
-527 operation
-528 operation
-529 operation
-530 operation
-531 operation
-532 operation
+7 operation
+8 operation
+9 operation
+10 operation
+11 operation
+12 operation
+13 operation
+14 operation
+15 operation
+16 operation
+17 operation
+18 operation
+19 operation
+20 operation
+21 operation
+22 operation
+23 operation
+24 operation
+25 operation
+26 operation
+27 operation
+28 operation
+29 operation
+30 operation
+31 operation
+32 operation
+33 operation
+34 operation
+35 operation
+36 operation
+37 operation
+38 operation
+39 operation
+40 operation
+41 operation
+42 operation
+43 operation
+44 operation
+45 operation
+46 operation
+47 operation
+48 operation
+49 operation
+50 operation
+51 operation
+52 operation
+53 operation
+54 operation
+1069 operation
+1070 operation
+1071 operation
+1072 operation
+1073 operation
+1074 operation
+1075 operation
+1076 operation
+1077 operation
+1078 operation
+1079 operation
+1080 operation
+1081 operation
+1082 operation
+1083 operation
+1084 operation
+1085 operation
+1086 operation
+1087 operation
+1088 operation
+1089 operation
+1090 operation
+1091 operation
+1092 operation
+1093 operation
+1094 operation
+1095 operation
+1096 operation
+1097 operation
+1098 operation
+1099 operation
+1100 operation
+1101 operation
+1102 operation
+1103 operation
+1104 operation
+1105 operation
+1106 operation
+1107 operation
+1108 operation
+1109 operation
+1110 operation
+1111 operation
+1112 operation
+1113 operation
+1114 operation
+1115 operation
+1116 operation
+1117 operation
+1118 operation
+1119 operation
+1120 operation
+1121 operation
+1122 operation
+1123 operation
+1124 operation
+1125 operation
+1126 operation
+1127 operation
+1128 operation
+1129 operation
+1130 operation
+1131 operation
+1132 operation
+1133 operation
+1134 operation
+1135 operation
+1136 operation
+1137 operation
+1138 operation
+1139 operation
+1140 operation
+1141 operation
+1142 operation
+1143 operation
+1144 operation
+1145 operation
+1146 operation
+1147 operation
+1148 operation
+1149 operation
+1150 operation
+1151 operation
+1152 operation
+1153 operation
+1154 operation
+1155 operation
+1156 operation
+1157 operation
+1158 operation
+1159 operation
+1160 operation
+1161 operation
+1162 operation
+1163 operation
+1164 operation
+1165 operation
+1166 operation
+1167 operation
+1168 operation
+1169 operation
+1170 operation
+1171 operation
+1172 operation
+1173 operation
+1174 operation
+1175 operation
+1176 operation
+1177 operation
+1178 operation
+1179 operation
+1180 operation
+1181 operation
+1182 operation
+1183 operation
+1184 operation
+1185 operation
+1186 operation
+1187 operation
+1188 operation
+1189 operation
+1190 operation
+1191 operation
+1192 operation
+1193 operation
+1194 operation
+1195 operation
+1196 operation
+1197 operation
+1198 operation
+1199 operation
+1200 operation
+1201 operation
+2005 operation
+2006 operation
+2007 operation
+2008 operation
+2009 operation
+2010 operation
+2011 operation
+2012 operation
+2013 operation
+2014 operation
+2015 operation
+2016 operation
+2017 operation
+2018 operation
+2019 operation
+2020 operation
+2021 operation
+2022 operation
+2023 operation
+2024 operation
+2025 operation
+2026 operation
+2027 operation
+2028 operation
+2029 operation
+2030 operation
+2031 operation
+2032 operation
+2033 operation
+2034 operation
+2035 operation
+2036 operation
+2037 operation
+2038 operation
+2039 operation
+2040 operation
+2041 operation
+2042 operation
+2043 operation
+2044 operation
+2045 operation
+2046 operation
+2047 operation
+2048 operation
+2049 operation
+2050 operation
+2051 operation
+2052 operation
+2053 operation
+2054 operation
+2055 operation
+2056 operation
+2057 operation
+2058 operation
+2059 operation
+2060 operation
+2061 operation
+2062 operation
+2063 operation
+2064 operation
+2065 operation
+2066 operation
+2067 operation
+2068 operation
+2069 operation
+2070 operation
+2071 operation
+2072 operation
+2073 operation
+2074 operation
+2075 operation
+2076 operation
+2077 operation
+2078 operation
+2079 operation
+2080 operation
+2081 operation
+2082 operation
+2083 operation
+2084 operation
+2085 operation
+2086 operation
+2087 operation
+2088 operation
+2089 operation
+2090 operation
+3000 operation
+3001 operation
+3002 operation
+3003 operation
+4000 operation
+4001 operation
 
 	)
 ]
@@ -1596,6 +1596,22 @@ LoDisLowcodeInstruction >> plaftormCodeValidate: stack forMethod: method [
 ]
 
 { #category : #'validation generated' }
+LoDisLowcodeInstruction >> pointerAddOffset32Validate: stack forMethod: method [
+	stack popInt32 ifFalse: [^ false ].
+	stack popPointer ifFalse: [^ false ].
+	stack pushPointer.
+	^ true
+]
+
+{ #category : #'validation generated' }
+LoDisLowcodeInstruction >> pointerAddOffset64Validate: stack forMethod: method [
+	stack popInt64 ifFalse: [^ false ].
+	stack popPointer ifFalse: [^ false ].
+	stack pushPointer.
+	^ true
+]
+
+{ #category : #'validation generated' }
 LoDisLowcodeInstruction >> pointerEqualValidate: stack forMethod: method [
 	stack popPointer ifFalse: [^ false ].
 	stack popPointer ifFalse: [^ false ].
@@ -1608,22 +1624,6 @@ LoDisLowcodeInstruction >> pointerNotEqualValidate: stack forMethod: method [
 	stack popPointer ifFalse: [^ false ].
 	stack popPointer ifFalse: [^ false ].
 	stack pushInt32.
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> pointerOffset32Validate: stack forMethod: method [
-	stack popInt32 ifFalse: [^ false ].
-	stack popPointer ifFalse: [^ false ].
-	stack pushPointer.
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> pointerOffset64Validate: stack forMethod: method [
-	stack popInt64 ifFalse: [^ false ].
-	stack popPointer ifFalse: [^ false ].
-	stack pushPointer.
 	^ true
 ]
 
@@ -1800,42 +1800,6 @@ LoDisLowcodeInstruction >> rem64Validate: stack forMethod: method [
 	stack popInt64 ifFalse: [^ false ].
 	stack popInt64 ifFalse: [^ false ].
 	stack pushInt64.
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnBoolean32AsOopValidate: stack forMethod: method [
-	stack popInt32 ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnBoolean64AsOopValidate: stack forMethod: method [
-	stack popInt64 ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnFloat64AsOopValidate: stack forMethod: method [
-	stack popFloat64 ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnInt64AsOopValidate: stack forMethod: method [
-	stack popInt64 ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnUInt32AsOopValidate: stack forMethod: method [
-	stack popInt32 ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnUInt64AsOopValidate: stack forMethod: method [
-	stack popInt64 ifFalse: [^ false ].
 	^ true
 ]
 

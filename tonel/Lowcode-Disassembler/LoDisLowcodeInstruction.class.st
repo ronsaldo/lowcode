@@ -234,23 +234,23 @@ LoDisLowcodeInstruction class >> initializeInstructionKindMap [
 466 operation
 467 operation
 468 operation
-469 jump
-470 branch
-471 branch
-472 branch
-473 branch
-478 terminator
-479 terminator
-480 terminator
-481 terminator
-482 terminator
-483 terminator
+469 operation
+470 operation
+471 operation
+472 operation
+473 operation
+474 operation
+475 jump
+476 branch
+477 branch
+478 branch
+479 branch
 484 terminator
 485 terminator
-486 terminator
-487 terminator
-488 terminator
-489 terminator
+486 operation
+487 operation
+488 operation
+489 operation
 490 operation
 491 operation
 492 operation
@@ -294,8 +294,6 @@ LoDisLowcodeInstruction class >> initializeInstructionKindMap [
 530 operation
 531 operation
 532 operation
-533 operation
-534 operation
 
 	)
 ]
@@ -675,6 +673,13 @@ LoDisLowcodeInstruction >> float32SubValidate: stack forMethod: method [
 ]
 
 { #category : #'validation generated' }
+LoDisLowcodeInstruction >> float32ToFloat64Validate: stack forMethod: method [
+	stack popFloat32 ifFalse: [^ false ].
+	stack pushFloat64.
+	^ true
+]
+
+{ #category : #'validation generated' }
 LoDisLowcodeInstruction >> float32ToInt32Validate: stack forMethod: method [
 	stack popFloat32 ifFalse: [^ false ].
 	stack pushInt32.
@@ -692,6 +697,20 @@ LoDisLowcodeInstruction >> float32ToInt64Validate: stack forMethod: method [
 LoDisLowcodeInstruction >> float32ToOopValidate: stack forMethod: method [
 	stack popFloat32 ifFalse: [^ false ].
 	stack pushOop.
+	^ true
+]
+
+{ #category : #'validation generated' }
+LoDisLowcodeInstruction >> float32ToUInt32Validate: stack forMethod: method [
+	stack popFloat32 ifFalse: [^ false ].
+	stack pushInt32.
+	^ true
+]
+
+{ #category : #'validation generated' }
+LoDisLowcodeInstruction >> float32ToUInt64Validate: stack forMethod: method [
+	stack popFloat32 ifFalse: [^ false ].
+	stack pushInt64.
 	^ true
 ]
 
@@ -776,6 +795,13 @@ LoDisLowcodeInstruction >> float64SubValidate: stack forMethod: method [
 ]
 
 { #category : #'validation generated' }
+LoDisLowcodeInstruction >> float64ToFloat32Validate: stack forMethod: method [
+	stack popFloat64 ifFalse: [^ false ].
+	stack pushFloat32.
+	^ true
+]
+
+{ #category : #'validation generated' }
 LoDisLowcodeInstruction >> float64ToInt32Validate: stack forMethod: method [
 	stack popFloat64 ifFalse: [^ false ].
 	stack pushInt32.
@@ -793,6 +819,20 @@ LoDisLowcodeInstruction >> float64ToInt64Validate: stack forMethod: method [
 LoDisLowcodeInstruction >> float64ToOopValidate: stack forMethod: method [
 	stack popFloat64 ifFalse: [^ false ].
 	stack pushOop.
+	^ true
+]
+
+{ #category : #'validation generated' }
+LoDisLowcodeInstruction >> float64ToUInt32Validate: stack forMethod: method [
+	stack popFloat64 ifFalse: [^ false ].
+	stack pushInt32.
+	^ true
+]
+
+{ #category : #'validation generated' }
+LoDisLowcodeInstruction >> float64ToUInt64Validate: stack forMethod: method [
+	stack popFloat64 ifFalse: [^ false ].
+	stack pushInt64.
 	^ true
 ]
 
@@ -1511,6 +1551,14 @@ LoDisLowcodeInstruction >> performCallIndirectPointerValidate: stack forMethod: 
 ]
 
 { #category : #'validation generated' }
+LoDisLowcodeInstruction >> performCallIndirectStructureValidate: stack forMethod: method [
+	stack popPointer ifFalse: [^ false ].
+	stack popPointer ifFalse: [^ false ].
+	stack pushPointer.
+	^ true
+]
+
+{ #category : #'validation generated' }
 LoDisLowcodeInstruction >> performCallInt32Validate: stack forMethod: method [
 	stack pushInt32.
 	^ true
@@ -1524,6 +1572,13 @@ LoDisLowcodeInstruction >> performCallInt64Validate: stack forMethod: method [
 
 { #category : #'validation generated' }
 LoDisLowcodeInstruction >> performCallPointerValidate: stack forMethod: method [
+	stack pushPointer.
+	^ true
+]
+
+{ #category : #'validation generated' }
+LoDisLowcodeInstruction >> performCallStructureValidate: stack forMethod: method [
+	stack popPointer ifFalse: [^ false ].
 	stack pushPointer.
 	^ true
 ]
@@ -1761,38 +1816,14 @@ LoDisLowcodeInstruction >> returnBoolean64AsOopValidate: stack forMethod: method
 ]
 
 { #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnFloat32AsOopValidate: stack forMethod: method [
-	stack popFloat32 ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
 LoDisLowcodeInstruction >> returnFloat64AsOopValidate: stack forMethod: method [
 	stack popFloat64 ifFalse: [^ false ].
 	^ true
 ]
 
 { #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnInt32AsOopValidate: stack forMethod: method [
-	stack popInt32 ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
 LoDisLowcodeInstruction >> returnInt64AsOopValidate: stack forMethod: method [
 	stack popInt64 ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnPointerAsOopValidate: stack forMethod: method [
-	stack popPointer ifFalse: [^ false ].
-	^ true
-]
-
-{ #category : #'validation generated' }
-LoDisLowcodeInstruction >> returnSmallIntegerValidate: stack forMethod: method [
-	stack popInt32 ifFalse: [^ false ].
 	^ true
 ]
 
@@ -1847,7 +1878,7 @@ LoDisLowcodeInstruction >> signExtend64From16Validate: stack forMethod: method [
 
 { #category : #'validation generated' }
 LoDisLowcodeInstruction >> signExtend64From32Validate: stack forMethod: method [
-	stack popInt64 ifFalse: [^ false ].
+	stack popInt32 ifFalse: [^ false ].
 	stack pushInt64.
 	^ true
 ]
@@ -2005,21 +2036,21 @@ LoDisLowcodeInstruction >> truncate32To8Validate: stack forMethod: method [
 { #category : #'validation generated' }
 LoDisLowcodeInstruction >> truncate64To16Validate: stack forMethod: method [
 	stack popInt64 ifFalse: [^ false ].
-	stack pushInt64.
+	stack pushInt32.
 	^ true
 ]
 
 { #category : #'validation generated' }
 LoDisLowcodeInstruction >> truncate64To32Validate: stack forMethod: method [
 	stack popInt64 ifFalse: [^ false ].
-	stack pushInt64.
+	stack pushInt32.
 	^ true
 ]
 
 { #category : #'validation generated' }
 LoDisLowcodeInstruction >> truncate64To8Validate: stack forMethod: method [
 	stack popInt64 ifFalse: [^ false ].
-	stack pushInt64.
+	stack pushInt32.
 	^ true
 ]
 
@@ -2232,7 +2263,7 @@ LoDisLowcodeInstruction >> zeroExtend64From16Validate: stack forMethod: method [
 
 { #category : #'validation generated' }
 LoDisLowcodeInstruction >> zeroExtend64From32Validate: stack forMethod: method [
-	stack popInt64 ifFalse: [^ false ].
+	stack popInt32 ifFalse: [^ false ].
 	stack pushInt64.
 	^ true
 ]

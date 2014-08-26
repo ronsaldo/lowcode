@@ -9,6 +9,58 @@ Class {
 	#category : #'Lowcode-Generator'
 }
 
+{ #category : #scripts }
+LowcodeSpec class >> generateClassComments [
+	"
+	self generateClassComments
+	"
+	|spec|
+	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
+	^ ByteString streamContents: [ :out |
+		spec instructions do: [ :ins |
+			out nextPutAll: ins opcode printString; tab; nextPutAll: ins name; tab; nextPutAll: ins description; cr
+		]
+	]
+]
+
+{ #category : #scripts }
+LowcodeSpec class >> generateOpcodes [
+	"
+	self generateOpcodes
+	"
+|spec sortedInstructions currentArity arityCount arity arityStart |
+spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
+sortedInstructions := spec instructions sort: [ :a :b | 
+	a stackArguments size == b stackArguments size ifTrue: [ 
+		a mnemonic < b mnemonic
+	]
+	ifFalse: [
+		a stackArguments size < b stackArguments size
+	]
+].
+
+currentArity := -1.
+arityCount := 0.
+arityStart := #(7 69 5 0 0).
+sortedInstructions do: [:ins |
+	arity := ins stackArguments size.
+	arity ~= currentArity ifTrue: [
+		currentArity := arity.
+		arityCount := arityStart at: arity + 1.
+	]
+	ifFalse: [
+		arityCount := arityCount + 1
+	].
+
+	ins opcode: currentArity *1000 + arityCount.
+].
+
+(FileSystem workingDirectory / 'lowcode-new.xml') writeStreamDo: [ :out |
+	spec makeXML prettyPrintOn: out
+]
+
+]
+
 { #category : #adding }
 LowcodeSpec >> addInstruction: anInstruction [
 	instructions add: anInstruction

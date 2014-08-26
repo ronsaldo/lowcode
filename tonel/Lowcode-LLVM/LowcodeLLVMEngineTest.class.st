@@ -37,7 +37,8 @@ LowcodeLLVMEngineTest >> testLowcodeLoop [
 			
 			"Return 10"
 			putLabel: done;
-			returnInt32AsOop.
+			int32ToOop;
+			returnTop
 	].
 
 	compiledMethod := LowcodeLLVMCompiledMethod for: method.
@@ -66,7 +67,8 @@ LowcodeLLVMEngineTest >> testLowcodeLoopCalling [
 			
 			"Return 10"
 			putLabel: done;
-			returnInt32AsOop.
+			int32ToOop;
+			returnTop
 	].
 
 	lowcodeCompiledMethod := LowcodeLLVMCompiledMethod for: method.
@@ -99,7 +101,8 @@ LowcodeLLVMEngineTest >> testLowcodeLoopInvalid [
 			
 			"Return 10"
 			putLabel: done;
-			returnInt32AsOop.
+			int32ToOop;
+			returnTop
 	].
 
 	self should: [ LowcodeLLVMCompiledMethod for: method ] raise: Error.
@@ -123,7 +126,9 @@ LowcodeLLVMEngineTest >> testSimple2 [
 		gen pushOne32;
 			pushOne32;
 			add32;
-			returnInt32AsOop. ].
+			int32ToOop;
+			returnTop
+ ].
 		
 	compiledMethod := LowcodeLLVMCompiledMethod for: method.
 	compiledMethod destroy

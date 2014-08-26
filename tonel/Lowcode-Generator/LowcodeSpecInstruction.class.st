@@ -52,7 +52,9 @@ LowcodeSpecInstruction >> asXMLElement [
 	element attributeAt: 'opcode' put: opcode printString;
 		attributeAt: 'mnemonic' put: mnemonic.
 
-	element addNode: ((XMLElement name: 'description')
+	element addNode: ((XMLElement name: 'name')
+				contentString: name);
+			addNode: ((XMLElement name: 'description')
 				contentString: description).
 	warning ifNotEmpty: [
 		element addNode: ((XMLElement name: 'warning')

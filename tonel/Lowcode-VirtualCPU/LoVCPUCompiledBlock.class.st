@@ -1889,6 +1889,30 @@ self shouldBeImplemented.
 ]
 
 { #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> pointerAddOffset32Compilation: instruction withStack: stack [
+	|base offset result  |
+	offset := stack popInt32.
+	base := stack popPointer.
+
+            result := base + offset.
+        
+	stack pushPointer: result.
+
+]
+
+{ #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> pointerAddOffset64Compilation: instruction withStack: stack [
+	|base offset result  |
+	offset := stack popInt64.
+	base := stack popPointer.
+
+            result := base + offset.
+        
+	stack pushPointer: result.
+
+]
+
+{ #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> pointerEqualCompilation: instruction withStack: stack [
 	|first second value  |
 	second := stack popPointer.
@@ -1905,30 +1929,6 @@ LoVCPUCompiledBlock >> pointerNotEqualCompilation: instruction withStack: stack 
 	first := stack popPointer.
 self shouldBeImplemented.
 	stack pushInt32: value.
-
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> pointerOffset32Compilation: instruction withStack: stack [
-	|base offset result  |
-	offset := stack popInt32.
-	base := stack popPointer.
-
-            result := base + offset.
-        
-	stack pushPointer: result.
-
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> pointerOffset64Compilation: instruction withStack: stack [
-	|base offset result  |
-	offset := stack popInt64.
-	base := stack popPointer.
-
-            result := base + offset.
-        
-	stack pushPointer: result.
 
 ]
 
@@ -2328,14 +2328,6 @@ self shouldBeImplemented.
 
 ]
 
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnBoolean64AsOopCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popInt64.
-self shouldBeImplemented.
-
-]
-
 { #category : #'sista extended bytecode instructions' }
 LoVCPUCompiledBlock >> returnFalseCompilation: instruction withStack: stack [
 	| |
@@ -2365,14 +2357,6 @@ LoVCPUCompiledBlock >> returnReceiverCompilation: instruction withStack: stack [
 
             self returnOop: self receiver.
         
-
-]
-
-{ #category : #'lowcode instructions' }
-LoVCPUCompiledBlock >> returnSmallIntegerCompilation: instruction withStack: stack [
-	|value  |
-	value := stack popInt32.
-self shouldBeImplemented.
 
 ]
 

@@ -16,7 +16,7 @@ Class {
 { #category : #'as yet unclassified' }
 LowcodeLLVMGenerator class >> generateFromFileNamed: fileName to: destFileName [
 	"
-	self generateFromFileNamed: '../lowcode.xml' to: './LowcodeLLVMGenerated.cpp'
+	self generateFromFileNamed: './lowcode.xml' to: './LowcodeLLVMGenerated.cpp'
 	"
 	(self fromFileNamed: fileName) destName: destFileName; generate.
 ]

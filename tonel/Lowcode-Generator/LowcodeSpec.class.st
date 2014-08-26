@@ -2,17 +2,11 @@ Class {
 	#name : #LowcodeSpec,
 	#superclass : #Object,
 	#instVars : [
-		'conditions',
 		'instructions',
 		'sistaInstructions'
 	],
 	#category : #'Lowcode-Generator'
 }
-
-{ #category : #adding }
-LowcodeSpec >> addConditionCode: aConditionCode [
-	conditions add: aConditionCode
-]
 
 { #category : #adding }
 LowcodeSpec >> addInstruction: anInstruction [
@@ -22,11 +16,6 @@ LowcodeSpec >> addInstruction: anInstruction [
 { #category : #adding }
 LowcodeSpec >> addSistaInstruction: aSistaInstruction [
 	sistaInstructions add: aSistaInstruction
-]
-
-{ #category : #accessing }
-LowcodeSpec >> conditions [
-	^ conditions
 ]
 
 { #category : #initialization }

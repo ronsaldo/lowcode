@@ -16,7 +16,7 @@ Class {
 { #category : #'as yet unclassified' }
 LowcodeCInterpreter class >> generateFromFileNamed: fileName to: destFileName [
 	"
-	self generateFromFileNamed: '../lowcode.xml' to: './LowcodeInterpreterGenerated.c'
+	self generateFromFileNamed: './lowcode.xml' to: './LowcodeInterpreterGenerated.c'
 	"
 	(self fromFileNamed: fileName) destName: destFileName; generate.
 ]

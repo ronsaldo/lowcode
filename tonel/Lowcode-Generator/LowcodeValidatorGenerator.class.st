@@ -11,7 +11,7 @@ Class {
 { #category : #generate }
 LowcodeValidatorGenerator class >> generateFromFileNamed: fileName [
 	"
-	self generateFromFileNamed: '../lowcode.xml'
+	self generateFromFileNamed: './lowcode.xml'
 	"
 	(self fromFileNamed: fileName) generate.
 ]

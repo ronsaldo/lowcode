@@ -14,7 +14,7 @@ Class {
 { #category : #generate }
 LowcodeVCPUGenerator class >> generateFromFileNamed: fileName [
 	"
-	self generateFromFileNamed: '../lowcode.xml'
+	self generateFromFileNamed: './lowcode.xml'
 	"
 	(self fromFileNamed: fileName) generate.
 ]

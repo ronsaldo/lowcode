@@ -74,7 +74,7 @@ FFIExternalStringType >> lowcode: gen coerceArgumentValue: calloutSpec [
 		"Put the trailing \0"
 		loadLocalPointer: stringPointerTemp;
 		loadLocalInt32: sizeTemp;
-		pointerOffset32;
+		pointerAddOffset32;
 		pushZero32;
 		storeInt8ToMemory;
 		
@@ -88,12 +88,7 @@ FFIExternalStringType >> lowcode: gen coerceArgumentValue: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIExternalStringType >> lowcode: gen performCallWithValueResult: calloutSpec [
-	gen performCallPointer: calloutSpec functionAddress
-]
-
-{ #category : #'lowcode marshalling' }
-FFIExternalStringType >> lowcode: gen returnValue: calloutSpec [
+FFIExternalStringType >> lowcode: gen convertValueToOop: calloutSpec [
 	| notNil pointerTemp sizeTemp resultTemp |
 	notNil := gen makeLabel: 'notNil'.
 	pointerTemp := gen allocateLocalPointer.
@@ -129,8 +124,12 @@ FFIExternalStringType >> lowcode: gen returnValue: calloutSpec [
 		memcpy32;
 		
 		"Return"
-		pushTemp: resultTemp;
-		returnTop
+		pushTemp: resultTemp
+]
+
+{ #category : #'lowcode marshalling' }
+FFIExternalStringType >> lowcode: gen performCallWithValueResult: calloutSpec [
+	gen performCallPointer: calloutSpec functionAddress
 ]
 
 { #category : #'lowcode marshalling' }
@@ -163,7 +162,7 @@ FFIExternalStringType >> lowcodeStrLen: gen [
 		
 		"Increase the pointer"
 		pushOne32;
-		pointerOffset32;
+		pointerAddOffset32;
 		jump: loop;	
 		
 		"Return the count"	

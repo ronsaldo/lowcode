@@ -42,11 +42,6 @@ FFIExternalAddressType >> lowcode: gen performCallWithValueResult: calloutSpec [
 	gen performCallPointer: calloutSpec functionAddress
 ]
 
-{ #category : #'lowcode marshalling' }
-FFIExternalAddressType >> lowcode: gen returnValue: calloutSpec [
-	gen returnPointerAsOop: (gen addLiteral: FFIExternalAddress)
-]
-
 { #category : #accessing }
 FFIExternalAddressType >> valueSize [
 	^ FFI pointerSize

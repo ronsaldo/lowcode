@@ -31,11 +31,6 @@ FFIInt32Type >> lowcode: gen readValueFromMemory: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIInt32Type >> lowcode: gen returnValue: calloutSpec [
-	gen returnInt32AsOop
-]
-
-{ #category : #'lowcode marshalling' }
 FFIInt32Type >> lowcode: gen writeValueToMemory: calloutSpec [
 	gen storeInt32ToMemory
 ]

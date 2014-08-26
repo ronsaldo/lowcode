@@ -26,13 +26,13 @@ FFIBoolType >> lowcode: gen convertToValueFromOop: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIBoolType >> lowcode: gen performCallWithValueResult: calloutSpec [
-	gen performCallInt32: calloutSpec functionAddress
+FFIBoolType >> lowcode: gen convertValueToOop: calloutSpec [
+	gen boolean32ToOop
 ]
 
 { #category : #'lowcode marshalling' }
-FFIBoolType >> lowcode: gen returnValue: calloutSpec [
-	gen returnBoolean32AsOop
+FFIBoolType >> lowcode: gen performCallWithValueResult: calloutSpec [
+	gen performCallInt32: calloutSpec functionAddress
 ]
 
 { #category : #accessing }

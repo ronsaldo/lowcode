@@ -28,8 +28,3 @@ FFIIntegerType >> lowcode: gen convertValueToOop: calloutSpec [
 FFIIntegerType >> lowcode: gen performCallWithValueResult: calloutSpec [
 	gen performCallInt32: calloutSpec functionAddress
 ]
-
-{ #category : #'lowcode marshalling' }
-FFIIntegerType >> lowcode:gen returnValue: calloutSpec [
-	gen returnSmallInteger
-]

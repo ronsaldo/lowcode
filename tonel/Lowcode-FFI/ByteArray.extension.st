@@ -8,10 +8,11 @@ ByteArray >> ffiFloat32AtOffset: zeroBasedOffset [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadFloat32FromMemory;
-			returnFloat32AsOop
+			float32ToOop;
+			returnTop
 	]
 ]
 
@@ -23,7 +24,7 @@ ByteArray >> ffiFloat32AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToFloat32;
@@ -40,10 +41,12 @@ ByteArray >> ffiFloat64AtOffset: zeroBasedOffset [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadFloat64FromMemory;
-			returnFloat64AsOop
+			float64ToOop;
+			returnTop
+
 	]
 ]
 
@@ -55,7 +58,7 @@ ByteArray >> ffiFloat64AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToFloat64;
@@ -72,10 +75,11 @@ ByteArray >> ffiInt16AtOffset: zeroBasedOffset [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadInt16FromMemory;
-			returnSmallInteger
+			smallInt32ToOop;
+			returnTop
 	]
 ]
 
@@ -87,7 +91,7 @@ ByteArray >> ffiInt16AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToInt32;
@@ -104,10 +108,11 @@ ByteArray >> ffiInt32AtOffset: zeroBasedOffset [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadInt32FromMemory;
-			returnInt32AsOop
+			int32ToOop;
+			returnTop
 	]
 ]
 
@@ -119,7 +124,7 @@ ByteArray >> ffiInt32AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToInt32;
@@ -136,10 +141,11 @@ ByteArray >> ffiInt64AtOffset: zeroBasedOffset [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadInt64FromMemory;
-			returnInt64AsOop
+			int64ToOop;
+			returnTop
 	]
 ]
 
@@ -151,7 +157,7 @@ ByteArray >> ffiInt64AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToInt64;
@@ -168,10 +174,11 @@ ByteArray >> ffiInt8AtOffset: zeroBasedOffset [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadInt8FromMemory;
-			returnSmallInteger
+			smallInt32ToOop;
+			returnTop
 	]
 ]
 
@@ -183,7 +190,7 @@ ByteArray >> ffiInt8AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToInt32;
@@ -193,7 +200,7 @@ ByteArray >> ffiInt8AtOffset: zeroBasedOffset put: value [
 ]
 
 { #category : #'*Lowcode-FFI' }
-ByteArray >> ffiLongAt: zeroBasedOffset [
+ByteArray >> ffiLongAt: oneBasedOffset [
 	^ Lowcode here: [ :gen |
 		gen pushReceiver;
 			firstIndexableFieldPointer;
@@ -202,15 +209,16 @@ ByteArray >> ffiLongAt: zeroBasedOffset [
 			oopToInt32;
 			pushOne32;
 			sub32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadInt32FromMemory;
-			returnInt32AsOop
+			int32ToOop;
+			returnTop
 	]
 ]
 
 { #category : #'*Lowcode-FFI' }
-ByteArray >> ffiLongAt: zeroBasedOffset put: value [
+ByteArray >> ffiLongAt: oneBasedOffset put: value [
 	^ Lowcode here: [ :gen |
 		gen pushReceiver;
 			firstIndexableFieldPointer;
@@ -219,7 +227,7 @@ ByteArray >> ffiLongAt: zeroBasedOffset put: value [
 			oopToInt32;
 			pushOne32;
 			sub32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToInt32;
@@ -231,15 +239,16 @@ ByteArray >> ffiLongAt: zeroBasedOffset put: value [
 { #category : #'*Lowcode-FFI' }
 ByteArray >> ffiUInt16AtOffset: zeroBasedOffset [
 	^ Lowcode here: [ :gen |
-		gen  pushReceiver;
+		gen pushReceiver;
 			firstIndexableFieldPointer;
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadUInt16FromMemory;
-			returnSmallInteger
+			smallInt32ToOop;
+			returnTop
 	]
 ]
 
@@ -251,7 +260,7 @@ ByteArray >> ffiUInt16AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToUInt32;
@@ -263,15 +272,16 @@ ByteArray >> ffiUInt16AtOffset: zeroBasedOffset put: value [
 { #category : #'*Lowcode-FFI' }
 ByteArray >> ffiUInt32AtOffset: zeroBasedOffset [
 	^ Lowcode here: [ :gen |
-		gen  pushReceiver;
+		gen pushReceiver;
 			firstIndexableFieldPointer;
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadUInt32FromMemory;
-			returnUInt32AsOop
+			uint32ToOop;
+			returnTop
 	]
 ]
 
@@ -283,7 +293,7 @@ ByteArray >> ffiUInt32AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToUInt32;
@@ -300,10 +310,11 @@ ByteArray >> ffiUInt64AtOffset: zeroBasedOffset [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadUInt64FromMemory;
-			returnUInt64AsOop
+			uint64ToOop;
+			returnTop
 	]
 ]
 
@@ -315,7 +326,7 @@ ByteArray >> ffiUInt64AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToUInt64;
@@ -332,10 +343,11 @@ ByteArray >> ffiUInt8AtOffset: zeroBasedOffset [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadUInt8FromMemory;
-			returnSmallInteger
+			smallInt32ToOop;
+			returnTop
 	]
 ]
 
@@ -347,7 +359,7 @@ ByteArray >> ffiUInt8AtOffset: zeroBasedOffset put: value [
 			
 			pushTemp: 0;
 			oopToInt32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToUInt32;
@@ -366,10 +378,11 @@ ByteArray >> ffiULongAt: zeroBasedOffset [
 			oopToInt32;
 			pushOne32;
 			sub32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			loadUInt32FromMemory;
-			returnUInt32AsOop
+			uint32ToOop;
+			returnTop
 	]
 ]
 
@@ -383,7 +396,7 @@ ByteArray >> ffiULongAt: zeroBasedOffset put: value [
 			oopToInt32;
 			pushOne32;
 			sub32;
-			pointerOffset32;
+			pointerAddOffset32;
 			
 			pushTemp: 1;
 			oopToUInt32;

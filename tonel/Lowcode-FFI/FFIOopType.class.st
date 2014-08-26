@@ -23,6 +23,6 @@ FFIOopType >> lowcode: gen coerceArgumentValue: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIOopType >> lowcode: gen returnValue: calloutSpec [
-	gen returnTop
+FFIOopType >> lowcode: gen convertValueToOop: calloutSpec [
+	"Do nothing"
 ]

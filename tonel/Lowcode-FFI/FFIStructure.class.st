@@ -174,7 +174,7 @@ FFIStructure >> emit: gen read: aFieldName spec: cs [
 
 	"Compute the value pointer"
 	gen pushConstantUInt32: offset;
-		pointerOffset32.
+		pointerAddOffset32.
 	
 	"Read the value"	
 	type lowcode: gen readOopFromMemory: cs.
@@ -193,7 +193,7 @@ FFIStructure >> emit: gen write: aFieldName spec: cs [
 
 	"Compute the value pointer"
 	gen pushConstantUInt32: offset;
-		pointerOffset32.
+		pointerAddOffset32.
 
 	"Load the Oop"
 	gen pushTemp: temp.

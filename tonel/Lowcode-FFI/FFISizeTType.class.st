@@ -57,13 +57,6 @@ FFISizeTType >> lowcode: gen readValueFromMemory: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
-FFISizeTType >> lowcode: gen returnValue: calloutSpec [
-	FFI pointerSize = 4 ifTrue: [ gen returnUInt32AsOop ]
-		ifFalse: [ gen returnUInt64AsOop ]
-	
-]
-
-{ #category : #'lowcode marshalling' }
 FFISizeTType >> lowcode: gen writeValueToMemory: calloutSpec [
 	FFI pointerSize == 4 ifTrue: [ gen storeInt32ToMemory ]
 		ifFalse: [ gen storeInt64ToMemory ]

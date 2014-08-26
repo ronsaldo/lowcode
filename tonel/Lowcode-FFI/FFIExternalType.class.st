@@ -303,7 +303,8 @@ FFIExternalType >> lowcode: gen returnPointer: calloutSpec [
 
 { #category : #'lowcode marshalling' }
 FFIExternalType >> lowcode: gen returnValue: calloutSpec [
-	self subclassResponsibility
+	self lowcode: gen convertValueToOop: calloutSpec.
+	gen  returnTop
 ]
 
 { #category : #'lowcode marshalling' }

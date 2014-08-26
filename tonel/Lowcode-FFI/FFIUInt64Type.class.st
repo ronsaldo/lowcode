@@ -40,11 +40,6 @@ FFIUInt64Type >> lowcode: gen readValueFromMemory: calloutSpec [
 ]
 
 { #category : #'lowcode marshalling' }
-FFIUInt64Type >> lowcode: gen returnValue: calloutSpec [
-	gen returnUInt64AsOop
-]
-
-{ #category : #'lowcode marshalling' }
 FFIUInt64Type >> lowcode: gen writeValueToMemory: calloutSpec [
 	gen storeInt64ToMemory
 ]

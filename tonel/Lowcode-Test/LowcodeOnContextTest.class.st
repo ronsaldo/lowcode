@@ -15,7 +15,8 @@ LowcodeOnContextTest >> add: a with: b [
 			pushTemp: 1;
 			oopToInt32;
 			add32;
-			returnInt32AsOop
+			int32ToOop;
+			returnTop
 	]
 ]
 
@@ -30,7 +31,8 @@ LowcodeOnContextTest >> isDigit: character [
 			callArgumentInt32;
 			performCallIndirectInt32;
 			endCall;
-			returnInt32AsOop.
+			int32ToOop;
+			returnTop
 	]
 
 ]
@@ -41,7 +43,8 @@ LowcodeOnContextTest >> returnAdd32 [
 		gen pushOne32;
 			pushOne32;
 			add32;
-			returnInt32AsOop
+			int32ToOop;
+			returnTop
 	]
 ]
 
@@ -64,7 +67,8 @@ LowcodeOnContextTest >> returnOne [
 LowcodeOnContextTest >> returnOne32 [
 	^ Lowcode here: [ :gen |
 		gen pushOne32;
-			returnInt32AsOop
+			int32ToOop;
+			returnTop
 	]
 ]
 
@@ -79,7 +83,8 @@ LowcodeOnContextTest >> returnSelf [
 LowcodeOnContextTest >> returnZero32 [
 	^ Lowcode here: [ :gen |
 		gen pushZero32;
-			returnInt32AsOop
+			int32ToOop;
+			returnTop
 	]
 ]
 

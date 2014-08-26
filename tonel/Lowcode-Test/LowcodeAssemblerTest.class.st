@@ -36,10 +36,11 @@ LowcodeAssemblerTest >> testReturnOne [
 	| gen data |
 	gen := LowcodeAssembler new.
 	gen pushOne32;
-		returnInt32AsOop.
+		int32ToOop;
+		returnTop.
 	
 	data := gen emit.
-	self assert: data instructions size = 6.
+	self assert: data instructions size = 7.
 ]
 
 { #category : #tests }

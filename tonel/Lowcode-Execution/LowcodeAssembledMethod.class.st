@@ -34,7 +34,7 @@ LowcodeAssembledMethod >> asCompiledMethod [
 	].
 
 	1 to: instructions size do: [ :i |
-		compiledMethod at: compiledMethod initialPC+ i + -  1put: (instructions at: i).
+		compiledMethod at: compiledMethod initialPC+ i + -1put: (instructions at: i).
 	].
 	^ compiledMethod
 ]

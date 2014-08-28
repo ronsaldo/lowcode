@@ -15,6 +15,21 @@ Class {
 	#category : #'Lowcode-Assembler'
 }
 
+{ #category : #'as yet unclassified' }
+LowcodeAssembler class >> compiledMethodCode: aBlock [
+	^ self compiledMethodFor: #UndefinedMethod class: UndefinedObject code: aBlock
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeAssembler class >> compiledMethodFor: aSelector class: aClass code: aBlock [
+	| asm |
+	asm := self new.
+	aBlock value: asm.
+	asm addLiteral: aSelector;
+		addLiteral: aClass.
+	 ^ asm emit asCompiledMethod
+]
+
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> add32 [
 	self addInstruction: 2005

@@ -24,6 +24,21 @@ LowcodeAssembledMethod class >> uninstallOfClass: aClass [
 	]
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeAssembledMethod >> asCompiledMethod [
+	| compiledMethod|
+	compiledMethod := CompiledMethod newBytes: instructions size trailerBytes: CompiledMethodTrailer empty nArgs: numberOfArguments nTemps: numberOfTemporals  nStack: 40 nLits: literals size primitive: 0.
+	
+	1 to: literals size do: [ :i |
+		compiledMethod literalAt: i put: (literals at: i).
+	].
+
+	1 to: instructions size do: [ :i |
+		compiledMethod at: compiledMethod initialPC+ i + -  1put: (instructions at: i).
+	].
+	^ compiledMethod
+]
+
 { #category : #compatibility }
 LowcodeAssembledMethod >> doesNotUnderstand: aMessage [
 	originalMethod ifNotNil: [ ^ aMessage sendTo: originalMethod ].

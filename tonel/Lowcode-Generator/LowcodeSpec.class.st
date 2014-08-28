@@ -29,7 +29,7 @@ LowcodeSpec class >> generateOpcodes [
 	self generateOpcodes
 	"
 |spec sortedInstructions currentArity arityCount arity arityStart |
-spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
+spec := LowcodeSpecLoader fromFileNamed: 'old-lowcode.xml'.
 sortedInstructions := spec instructions sort: [ :a :b | 
 	a stackArguments size == b stackArguments size ifTrue: [ 
 		a mnemonic < b mnemonic
@@ -41,7 +41,7 @@ sortedInstructions := spec instructions sort: [ :a :b |
 
 currentArity := -1.
 arityCount := 0.
-arityStart := #(7 69 5 0 0).
+arityStart := #(0 7 69 5 0 0).
 sortedInstructions do: [:ins |
 	arity := ins stackArguments size.
 	arity ~= currentArity ifTrue: [

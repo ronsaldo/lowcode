@@ -135,7 +135,7 @@ LowcodeAssemblerGenerator >> generateTables [
 LowcodeAssemblerGenerator >> generateTo: stream instructionArgument: arg index: index [
 	| map |
 	map := TypeMap at: arg type ifAbsent: [ self error: 'expected a type map' ].
-	stream nextPutAll: map asString , ' a' , index asString, '_'   , arg name
+	stream nextPutAll: map asString , ' a' , index asString, 'N'   , arg name
 ]
 
 { #category : #generation }
@@ -180,7 +180,7 @@ LowcodeAssemblerGenerator >> generateTo: stream selectorArguments: arguments [
 			stream nextPutAll: ' ' , arg name , ': '.
 		].
 	
-		stream nextPutAll: 'a', i printString , '_',  arg name.
+		stream nextPutAll: 'a', i printString , 'N',  arg name.
 	]
 ]
 

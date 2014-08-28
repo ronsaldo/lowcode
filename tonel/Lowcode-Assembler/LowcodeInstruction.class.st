@@ -60,8 +60,8 @@ LowcodeInstruction >> emitToStream: stream [
 	extendB ifNotNil: [ self emitExtendB: extendB toStream: stream ].
 	
 	"Emit the opcode."
-	low := opcode & 16rFF.
-	high := ((opcode & 16rFF00) >> 8) | 16r80.
+	low := opcode bitAnd: 16rFF.
+	high := ((opcode bitAnd: 16rFF00) >> 8) bitOr: 16r80.
 	stream nextPut: 248. "Sista inline primitive".
 	stream nextPut: low.
 	stream nextPut: high.

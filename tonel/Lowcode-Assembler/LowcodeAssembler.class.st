@@ -161,8 +161,8 @@ LowcodeAssembler >> arithmeticRightShift64 [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> beginCall: a1_alignment [
-	self addInstruction: 7  extendA: a1_alignment
+LowcodeAssembler >> beginCall: a1Nalignment [
+	self addInstruction: 7  extendA: a1Nalignment
 ]
 
 { #category : #'lowcode instructions' }
@@ -176,23 +176,23 @@ LowcodeAssembler >> boolean64ToOop [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> branchFalse32: a1_dest [
-	self addInstruction: 1073  label: a1_dest
+LowcodeAssembler >> branchFalse32: a1Ndest [
+	self addInstruction: 1073  label: a1Ndest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> branchFalse64: a1_dest [
-	self addInstruction: 1074  label: a1_dest
+LowcodeAssembler >> branchFalse64: a1Ndest [
+	self addInstruction: 1074  label: a1Ndest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> branchTrue32: a1_dest [
-	self addInstruction: 1075  label: a1_dest
+LowcodeAssembler >> branchTrue32: a1Ndest [
+	self addInstruction: 1075  label: a1Ndest
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> branchTrue64: a1_dest [
-	self addInstruction: 1076  label: a1_dest
+LowcodeAssembler >> branchTrue64: a1Ndest [
+	self addInstruction: 1076  label: a1Ndest
 ]
 
 { #category : #'lowcode instructions' }
@@ -226,23 +226,23 @@ LowcodeAssembler >> callArgumentPointer [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> callArgumentStructure: a1_structureSize [
-	self addInstruction: 1083  extendA: a1_structureSize
+LowcodeAssembler >> callArgumentStructure: a1NstructureSize [
+	self addInstruction: 1083  extendA: a1NstructureSize
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> callInstruction: a1_function [
-	self addInstruction: 8  extendA: a1_function
+LowcodeAssembler >> callInstruction: a1Nfunction [
+	self addInstruction: 8  extendA: a1Nfunction
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> callPhysical: a1_registerID [
-	self addInstruction: 9  extendA: a1_registerID
+LowcodeAssembler >> callPhysical: a1NregisterID [
+	self addInstruction: 9  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> checkSessionIdentifier: a1_expectedSession [
-	self addInstruction: 10  extendA: a1_expectedSession
+LowcodeAssembler >> checkSessionIdentifier: a1NexpectedSession [
+	self addInstruction: 10  extendA: a1NexpectedSession
 ]
 
 { #category : #'lowcode instructions' }
@@ -360,8 +360,8 @@ LowcodeAssembler >> fail [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> failWithCode: a1_errorCode [
-	self addInstruction: 14  extendA: a1_errorCode
+LowcodeAssembler >> failWithCode: a1NerrorCode [
+	self addInstruction: 14  extendA: a1NerrorCode
 ]
 
 { #category : #'lowcode instructions' }
@@ -554,8 +554,8 @@ LowcodeAssembler >> instantiateIndexable32Oop [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> instantiateIndexableOop: a1_indexableSize [
-	self addInstruction: 1104  extendA: a1_indexableSize
+LowcodeAssembler >> instantiateIndexableOop: a1NindexableSize [
+	self addInstruction: 1104  extendA: a1NindexableSize
 ]
 
 { #category : #'lowcode instructions' }
@@ -699,8 +699,8 @@ LowcodeAssembler >> isWordsOrBytes [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> jump: a1_dest [
-	self addInstruction: 15  label: a1_dest
+LowcodeAssembler >> jump: a1Ndest [
+	self addInstruction: 15  label: a1Ndest
 ]
 
 { #category : #'lowcode instructions' }
@@ -744,63 +744,63 @@ LowcodeAssembler >> loadInt8FromMemory [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalAddress: a1_baseOffset [
-	self addInstruction: 16  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalAddress: a1NbaseOffset [
+	self addInstruction: 16  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalFloat32: a1_baseOffset [
-	self addInstruction: 17  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalFloat32: a1NbaseOffset [
+	self addInstruction: 17  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalFloat64: a1_baseOffset [
-	self addInstruction: 18  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalFloat64: a1NbaseOffset [
+	self addInstruction: 18  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalInt16: a1_baseOffset [
-	self addInstruction: 19  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalInt16: a1NbaseOffset [
+	self addInstruction: 19  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalInt32: a1_baseOffset [
-	self addInstruction: 20  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalInt32: a1NbaseOffset [
+	self addInstruction: 20  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalInt64: a1_baseOffset [
-	self addInstruction: 21  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalInt64: a1NbaseOffset [
+	self addInstruction: 21  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalInt8: a1_baseOffset [
-	self addInstruction: 22  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalInt8: a1NbaseOffset [
+	self addInstruction: 22  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalPointer: a1_baseOffset [
-	self addInstruction: 23  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalPointer: a1NbaseOffset [
+	self addInstruction: 23  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalUInt16: a1_baseOffset [
-	self addInstruction: 24  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalUInt16: a1NbaseOffset [
+	self addInstruction: 24  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalUInt32: a1_baseOffset [
-	self addInstruction: 25  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalUInt32: a1NbaseOffset [
+	self addInstruction: 25  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalUInt64: a1_baseOffset [
-	self addInstruction: 26  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalUInt64: a1NbaseOffset [
+	self addInstruction: 26  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadLocalUInt8: a1_baseOffset [
-	self addInstruction: 27  extendA: a1_baseOffset
+LowcodeAssembler >> loadLocalUInt8: a1NbaseOffset [
+	self addInstruction: 27  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
@@ -809,8 +809,8 @@ LowcodeAssembler >> loadObjectAt [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> loadObjectField: a1_fieldIndex [
-	self addInstruction: 1127  extendA: a1_fieldIndex
+LowcodeAssembler >> loadObjectField: a1NfieldIndex [
+	self addInstruction: 1127  extendA: a1NfieldIndex
 ]
 
 { #category : #'lowcode instructions' }
@@ -891,33 +891,33 @@ LowcodeAssembler >> memcpy64 [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> memcpyFixed: a1_size [
-	self addInstruction: 2049  extendA: a1_size
+LowcodeAssembler >> memcpyFixed: a1Nsize [
+	self addInstruction: 2049  extendA: a1Nsize
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> moveFloat32ToPhysical: a1_registerID [
-	self addInstruction: 1135  extendA: a1_registerID
+LowcodeAssembler >> moveFloat32ToPhysical: a1NregisterID [
+	self addInstruction: 1135  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> moveFloat64ToPhysical: a1_registerID [
-	self addInstruction: 1136  extendA: a1_registerID
+LowcodeAssembler >> moveFloat64ToPhysical: a1NregisterID [
+	self addInstruction: 1136  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> moveInt32ToPhysical: a1_registerID [
-	self addInstruction: 1137  extendA: a1_registerID
+LowcodeAssembler >> moveInt32ToPhysical: a1NregisterID [
+	self addInstruction: 1137  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> moveInt64ToPhysical: a1_registerID [
-	self addInstruction: 1138  extendA: a1_registerID
+LowcodeAssembler >> moveInt64ToPhysical: a1NregisterID [
+	self addInstruction: 1138  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> movePointerToPhysical: a1_registerID [
-	self addInstruction: 1139  extendA: a1_registerID
+LowcodeAssembler >> movePointerToPhysical: a1NregisterID [
+	self addInstruction: 1139  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
@@ -1036,13 +1036,13 @@ LowcodeAssembler >> or64 [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> performCallFloat32: a1_function [
-	self addInstruction: 30  extendA: a1_function
+LowcodeAssembler >> performCallFloat32: a1Nfunction [
+	self addInstruction: 30  extendA: a1Nfunction
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> performCallFloat64: a1_function [
-	self addInstruction: 31  extendA: a1_function
+LowcodeAssembler >> performCallFloat64: a1Nfunction [
+	self addInstruction: 31  extendA: a1Nfunction
 ]
 
 { #category : #'lowcode instructions' }
@@ -1071,28 +1071,28 @@ LowcodeAssembler >> performCallIndirectPointer [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> performCallIndirectStructure: a1_structureSize [
-	self addInstruction: 2056  extendA: a1_structureSize
+LowcodeAssembler >> performCallIndirectStructure: a1NstructureSize [
+	self addInstruction: 2056  extendA: a1NstructureSize
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> performCallInt32: a1_function [
-	self addInstruction: 32  extendA: a1_function
+LowcodeAssembler >> performCallInt32: a1Nfunction [
+	self addInstruction: 32  extendA: a1Nfunction
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> performCallInt64: a1_function [
-	self addInstruction: 33  extendA: a1_function
+LowcodeAssembler >> performCallInt64: a1Nfunction [
+	self addInstruction: 33  extendA: a1Nfunction
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> performCallPointer: a1_function [
-	self addInstruction: 34  extendA: a1_function
+LowcodeAssembler >> performCallPointer: a1Nfunction [
+	self addInstruction: 34  extendA: a1Nfunction
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> performCallStructure: a1_function structureSize: a2_structureSize [
-	self addInstruction: 1161  extendA: a1_function  extendB: a2_structureSize
+LowcodeAssembler >> performCallStructure: a1Nfunction structureSize: a2NstructureSize [
+	self addInstruction: 1161  extendA: a1Nfunction  extendB: a2NstructureSize
 ]
 
 { #category : #'lowcode instructions' }
@@ -1136,8 +1136,8 @@ LowcodeAssembler >> pointerToInt64 [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pointerToOop: a1_pointerClassLiteral [
-	self addInstruction: 1165  extendA: a1_pointerClassLiteral
+LowcodeAssembler >> pointerToOop: a1NpointerClassLiteral [
+	self addInstruction: 1165  extendA: a1NpointerClassLiteral
 ]
 
 { #category : #'lowcode instructions' }
@@ -1182,13 +1182,13 @@ LowcodeAssembler >> popPointer [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushConstantUInt32: a1_constant [
-	self addInstruction: 36  extendA: a1_constant
+LowcodeAssembler >> pushConstantUInt32: a1Nconstant [
+	self addInstruction: 36  extendA: a1Nconstant
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushConstantUInt64: a1_constant [
-	self addInstruction: 37  extendA: a1_constant
+LowcodeAssembler >> pushConstantUInt64: a1Nconstant [
+	self addInstruction: 37  extendA: a1Nconstant
 ]
 
 { #category : #'sista extended bytecode instructions' }
@@ -1252,28 +1252,28 @@ LowcodeAssembler >> pushOneFloat64 [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushPhysicalFloat32: a1_registerID [
-	self addInstruction: 43  extendA: a1_registerID
+LowcodeAssembler >> pushPhysicalFloat32: a1NregisterID [
+	self addInstruction: 43  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushPhysicalFloat64: a1_registerID [
-	self addInstruction: 44  extendA: a1_registerID
+LowcodeAssembler >> pushPhysicalFloat64: a1NregisterID [
+	self addInstruction: 44  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushPhysicalInt32: a1_registerID [
-	self addInstruction: 45  extendA: a1_registerID
+LowcodeAssembler >> pushPhysicalInt32: a1NregisterID [
+	self addInstruction: 45  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushPhysicalInt64: a1_registerID [
-	self addInstruction: 46  extendA: a1_registerID
+LowcodeAssembler >> pushPhysicalInt64: a1NregisterID [
+	self addInstruction: 46  extendA: a1NregisterID
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> pushPhysicalPointer: a1_registerID [
-	self addInstruction: 47  extendA: a1_registerID
+LowcodeAssembler >> pushPhysicalPointer: a1NregisterID [
+	self addInstruction: 47  extendA: a1NregisterID
 ]
 
 { #category : #'sista extended bytecode instructions' }
@@ -1460,43 +1460,43 @@ LowcodeAssembler >> storeInt8ToMemory [
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> storeLocalFloat32: a1_baseOffset [
-	self addInstruction: 1178  extendA: a1_baseOffset
+LowcodeAssembler >> storeLocalFloat32: a1NbaseOffset [
+	self addInstruction: 1178  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> storeLocalFloat64: a1_baseOffset [
-	self addInstruction: 1179  extendA: a1_baseOffset
+LowcodeAssembler >> storeLocalFloat64: a1NbaseOffset [
+	self addInstruction: 1179  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> storeLocalInt16: a1_baseOffset [
-	self addInstruction: 1180  extendA: a1_baseOffset
+LowcodeAssembler >> storeLocalInt16: a1NbaseOffset [
+	self addInstruction: 1180  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> storeLocalInt32: a1_baseOffset [
-	self addInstruction: 1181  extendA: a1_baseOffset
+LowcodeAssembler >> storeLocalInt32: a1NbaseOffset [
+	self addInstruction: 1181  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> storeLocalInt64: a1_baseOffset [
-	self addInstruction: 1182  extendA: a1_baseOffset
+LowcodeAssembler >> storeLocalInt64: a1NbaseOffset [
+	self addInstruction: 1182  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> storeLocalInt8: a1_baseOffset [
-	self addInstruction: 1183  extendA: a1_baseOffset
+LowcodeAssembler >> storeLocalInt8: a1NbaseOffset [
+	self addInstruction: 1183  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> storeLocalPointer: a1_baseOffset [
-	self addInstruction: 1184  extendA: a1_baseOffset
+LowcodeAssembler >> storeLocalPointer: a1NbaseOffset [
+	self addInstruction: 1184  extendA: a1NbaseOffset
 ]
 
 { #category : #'lowcode instructions' }
-LowcodeAssembler >> storeObjectField: a1_fieldIndex [
-	self addInstruction: 2071  extendA: a1_fieldIndex
+LowcodeAssembler >> storeObjectField: a1NfieldIndex [
+	self addInstruction: 2071  extendA: a1NfieldIndex
 ]
 
 { #category : #'lowcode instructions' }

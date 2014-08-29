@@ -28,11 +28,15 @@ LowcodeSpec class >> generateOpcodes [
 	"
 	self generateOpcodes
 	"
-|spec sortedInstructions currentArity arityCount arity arityStart |
+|spec sortedInstructions currentArity currentResultArity arityCount arity resultArity arityStart |
 spec := LowcodeSpecLoader fromFileNamed: 'old-lowcode.xml'.
 sortedInstructions := spec instructions sort: [ :a :b | 
 	a stackArguments size == b stackArguments size ifTrue: [ 
-		a mnemonic < b mnemonic
+		a stackResults size == b stackResults size ifTrue: [ 
+			a mnemonic < b mnemonic
+		] ifFalse: [ 
+			a stackResults size < b stackResults size
+		]
 	]
 	ifFalse: [
 		a stackArguments size < b stackArguments size
@@ -40,19 +44,22 @@ sortedInstructions := spec instructions sort: [ :a :b |
 ].
 
 currentArity := -1.
+currentResultArity := -1.
 arityCount := 0.
-arityStart := #(0 7 69 5 0 0).
+arityStart := #(#(0 0 0) (0 7 0) (0 69 0) (0 5 0) (0 0 0) (0 0 0)).
 sortedInstructions do: [:ins |
 	arity := ins stackArguments size.
-	arity ~= currentArity ifTrue: [
+	resultArity := ins stackResults size.
+	(arity ~= currentArity or: [resultArity ~= currentResultArity]) ifTrue: [
 		currentArity := arity.
-		arityCount := arityStart at: arity + 1.
+		currentResultArity := resultArity.
+		arityCount := ((arityStart at: arity + 1) at: resultArity + 1).
 	]
 	ifFalse: [
 		arityCount := arityCount + 1
 	].
 
-	ins opcode: currentArity *1000 + arityCount.
+	ins opcode: (currentArity *1000) + (resultArity*300)+ arityCount.
 ].
 
 (FileSystem workingDirectory / 'lowcode-new.xml') writeStreamDo: [ :out |

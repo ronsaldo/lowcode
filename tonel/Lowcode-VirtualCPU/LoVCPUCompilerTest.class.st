@@ -42,8 +42,10 @@ LoVCPUCompilerTest >> testLowcodeLoop [
 			
 			"Return 10"
 			putLabel: done;
-			returnInt32AsOop.
+			int32ToOop;
+			returnTop.
 	].
+
 	compiler := LoVCPUCompiler default.
 	compiler compileDisassembledMethod: method
 ]

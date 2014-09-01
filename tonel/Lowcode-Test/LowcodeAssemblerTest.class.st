@@ -15,7 +15,7 @@ LowcodeAssemblerTest >> testInfinite [
 	gen jump: label.
 	
 	data := gen emit.
-	self assert: data instructions size = 5.
+	self assert: data instructions size = 9.
 ]
 
 { #category : #tests }
@@ -27,8 +27,7 @@ LowcodeAssemblerTest >> testInfinite2 [
 	gen jump: label.
 	
 	data := gen emit.
-	self assert: data instructions size = 6.
-	self assert: (data literals first) == 1
+	self assert: data instructions size = 10.
 ]
 
 { #category : #tests }

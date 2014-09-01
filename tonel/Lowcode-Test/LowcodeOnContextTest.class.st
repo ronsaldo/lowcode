@@ -21,6 +21,11 @@ LowcodeOnContextTest >> add: a with: b [
 ]
 
 { #category : #'lowcode methods' }
+LowcodeOnContextTest >> ifTest:aBoolean [
+	^ aBoolean ifTrue: [ 1 ] ifFalse: [ 2 ]
+]
+
+{ #category : #'lowcode methods' }
 LowcodeOnContextTest >> isDigit: character [
 	^ Lowcode here: [ :gen |
 		gen pushMyInstanceVariable: #isdigitFunction;

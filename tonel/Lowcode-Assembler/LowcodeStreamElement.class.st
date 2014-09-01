@@ -443,8 +443,25 @@ LowcodeStreamElement >> emitExtendB: value toStream: stream [
 ]
 
 { #category : #'instruction encoding' }
+LowcodeStreamElement >> emitExtendLabel: relativeOffset toStream: stream [
+	| numBytes opcode value |
+	opcode := 225.
+	value := relativeOffset.
+	numBytes := self labelSize.
+	numBytes >= 4 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 24) & 16rFF ].
+	numBytes >= 3 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 16) & 16rFF ].
+	numBytes >= 2 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 8) & 16rFF ].
+	numBytes >= 1 ifTrue: [ stream nextPut: opcode; nextPut: value & 16rFF ].
+]
+
+{ #category : #'instruction encoding' }
 LowcodeStreamElement >> emitToStream: stream [
 	self subclassResponsibility
+]
+
+{ #category : #'instruction encoding' }
+LowcodeStreamElement >> labelSize [
+	^ 3
 ]
 
 { #category : #'as yet unclassified' }

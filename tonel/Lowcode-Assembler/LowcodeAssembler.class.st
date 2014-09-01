@@ -867,8 +867,6 @@ LowcodeAssembler >> lockVM [
 LowcodeAssembler >> makeLabel [
 	| label |
 	label := LowcodeLabel new.
-	label index: literalTable size.
-	literalTable add: label.
 	^ label
 ]
 

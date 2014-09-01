@@ -7,7 +7,9 @@ Class {
 	#instVars : [
 		'opcode',
 		'extendA',
-		'extendB'
+		'extendB',
+		'destLabel',
+		'nextOffset'
 	],
 	#category : #'Lowcode-Assembler'
 }
@@ -39,13 +41,17 @@ LowcodeInstruction class >> new: opcode label: aLabel [
 
 { #category : #'instruction encoding' }
 LowcodeInstruction >> computeSizeForOffset: anOffset [
-	^ self elementSize
+	| size |
+	size := self elementSize.
+	nextOffset := size + anOffset.
+	^ size
 ]
 
 { #category : #'instruction encoding' }
 LowcodeInstruction >> elementSize [
 	| size |
 	size := 3.
+	destLabel ifNotNil: [ size := size + (self labelSize * 2) ].
 	extendA ifNotNil: [ size  := size + ((self bytesFor: extendA) * 2) ].
 	extendB ifNotNil: [ size  := size + ((self bytesFor: extendB) * 2) ].
 	^ size
@@ -56,6 +62,7 @@ LowcodeInstruction >> emitToStream: stream [
 	| low high |
 	
 	"Emit the extension arguments"
+	destLabel ifNotNil: [ self emitExtendLabel: destLabel offset - nextOffset toStream: stream].
 	extendA ifNotNil: [ self emitExtendA: extendA toStream: stream ].
 	extendB ifNotNil: [ self emitExtendB: extendB toStream: stream ].
 	
@@ -90,7 +97,7 @@ LowcodeInstruction >> extendB: anInteger [
 
 { #category : #accessing }
 LowcodeInstruction >> label: label [
-	extendA := label index
+	destLabel := label.
 ]
 
 { #category : #accessing }
@@ -110,5 +117,6 @@ LowcodeInstruction >> printOn: aStream [
 	aStream nextPutAll: (self lowcodeMnemonicFor: opcode).
 	extendA ifNotNil: [ aStream nextPutAll: ' ' , extendA printString ].
 	extendB ifNotNil: [ aStream nextPutAll: ' ' , extendB printString ].
+	destLabel ifNotNil: [ aStream nextPutAll: ' ' , destLabel offset printString ].
 	aStream cr
 ]

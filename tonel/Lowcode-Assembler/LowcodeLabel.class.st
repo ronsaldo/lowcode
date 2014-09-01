@@ -5,8 +5,7 @@ Class {
 	#name : #LowcodeLabel,
 	#superclass : #LowcodeStreamElement,
 	#instVars : [
-		'offset',
-		'index'
+		'offset'
 	],
 	#category : #'Lowcode-Assembler'
 }
@@ -30,16 +29,6 @@ LowcodeLabel >> elementSize [
 { #category : #'instruction encoding' }
 LowcodeLabel >> emitToStream: stream [
 	"Do nothing here."
-]
-
-{ #category : #accessing }
-LowcodeLabel >> index [
-	^ index
-]
-
-{ #category : #accessing }
-LowcodeLabel >> index: anInteger [
-	index := anInteger
 ]
 
 { #category : #accessing }

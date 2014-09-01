@@ -53,8 +53,17 @@ LowcodeSpecLoader >> parseArgument: element [
 	arg := LowcodeSpecArgument new.
 	arg type: element name asSymbol;
 		name: (element attributeAt: 'name');
-		description: (element attributeAt: 'description' ifAbsent: ['']).
+		description: (element attributeAt: 'description' ifAbsent: ['']);
+		aliased: (self parseBoolean: (element attributeAt: 'aliased' ifAbsent: [false])).
 	^ arg.
+]
+
+{ #category : #parsing }
+LowcodeSpecLoader >> parseBoolean: aString [
+	(aString == false or: [aString == true ]) ifTrue: [ ^ aString ].
+	aString = 'true' ifTrue: [ ^ true ].
+	aString = 'false' ifTrue: [ ^ false ].
+	self error: 'Failed to parse boolean value.'
 ]
 
 { #category : #parsing }

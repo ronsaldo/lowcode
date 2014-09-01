@@ -28,7 +28,7 @@ LowcodeVCPUGenerator class >> initialize [
 	
 	ExtensionArgumentMap := Dictionary newFromPairs: #(
 		'extend-a' 'instruction extendA'
-		'label' 'compiler labelAt: instruction extendA'
+		'label' 'compiler labelAt: instruction extendB'
 		'literal' 'compiler literalAt: instruction extendA'
 		'extend-b' 'instruction extendB'
 	).

@@ -4,16 +4,28 @@ Class {
 	#instVars : [
 		'type',
 		'name',
-		'description'
+		'description',
+		'aliased'
 	],
 	#category : #'Lowcode-Generator'
 }
+
+{ #category : #accessing }
+LowcodeSpecArgument >> aliased [
+	^ aliased
+]
+
+{ #category : #accessing }
+LowcodeSpecArgument >> aliased: aBoolean [
+	aliased := aBoolean
+]
 
 { #category : #'as yet unclassified' }
 LowcodeSpecArgument >> asXMLElement [
 	| element |
 	element := XMLElement name: type.
 	element attributeAt: 'name' put: name.
+	aliased ifTrue: [ element attributeAt: 'aliased' put: aliased. ].
 	description ifNotEmpty: [ element contentString: description ].
 	^ element
 ]

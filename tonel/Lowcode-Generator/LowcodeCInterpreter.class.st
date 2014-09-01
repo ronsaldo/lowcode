@@ -163,12 +163,6 @@ LowcodeCInterpreter >> emitCommon [
 	CHECK_FAILED(); \
 }
 
-#define LABEL_AT_TO(id, dest) { \
-	sqInt literalOop; \
-	LITERAL_AT_TO(id, literalOop); \
-	dest = instructionStream + interpreterProxy->integerValueOf(literalOop); \
-}
-
 /* Utility macros */
 #define UNIMPLEMENTED() { \
 	fprintf(stderr, "Unimplemented Lowcode instruction at %s line %d\n", __FILE__, __LINE__); \
@@ -258,7 +252,7 @@ sqInt LowcodePlugin_InterpretCodeLiteralsReceiverTemporalsStackFrame(VirtualMach
 	/* The current program counter. */
 	uint8_t *pc = instructionStream;
 	uint32_t extA = 0;
-	uint32_t extB = 0;
+	int32_t extB = 0;
 	
 	/* For calling*/
 	LOWCODE_FFI_COMMON();
@@ -289,7 +283,11 @@ sqInt LowcodePlugin_InterpretCodeLiteralsReceiverTemporalsStackFrame(VirtualMach
 			}
 			else if(sistaOpcode == SISTA_OPCODE_EXT_B)
 			{
-				extB  = extB*256 + (*(pc++)); 
+				uint8_t newByte = (*(pc++));
+				if(extB == 0 && newByte > 127)
+					extB = newByte - 256;
+				else
+					extB  = extB<<8 + newByte; 
 			}
 			else
 			{ 
@@ -381,12 +379,6 @@ LowcodeCInterpreter >> fetchArguments: instruction [
 { #category : #accessing }
 LowcodeCInterpreter >> fetchExtendedArgument: arg [
 	| value |
-	arg type = 'label' ifTrue: [
-		out nextPutAll:
-'				LABEL_AT_TO(extA, ' , arg name , ');
-				extA = 0;' ; lf.
-		^ self
-	].
 	arg type = 'literal' ifTrue: [
 		out nextPutAll:
 '				LITERAL_AT_TO(extA, ' , arg name , ');
@@ -394,6 +386,11 @@ LowcodeCInterpreter >> fetchExtendedArgument: arg [
 		^ self
 	].
 
+	arg type = 'label' ifTrue: [
+		out tab; tab; tab; nextPutAll: arg name , ' = pc + extB;'; 
+			tab; tab; tab; nextPutAll: 'extB = 0;'.
+		^ self.
+	].
 	arg type = 'extend-a' ifTrue: [ value := 'extA' ].
 	arg type = 'extend-b' ifTrue: [ value := 'extB' ].
 	out nextPutAll: 

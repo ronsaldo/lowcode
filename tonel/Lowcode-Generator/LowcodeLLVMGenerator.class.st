@@ -93,7 +93,7 @@ LowcodeLLVMGenerator >> emitCompilationDeclareStackResults: instruction [
 LowcodeLLVMGenerator >> emitCompilationExtendedArguments: instruction [
 	instruction arguments do: [ :arg |
 		arg type = 'extend-a' ifTrue: [ out tab; tab; tab; nextPutAll: 'uint64_t ' , arg name , ' = getExtendA();'; lf  ].
-		arg type = 'extend-b' ifTrue: [ out tab; tab; tab; nextPutAll: 'uint64_t ' , arg name , ' = getExtendB();'; lf ].
+		arg type = 'extend-b' ifTrue: [ out tab; tab; tab; nextPutAll: 'int64_t ' , arg name , ' = getExtendB();'; lf ].
 		arg type = 'literal' ifTrue: [ out tab; tab; tab; nextPutAll: 'llvm::Value *' , arg name , ' = getLiteralAt(getExtendA());'; lf ].
 	]
 ]

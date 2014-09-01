@@ -385,9 +385,8 @@ LoDisLowcodeInstruction >> boolean64ToOopValidate: stack forMethod: method [
 ]
 
 { #category : #accessing }
-LoDisLowcodeInstruction >> branchAddress: literals [
-	"TODO: Improve the encoding algorithm to remove the literals"
-	^ literals at: extendA + 1
+LoDisLowcodeInstruction >> branchAddress [
+	^ nextPC + extendB
 ]
 
 { #category : #'validation generated' }
@@ -1071,9 +1070,8 @@ LoDisLowcodeInstruction >> isWordsValidate: stack forMethod: method [
 ]
 
 { #category : #accessing }
-LoDisLowcodeInstruction >> jumpAddress: literals [
-	"TODO: Improve the encoding algorithm to remove the literals"
-	^ literals at: extendA + 1
+LoDisLowcodeInstruction >> jumpAddress [
+	^ nextPC + extendB
 ]
 
 { #category : #'validation generated' }

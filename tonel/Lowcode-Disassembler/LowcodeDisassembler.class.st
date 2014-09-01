@@ -140,11 +140,11 @@ LowcodeDisassembler >> detectBlockEntries. [
 	self addBlockEntry: allInstructions first pc.
 	allInstructions do: [ :ins |
 		ins isJump ifTrue: [
-			ins jumpBlock: (self addBlockEntry: (ins jumpAddress: literals))
+			ins jumpBlock: (self addBlockEntry: ins jumpAddress)
 		].
 		ins isBranch ifTrue: [
 			ins nextBlock: (self addBlockEntry: ins nextAddress).
-			ins branchBlock: (self addBlockEntry: (ins branchAddress: literals)).
+			ins branchBlock: (self addBlockEntry: ins branchAddress).
 		].
 	]
 ]

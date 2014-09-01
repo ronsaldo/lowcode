@@ -42,7 +42,7 @@ LoVCPUCompilerTest >> testLowcodeLoop [
 			
 			"Return 10"
 			putLabel: done;
-			int32ToOop;
+			smallInt32ToOop;
 			returnTop.
 	].
 

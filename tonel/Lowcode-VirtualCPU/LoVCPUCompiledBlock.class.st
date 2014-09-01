@@ -2460,7 +2460,9 @@ self shouldBeImplemented.
 LoVCPUCompiledBlock >> smallInt32ToOopCompilation: instruction withStack: stack [
 	|value object  |
 	value := stack popInt32.
-self shouldBeImplemented.
+
+            object := (value << (vcpu word: 1)) | (vcpu word: 1).
+        
 	stack pushOop: object.
 
 ]

@@ -9,7 +9,9 @@ Class {
 	#instVars : [
 		'opcode',
 		'first',
-		'second'
+		'second',
+		'destLabel',
+		'nextOffset'
 	],
 	#category : #'Lowcode-Assembler'
 }
@@ -31,7 +33,10 @@ LowcodeSistaInstruction class >> new: opcode with: first with: second [
 
 { #category : #'as yet unclassified' }
 LowcodeSistaInstruction >> computeSizeForOffset: anOffset [
-	^ self elementSize
+	| size |
+	size := self elementSize.
+	nextOffset := size + anOffset.
+	^ size
 ]
 
 { #category : #'as yet unclassified' }
@@ -64,6 +69,11 @@ LowcodeSistaInstruction >> first [
 LowcodeSistaInstruction >> first: anObject [
 	
 	first := anObject
+]
+
+{ #category : #accessing }
+LowcodeSistaInstruction >> label: label [
+	destLabel := label.
 ]
 
 { #category : #accessing }

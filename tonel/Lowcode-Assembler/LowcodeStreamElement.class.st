@@ -426,10 +426,10 @@ LowcodeStreamElement >> elementSize [
 LowcodeStreamElement >> emitExtend: opcode value: value toStream: stream [
 	| numBytes |
 	numBytes := self bytesFor: value.
-	numBytes >= 4 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 24) & 16rFF ].
-	numBytes >= 3 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 16) & 16rFF ].
-	numBytes >= 2 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 8) & 16rFF ].
-	numBytes >= 1 ifTrue: [ stream nextPut: opcode; nextPut: value & 16rFF ].
+	numBytes >= 4 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 24 bitAnd: 16rFF) ].
+	numBytes >= 3 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 16 bitAnd: 16rFF) ].
+	numBytes >= 2 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 8 bitAnd: 16rFF) ].
+	numBytes >= 1 ifTrue: [ stream nextPut: opcode; nextPut: (value bitAnd: 16rFF) ].
 ]
 
 { #category : #'instruction encoding' }
@@ -448,10 +448,10 @@ LowcodeStreamElement >> emitExtendLabel: relativeOffset toStream: stream [
 	opcode := 225.
 	value := relativeOffset.
 	numBytes := self labelSize.
-	numBytes >= 4 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 24) & 16rFF ].
-	numBytes >= 3 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 16) & 16rFF ].
-	numBytes >= 2 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 8) & 16rFF ].
-	numBytes >= 1 ifTrue: [ stream nextPut: opcode; nextPut: value & 16rFF ].
+	numBytes >= 4 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 24 bitAnd: 16rFF) ].
+	numBytes >= 3 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 16 bitAnd: 16rFF) ].
+	numBytes >= 2 ifTrue: [ stream nextPut: opcode; nextPut: (value >> 8 bitAnd: 16rFF) ].
+	numBytes >= 1 ifTrue: [ stream nextPut: opcode; nextPut: (value bitAnd: 16rFF) ].
 ]
 
 { #category : #'instruction encoding' }

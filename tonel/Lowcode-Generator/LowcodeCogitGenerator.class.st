@@ -47,7 +47,7 @@ LowcodeCogitGenerator >> allocateArgumentRegisters: instruction [
 LowcodeCogitGenerator >> allocateFloatRegisterTo: name [
 	| templ code |
 	templ := '
-			($var := backEnd availableRegisterOrNilFor: $liveRegisters) ifNil:
+			($var := backEnd availableFloatRegisterOrNilFor: $liveRegisters) ifNil:
 				[self ssAllocateRequiredReg: ($var := $reg)].
 '.
 	code := ((templ copyReplaceAll: '$var' with: name)
@@ -180,8 +180,8 @@ LowcodeCogitGenerator >> checkReceiverRegisterLive [
 LowcodeCogitGenerator >> cleanExtendedArgument: arg [
 	| type |
 	type := arg type.
-	((type = 'extend-a' or: [ type = 'literal' ]) or: [ type = 'label' ]) ifTrue: [ ^ out tab; tab; tab; nextPutAll: 'extA := 0.'; cr. ].
-	type = 'extend-b' ifTrue: [ ^ out tab; tab; tab; nextPutAll: 'extB := 0.'; cr. ].
+	(type = 'extend-a' or: [ type = 'literal' ]) ifTrue: [ ^ out tab; tab; tab; nextPutAll: 'extA := 0.'; cr. ].
+	(type = 'extend-b' or: [ type = 'label' ]) ifTrue: [ ^ out tab; tab; tab; nextPutAll: 'extB := 0.'; cr. ].
 	self error: 'Unknown extended argument.'
 ]
 
@@ -219,6 +219,7 @@ LowcodeCogitGenerator >> emitBinary: instruction [
 { #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> emitNullary: instruction [
 	self beginInstruction: instruction opcodeOffset: 0.
+	self fetchExtendedArguments: instruction.
 	out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ 'self halt.' ]); cr.
 	self cleanExtendedArguments: instruction.
 	self endInstruction: instruction.
@@ -277,7 +278,12 @@ LowcodeCogitGenerator >> fetchExtendedArgument: argument [
 		^ self.
 	].
 
-	(type = 'extend-a' or: [ type = 'label' ]) ifTrue: [ var := 'extA' ].
+	type = 'label' ifTrue: [ 
+		out nextPutAll: argument name , ' := extB + 3 + bytecodePC.'; cr.
+		^ self.
+	].
+
+	type = 'extend-a' ifTrue: [ var := 'extA' ].
 	type = 'extend-b' ifTrue: [ var := 'extB' ].
 	out tab; tab; tab; nextPutAll: argument name , ' := ' , var , '.'; cr
 ]

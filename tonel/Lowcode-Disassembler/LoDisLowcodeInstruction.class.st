@@ -33,6 +33,7 @@ LoDisLowcodeInstruction class >> initializeInstructionKindMap [
 9 operation
 10 operation
 11 operation
+12 operation
 300 operation
 301 operation
 302 operation
@@ -1256,6 +1257,11 @@ LoDisLowcodeInstruction >> loadUInt64FromMemoryValidate: stack forMethod: method
 LoDisLowcodeInstruction >> loadUInt8FromMemoryValidate: stack forMethod: method [
 	stack popPointer ifFalse: [^ false ].
 	stack pushInt32.
+	^ true
+]
+
+{ #category : #'validation generated' }
+LoDisLowcodeInstruction >> localFrameSizeValidate: stack forMethod: method [
 	^ true
 ]
 

@@ -14,7 +14,7 @@ Class {
 { #category : #loading }
 LowcodeSpecLoader class >> fromFileNamed: fileName [
 	"
-	self fromFileNamed: '../lowcode.xml'
+	self fromFileNamed: './lowcode.xml'
 	"
 	^ self new fromFileNamed: fileName
 ]

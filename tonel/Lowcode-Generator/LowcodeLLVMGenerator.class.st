@@ -33,6 +33,7 @@ LowcodeLLVMGenerator class >> initialize [
 		'branch' 'InstructionKind::Branch'
 		'terminator' 'InstructionKind::Terminator'
 		'jump' 'InstructionKind::Jump'
+		'metadata' 'InstructionKind::MetaData'
 	).
 	
 	PopForTypes := Dictionary newFromPairs: #(

@@ -96,6 +96,11 @@ LowcodeSpecInstruction >> description: anObject [
 ]
 
 { #category : #accessing }
+LowcodeSpecInstruction >> hasSemanticFor: languageVariant [
+	^ semantics includesKey: languageVariant
+]
+
+{ #category : #accessing }
 LowcodeSpecInstruction >> initialize [
 	opcode := 0.
 	arguments := #().

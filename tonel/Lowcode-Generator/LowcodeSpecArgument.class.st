@@ -25,7 +25,7 @@ LowcodeSpecArgument >> asXMLElement [
 	| element |
 	element := XMLElement name: type.
 	element attributeAt: 'name' put: name.
-	aliased ifTrue: [ element attributeAt: 'aliased' put: aliased. ].
+	aliased ifTrue: [ element attributeAt: 'aliased' put: 'true'. ].
 	description ifNotEmpty: [ element contentString: description ].
 	^ element
 ]

@@ -68,6 +68,26 @@ sortedInstructions do: [:ins |
 
 ]
 
+{ #category : #scripts }
+LowcodeSpec class >> implementedList [
+	"
+	self implementedList
+	"
+	|spec|
+	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
+	((spec instructions select: [ :ins | ins hasSemanticFor: 'Smalltalk/Cog' ]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
+]
+
+{ #category : #scripts }
+LowcodeSpec class >> todoList [
+	"
+	self todoList
+	"
+	|spec|
+	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
+	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/Cog') not ]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
+]
+
 { #category : #adding }
 LowcodeSpec >> addInstruction: anInstruction [
 	instructions add: anInstruction

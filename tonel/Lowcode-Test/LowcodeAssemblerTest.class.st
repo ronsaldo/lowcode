@@ -15,7 +15,7 @@ LowcodeAssemblerTest >> testInfinite [
 	gen jump: label.
 	
 	data := gen emit.
-	self assert: data instructions size = 9.
+	self assert: data instructions size = 14.
 ]
 
 { #category : #tests }
@@ -27,7 +27,19 @@ LowcodeAssemblerTest >> testInfinite2 [
 	gen jump: label.
 	
 	data := gen emit.
-	self assert: data instructions size = 10.
+	self assert: data instructions size = 15.
+]
+
+{ #category : #tests }
+LowcodeAssemblerTest >> testLocal [
+	| gen data |
+	gen := LowcodeAssembler new.
+	gen allocateLocalInt32.
+	gen returnFalse.
+	
+	data := gen emit.
+	self assert: data instructions size = 6.
+	self assert: (data instructions at: 2) = 4.
 ]
 
 { #category : #tests }
@@ -39,7 +51,7 @@ LowcodeAssemblerTest >> testReturnOne [
 		returnTop.
 	
 	data := gen emit.
-	self assert: data instructions size = 7.
+	self assert: data instructions size = 12.
 ]
 
 { #category : #tests }
@@ -49,5 +61,5 @@ LowcodeAssemblerTest >> testSimple [
 	gen returnFalse.
 	
 	data := gen emit.
-	self assert: data instructions size = 1.
+	self assert: data instructions size = 6.
 ]

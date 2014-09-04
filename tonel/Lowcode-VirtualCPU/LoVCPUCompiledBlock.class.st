@@ -1419,6 +1419,16 @@ self shouldBeImplemented.
 ]
 
 { #category : #'lowcode instructions' }
+LoVCPUCompiledBlock >> localFrameSizeCompilation: instruction withStack: stack [
+	|size  |
+	size := instruction extendA.
+
+            "Do nothing."
+        
+
+]
+
+{ #category : #'lowcode instructions' }
 LoVCPUCompiledBlock >> lockRegistersCompilation: instruction withStack: stack [
 	| |
 self shouldBeImplemented.

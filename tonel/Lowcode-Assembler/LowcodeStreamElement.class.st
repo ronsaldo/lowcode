@@ -22,10 +22,11 @@ LowcodeStreamElement class >> initMnemonicTables [
 			5 fail
 			6 failWithCode
 			7 jump
-			8 lockRegisters
-			9 lockVM
-			10 unlockRegisters
-			11 unlockVM
+			8 localFrameSize
+			9 lockRegisters
+			10 lockVM
+			11 unlockRegisters
+			12 unlockVM
 			300 checkSessionIdentifier
 			301 loadLocalAddress
 			302 loadLocalFloat32

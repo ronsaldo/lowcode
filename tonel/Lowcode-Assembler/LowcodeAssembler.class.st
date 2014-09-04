@@ -328,6 +328,7 @@ LowcodeAssembler >> effectiveAddress64 [
 { #category : #'instruction encoding' }
 LowcodeAssembler >> emit [
 	| size literals instructions|
+	streamElements first extendA: stackFrameAllocated.
 	size := self computeSizes.
 	literals := Array new: literalTable size.
 	literalTable doWithIndex: [ :lit :id |
@@ -561,6 +562,7 @@ LowcodeAssembler >> initialize [
 	stackFrameAllocated := 0.
 	numberOfTemporals := 0.
 	numberOfArguments := 0.
+	self localFrameSize: 0.
 ]
 
 { #category : #'lowcode instructions' }
@@ -854,13 +856,18 @@ LowcodeAssembler >> loadUInt8FromMemory [
 ]
 
 { #category : #'lowcode instructions' }
+LowcodeAssembler >> localFrameSize: a1Nsize [
+	self addInstruction: 8  extendA: a1Nsize
+]
+
+{ #category : #'lowcode instructions' }
 LowcodeAssembler >> lockRegisters [
-	self addInstruction: 8
+	self addInstruction: 9
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> lockVM [
-	self addInstruction: 9
+	self addInstruction: 10
 ]
 
 { #category : #adding }
@@ -1649,12 +1656,12 @@ LowcodeAssembler >> umul64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> unlockRegisters [
-	self addInstruction: 10
+	self addInstruction: 11
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> unlockVM [
-	self addInstruction: 11
+	self addInstruction: 12
 ]
 
 { #category : #'lowcode instructions' }

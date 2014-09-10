@@ -110,6 +110,15 @@ LowcodeCogitGenerator >> allocateResultRegisters: instruction [
 ]
 
 { #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> allocateResultRegistersForNullary: instruction [
+	instruction stackResults reverseDo: [ :arg |
+		arg allocate ifTrue: [
+			self allocateRegisterTo: arg
+		]
+	]
+]
+
+{ #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> allocatedRegisterMask [
 	| res |
 	res := 'self liveRegisters'.
@@ -217,9 +226,18 @@ LowcodeCogitGenerator >> emitBinary: instruction [
 ]
 
 { #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> emitCuaternary: instruction [
+	self beginInstruction: instruction opcodeOffset: -4000.
+	self emitWithArguments: instruction.
+]
+
+{ #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> emitNullary: instruction [
 	self beginInstruction: instruction opcodeOffset: 0.
 	self fetchExtendedArguments: instruction.
+	self allocateResultRegistersForNullary: instruction.
+	self checkReceiverRegisterLive.
+	
 	out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ 'self halt.' ]); cr.
 	self cleanExtendedArguments: instruction.
 	self endInstruction: instruction.
@@ -298,10 +316,11 @@ LowcodeCogitGenerator >> generate [
 	out := destName asFileReference delete; writeStream.
 	[
 		self generateHeader;
-			generateNullaryInstructions;
+			generateInstructions: 'Nullary' numArgs: 0 split: 20 with: #emitNullary:;
 			generateInstructions: 'Unary' numArgs: 1 split: 10 with: #emitUnary:;
 			generateInstructions: 'Binary' numArgs: 2 split: 5 with: #emitBinary:;
-			generateInstructions: 'Trinary' numArgs: 3 split: 15 with: #emitTernary:.
+			generateInstructions: 'Trinary' numArgs: 3 split: 15 with: #emitTernary:;
+			generateInstructions: 'Cuaternary' numArgs: 4 split: 15 with: #emitCuaternary:.
 	] ensure: [ out close ]
 
 ]

@@ -33,6 +33,17 @@ LowcodeSpecLoader >> assertElement: element names: names [
 	self error:  'unexpected element'
 ]
 
+{ #category : #parsing }
+LowcodeSpecLoader >> decodeXMLText: textContent [
+	|decoded|
+	decoded := textContent copyReplaceAll: '&lt;' with: '<'.
+	decoded := decoded copyReplaceAll: '&gt;' with: '>'.
+	decoded := decoded copyReplaceAll: '&amp;' with: '&'.
+	decoded := decoded copyReplaceAll: '&apos;' with: ''''.
+	decoded := decoded copyReplaceAll: '&quot;' with: '"'.
+	^ decoded
+]
+
 { #category : #initialize }
 LowcodeSpecLoader >> fromFileNamed: fileName [
 	| stream |
@@ -54,7 +65,8 @@ LowcodeSpecLoader >> parseArgument: element [
 	arg type: element name asSymbol;
 		name: (element attributeAt: 'name');
 		description: (element attributeAt: 'description' ifAbsent: ['']);
-		aliased: (self parseBoolean: (element attributeAt: 'aliased' ifAbsent: [false])).
+		aliased: (self parseBoolean: (element attributeAt: 'aliased' ifAbsent: [false]));
+		allocate: (self parseBoolean: (element attributeAt: 'allocate' ifAbsent: [false])).
 	^ arg.
 ]
 
@@ -127,14 +139,12 @@ LowcodeSpecLoader >> parseInstruction: instruction arguments: element [
 
 { #category : #parsing }
 LowcodeSpecLoader >> parseInstruction: instruction semantic: element [
-	| decoded |
+	| code semantic |
 	self assertElement: element name: 'semantic'.
-	decoded := element innerXML copyReplaceAll: '&lt;' with: '<'.
-	decoded := decoded copyReplaceAll: '&gt;' with: '>'.
-	decoded := decoded copyReplaceAll: '&amp;' with: '&'.
-	decoded := decoded copyReplaceAll: '&apos;' with: ''''.
-	decoded := decoded copyReplaceAll: '&quot;' with: '"'.
-	instruction semantic:   decoded for: (element attributeAt: 'language')
+	code := self decodeXMLText: element innerXML.
+	semantic := LowcodeSpecInstructionSemantic new code: code.
+	semantic locals: (element attributeAt: 'locals').
+	instruction semantic: semantic for: (element attributeAt: 'language')
 ]
 
 { #category : #parsing }

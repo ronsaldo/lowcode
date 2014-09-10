@@ -5,7 +5,8 @@ Class {
 		'type',
 		'name',
 		'description',
-		'aliased'
+		'aliased',
+		'allocate'
 	],
 	#category : #'Lowcode-Generator'
 }
@@ -20,12 +21,23 @@ LowcodeSpecArgument >> aliased: aBoolean [
 	aliased := aBoolean
 ]
 
+{ #category : #accessing }
+LowcodeSpecArgument >> allocate [
+	^ allocate
+]
+
+{ #category : #accessing }
+LowcodeSpecArgument >> allocate: aBoolean [
+	allocate := aBoolean
+]
+
 { #category : #'as yet unclassified' }
 LowcodeSpecArgument >> asXMLElement [
 	| element |
 	element := XMLElement name: type.
 	element attributeAt: 'name' put: name.
 	aliased ifTrue: [ element attributeAt: 'aliased' put: 'true'. ].
+	allocate ifTrue: [ element attributeAt: 'allocate' put: 'true'. ].
 	description ifNotEmpty: [ element contentString: description ].
 	^ element
 ]

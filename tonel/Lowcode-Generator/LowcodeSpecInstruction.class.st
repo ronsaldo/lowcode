@@ -11,6 +11,7 @@ Class {
 		'stackArguments',
 		'stackResults',
 		'semantics',
+		'semanticLocals',
 		'encodingCode',
 		'kind'
 	],
@@ -180,8 +181,13 @@ LowcodeSpecInstruction >> semantic: semantic for: languageVariant [
 ]
 
 { #category : #accessing }
-LowcodeSpecInstruction >> semanticFor: languageVariant ifAbsent: aBlock [
+LowcodeSpecInstruction >> semanticDataFor: languageVariant ifAbsent: aBlock [
 	^ semantics at: languageVariant ifAbsent: aBlock 
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> semanticFor: languageVariant ifAbsent: aBlock [
+	^ (semantics at: languageVariant ifAbsent: [ ^ aBlock value]) code
 ]
 
 { #category : #accessing }

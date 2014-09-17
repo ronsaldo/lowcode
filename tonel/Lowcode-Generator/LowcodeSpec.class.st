@@ -75,7 +75,7 @@ LowcodeSpec class >> implementedList [
 	"
 	|spec|
 	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
-	((spec instructions select: [ :ins | ins hasSemanticFor: 'Smalltalk/Cog' ]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
+	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/Cog') or: [ins hasSemanticFor: 'Smalltalk/Cog/32']]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
 ]
 
 { #category : #scripts }
@@ -85,7 +85,7 @@ LowcodeSpec class >> todoList [
 	"
 	|spec|
 	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
-	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/Cog') not ]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
+	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/Cog') not and: [(ins hasSemanticFor: 'Smalltalk/Cog/32') not]]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
 ]
 
 { #category : #adding }

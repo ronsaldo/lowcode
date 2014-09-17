@@ -10,24 +10,26 @@ Class {
 		'literalTable',
 		'stackFrameAllocated',
 		'numberOfTemporals',
-		'numberOfArguments'
+		'numberOfArguments',
+		'literals',
+		'bytecodes'
 	],
 	#category : #'Lowcode-Assembler'
 }
 
 { #category : #'as yet unclassified' }
 LowcodeAssembler class >> compiledMethodCode: aBlock [
-	^ self compiledMethodFor: #UndefinedMethod class: UndefinedObject code: aBlock
+	^ self compiledMethodFor: #UndefinedMethod class: UndefinedObject code: aBlock trailer: CompiledMethodTrailer empty
 ]
 
 { #category : #'as yet unclassified' }
-LowcodeAssembler class >> compiledMethodFor: aSelector class: aClass code: aBlock [
+LowcodeAssembler class >> compiledMethodFor: aSelector class: aClass code: aBlock trailer: trailer [
 	| asm |
 	asm := self new.
 	aBlock value: asm.
 	asm addLiteral: aSelector;
 		addLiteral: aClass.
-	 ^ asm emit asCompiledMethod
+	 ^ asm emitCompiledMethodWith: trailer
 ]
 
 { #category : #'lowcode instructions' }
@@ -327,7 +329,39 @@ LowcodeAssembler >> effectiveAddress64 [
 
 { #category : #'instruction encoding' }
 LowcodeAssembler >> emit [
-	| size literals instructions|
+	self emitInstructions.
+
+	^ LowcodeAssembledMethod new
+		literals: literals;
+		instructions: bytecodes;
+		stackFrameSize: stackFrameAllocated;
+		numberOfTemporals: numberOfTemporals;
+		numberOfArguments: numberOfArguments.
+]
+
+{ #category : #'instruction encoding' }
+LowcodeAssembler >> emitCompiledMethodWith: trailer [
+	"
+	Method taken from IRSistaV1BytecodeGenerator >> #compiledMethodWith:
+	"
+	| cm header |
+	self emitInstructions.
+
+	header := ((numberOfArguments bitShift: 24) +
+				(numberOfTemporals bitShift: 18) +
+				literals size ) + SmallInteger minVal.
+	cm := trailer createMethod: bytecodes size class: CompiledMethod header: header.
+	(WriteStream with: cm)
+		position: cm initialPC - 1;
+		nextPutAll: bytecodes.
+	literals withIndexDo: [:obj :i | cm literalAt: i put: obj].
+	cm needsFrameSize: self stackFrameSize.
+	^ cm
+]
+
+{ #category : #'instruction encoding' }
+LowcodeAssembler >> emitInstructions [
+	| size |
 	streamElements first extendA: stackFrameAllocated.
 	size := self computeSizes.
 	literals := Array new: literalTable size.
@@ -336,16 +370,10 @@ LowcodeAssembler >> emit [
 			ifFalse: [ literals at: id put: lit value ]
 	].
 	
-	instructions := ByteArray new: size streamContents: [ :stream |
+	bytecodes  := ByteArray new: size streamContents: [ :stream |
 		streamElements do: [ :el | el emitToStream: stream ]
 	].
 
-	^ LowcodeAssembledMethod new
-		literals: literals;
-		instructions: instructions;
-		stackFrameSize: stackFrameAllocated;
-		numberOfTemporals: numberOfTemporals;
-		numberOfArguments: numberOfArguments.
 ]
 
 { #category : #utilities }
@@ -1447,6 +1475,12 @@ LowcodeAssembler >> signExtend64From8 [
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> smallInt32ToOop [
 	self addInstruction: 1388
+]
+
+{ #category : #'instruction encoding' }
+LowcodeAssembler >> stackFrameSize [
+	"TODO: Compute the max stack size"
+	^ 30
 ]
 
 { #category : #'lowcode instructions' }

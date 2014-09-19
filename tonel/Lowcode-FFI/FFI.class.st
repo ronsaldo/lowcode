@@ -37,8 +37,8 @@ FFI class >> loadSymbol: aName fromModule: aModuleNameOrHandle [
 FFI class >> memCopy: source to: dest size: size [
 	^ self ffiCallout
 		function: #( void (void* dest, void* source, size_t size) ) emit: [ :gen :cs |
-			self pointerSize = 4 ifTrue: [ self memcpy32 ]
-				ifFalse: [ self memcpy64 ]
+			self pointerSize = 4 ifTrue: [ gen memcpy32 ]
+				ifFalse: [ gen memcpy64 ]
 		]
 ]
 

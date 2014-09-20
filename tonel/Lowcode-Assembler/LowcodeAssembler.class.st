@@ -287,6 +287,18 @@ LowcodeAssembler >> div64 [
 	self addInstruction: 2376
 ]
 
+{ #category : #'instruction encoding' }
+LowcodeAssembler >> dump [
+	self dumpTo: FileStream stdout
+]
+
+{ #category : #'instruction encoding' }
+LowcodeAssembler >> dumpTo: aStream [
+	| initialPC |
+	initialPC := (literals size + 1) * Smalltalk wordSize + 1.
+	streamElements do: [ :i | i dumpTo: aStream startPC:  initialPC].
+]
+
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> duplicateFloat32 [
 	self addInstruction: 1600

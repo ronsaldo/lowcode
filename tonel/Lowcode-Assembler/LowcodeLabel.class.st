@@ -22,6 +22,12 @@ LowcodeLabel >> computeSizeForOffset: anOffset [
 	^ self elementSize
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeLabel >> dumpTo: aStream startPC: startPC [
+	self printOn: aStream
+
+]
+
 { #category : #'instruction encoding' }
 LowcodeLabel >> elementSize [
 	^ 0

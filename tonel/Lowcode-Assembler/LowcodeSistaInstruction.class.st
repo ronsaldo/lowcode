@@ -40,6 +40,13 @@ LowcodeSistaInstruction >> computeSizeForOffset: anOffset [
 ]
 
 { #category : #'as yet unclassified' }
+LowcodeSistaInstruction >> dumpTo: aStream startPC: startPC [
+	aStream nextPutAll: '[' , (self pc + startPC) hex , '] '.
+	self printOn: aStream
+
+]
+
+{ #category : #'as yet unclassified' }
 LowcodeSistaInstruction >> elementSize [
 	opcode >= 248 ifTrue: [ ^ 3 ].
 	opcode >= 224 ifTrue: [ ^ 2 ].
@@ -86,12 +93,13 @@ LowcodeSistaInstruction >> opcode: anObject [
 	opcode := anObject
 ]
 
+{ #category : #accessing }
+LowcodeSistaInstruction >> pc [
+	^ nextOffset - self elementSize
+]
+
 { #category : #'as yet unclassified' }
 LowcodeSistaInstruction >> printOn: aStream [
-	nextOffset ifNotNil: [
-		aStream nextPutAll: '[' , (nextOffset  - self elementSize) hex , '] '
-	].
-
 	aStream nextPutAll: (self sistaExtendedBytecodeMnemonicFor: opcode).
 	first ifNotNil: [ aStream nextPutAll: ' ' , first printString ].
 	second ifNotNil: [ aStream nextPutAll: ' ' , second printString ].

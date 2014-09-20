@@ -47,6 +47,13 @@ LowcodeInstruction >> computeSizeForOffset: anOffset [
 	^ size
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeInstruction >> dumpTo: aStream startPC: startPC [
+	aStream nextPutAll: '[' , (self pc + startPC) hex , '] '.
+	self printOn: aStream
+
+]
+
 { #category : #'instruction encoding' }
 LowcodeInstruction >> elementSize [
 	| size |
@@ -112,15 +119,16 @@ LowcodeInstruction >> opcode: anObject [
 	opcode := anObject
 ]
 
+{ #category : #'instruction encoding' }
+LowcodeInstruction >> pc [
+	^ nextOffset - 3
+]
+
 { #category : #'as yet unclassified' }
 LowcodeInstruction >> printOn: aStream [
-	nextOffset ifNotNil: [
-		aStream nextPutAll: '[' , (nextOffset  - self elementSize) hex , '] '
-	].
-
 	aStream nextPutAll: (self lowcodeMnemonicFor: opcode).
 	extendA ifNotNil: [ aStream nextPutAll: ' ' , extendA printString ].
 	extendB ifNotNil: [ aStream nextPutAll: ' ' , extendB printString ].
-	destLabel ifNotNil: [ aStream nextPutAll: ' ' , destLabel offset printString ].
+	destLabel ifNotNil: [ aStream nextPutAll: ' ' , destLabel name ].
 	aStream cr
 ]

@@ -28,7 +28,7 @@ LowcodeAssembler class >> compiledMethodFor: aSelector class: aClass code: aBloc
 	asm := self new.
 	aBlock value: asm.
 	asm addLiteral: aSelector;
-		addLiteral: aClass.
+		addLiteral: aClass binding.
 	 ^ asm emitCompiledMethodWith: trailer
 ]
 

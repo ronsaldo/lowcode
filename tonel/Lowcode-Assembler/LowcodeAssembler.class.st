@@ -366,8 +366,7 @@ LowcodeAssembler >> emitInstructions [
 	size := self computeSizes.
 	literals := Array new: literalTable size.
 	literalTable doWithIndex: [ :lit :id |
-		lit isLiteral ifTrue: [ literals at: id put: lit ]
-			ifFalse: [ literals at: id put: lit value ]
+		literals at: id put: lit
 	].
 	
 	bytecodes  := ByteArray new: size streamContents: [ :stream |
@@ -379,7 +378,7 @@ LowcodeAssembler >> emitInstructions [
 { #category : #utilities }
 LowcodeAssembler >> emitSessionCheck [
 	| rest |
-	rest := self makeLabel.
+	rest := self makeLabel: 'sessionCorrect'.
 		
 	self checkSessionIdentifier: Lowcode uniqueSessionIdentifier;
 		branchTrue32: rest;
@@ -906,8 +905,8 @@ LowcodeAssembler >> makeLabel [
 ]
 
 { #category : #adding }
-LowcodeAssembler >> makeLabel: labeName [
-	^ self makeLabel
+LowcodeAssembler >> makeLabel: labelName [
+	^ self makeLabel name: labelName
 ]
 
 { #category : #adding }

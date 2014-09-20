@@ -396,6 +396,12 @@ LowcodeStreamElement class >> initMnemonicTables [
 ]
 
 { #category : #'as yet unclassified' }
+LowcodeStreamElement class >> initialize [
+	super initialize.
+	self initMnemonicTables.
+]
+
+{ #category : #'as yet unclassified' }
 LowcodeStreamElement class >> lowcodeMnemonicFor: opcode [
 	^ LowcodeMnemonics at: opcode
 ]

@@ -88,6 +88,10 @@ LowcodeSistaInstruction >> opcode: anObject [
 
 { #category : #'as yet unclassified' }
 LowcodeSistaInstruction >> printOn: aStream [
+	nextOffset ifNotNil: [
+		aStream nextPutAll: '[' , (nextOffset  - self elementSize) hex , '] '
+	].
+
 	aStream nextPutAll: (self sistaExtendedBytecodeMnemonicFor: opcode).
 	first ifNotNil: [ aStream nextPutAll: ' ' , first printString ].
 	second ifNotNil: [ aStream nextPutAll: ' ' , second printString ].

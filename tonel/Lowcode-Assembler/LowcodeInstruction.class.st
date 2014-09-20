@@ -114,6 +114,10 @@ LowcodeInstruction >> opcode: anObject [
 
 { #category : #'as yet unclassified' }
 LowcodeInstruction >> printOn: aStream [
+	nextOffset ifNotNil: [
+		aStream nextPutAll: '[' , (nextOffset  - self elementSize) hex , '] '
+	].
+
 	aStream nextPutAll: (self lowcodeMnemonicFor: opcode).
 	extendA ifNotNil: [ aStream nextPutAll: ' ' , extendA printString ].
 	extendB ifNotNil: [ aStream nextPutAll: ' ' , extendB printString ].

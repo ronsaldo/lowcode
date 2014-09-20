@@ -5,7 +5,8 @@ Class {
 	#name : #LowcodeLabel,
 	#superclass : #LowcodeStreamElement,
 	#instVars : [
-		'offset'
+		'offset',
+		'name'
 	],
 	#category : #'Lowcode-Assembler'
 }
@@ -32,6 +33,16 @@ LowcodeLabel >> emitToStream: stream [
 ]
 
 { #category : #accessing }
+LowcodeLabel >> name [
+	^ name
+]
+
+{ #category : #accessing }
+LowcodeLabel >> name: aString [
+	name := aString
+]
+
+{ #category : #accessing }
 LowcodeLabel >> offset [
 	^ offset
 ]
@@ -39,6 +50,11 @@ LowcodeLabel >> offset [
 { #category : #accessing }
 LowcodeLabel >> offset: anObject [
 	offset := anObject
+]
+
+{ #category : #accessing }
+LowcodeLabel >> printOn: aStream [
+	aStream nextPutAll: name ,  ':'
 ]
 
 { #category : #accessing }

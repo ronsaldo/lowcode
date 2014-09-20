@@ -28,7 +28,7 @@ LowcodeVMEngine >> emit: aBlock onMethod: aCompiledMethod [
 	aBlock value: assembler.
 	
 	assembler addLiteral: aCompiledMethod selector;
-		addLiteral: aCompiledMethod methodClass.
+		addLiteral: aCompiledMethod methodClass binding.
 	self install: assembler inMethod: aCompiledMethod.
 ]
 
@@ -38,5 +38,6 @@ LowcodeVMEngine >> install: assembler inMethod: aCompiledMethod [
 	newMethod := assembler emitCompiledMethodWith: aCompiledMethod trailer.
 	class := newMethod methodClass.
 	selector := newMethod selector.
+	self halt.
 	class methodDict at: selector put: newMethod
 ]

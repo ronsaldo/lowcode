@@ -44,10 +44,12 @@ FFIExternalHandle >> value [
 			
 		self class instanceSize = 4 ifTrue: [
 			gen pointerToInt32;
-				returnUInt32AsOop
+				uint32ToOop;
+				returnTop
 		] ifFalse: [	
 			gen pointerToInt64;
-				returnUInt64AsOop
+				uint64ToOop;
+				returnTop
 		].
 	]
 ]

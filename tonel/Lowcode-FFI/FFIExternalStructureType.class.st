@@ -93,7 +93,8 @@ FFIExternalStructureType >> lowcode: gen convertValueToOop: calloutSpec [
 
 { #category : #'lowcode marshalling' }
 FFIExternalStructureType >> lowcode: gen fetchDataPointer: calloutSpec [
-	| fail done notExternalAddress|
+	| failClassCheck fail done notExternalAddress|
+	failClassCheck := gen makeLabel: 'failClassCheck'.
 	fail := gen makeLabel: 'fail'.
 	notExternalAddress := gen makeLabel: 'notExternalAddress'.
 	done := gen makeLabel: 'done'.
@@ -122,9 +123,13 @@ FFIExternalStructureType >> lowcode: gen fetchDataPointer: calloutSpec [
 		branchFalse32: fail;
 		firstIndexableFieldPointer;
 		jump: done;
-		
+
+		putLabel: failClassCheck;
+		fail;
+		returnNil;		
 		putLabel: fail;
 		fail;
+		returnNil;
 		putLabel: done
 ]
 

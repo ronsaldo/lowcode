@@ -26,6 +26,14 @@ LowcodeOnContextTest >> ifTest:aBoolean [
 ]
 
 { #category : #'lowcode methods' }
+LowcodeOnContextTest >> inlinePrimitiveFail [
+	^ Lowcode here: [ :gen |
+		gen fail;
+			returnReceiver
+	]
+]
+
+{ #category : #'lowcode methods' }
 LowcodeOnContextTest >> isDigit: character [
 	^ Lowcode here: [ :gen |
 		gen pushMyInstanceVariable: #isdigitFunction;
@@ -49,6 +57,24 @@ LowcodeOnContextTest >> returnAdd32 [
 			pushOne32;
 			add32;
 			int32ToOop;
+			returnTop
+	]
+]
+
+{ #category : #'lowcode methods' }
+LowcodeOnContextTest >> returnBranchTrue32: bool [
+	| cont trueLabel |
+	^ Lowcode here: [ :gen |
+		cont := gen makeLabel: 'cont'.
+		trueLabel := gen makeLabel: 'true'.
+		gen pushTemp: 0;
+			oopSmallIntegerToInt32;
+			branchTrue32: trueLabel;
+			pushZero;
+			jump: cont;
+			putLabel: trueLabel;
+			pushOne;
+			putLabel: cont;
 			returnTop
 	]
 ]
@@ -85,6 +111,21 @@ LowcodeOnContextTest >> returnSelf [
 ]
 
 { #category : #'lowcode methods' }
+LowcodeOnContextTest >> returnUseLocalPointer: aPointer [
+	| pointerTemp |
+	^ Lowcode here: [ :gen |
+		pointerTemp := gen allocateLocalPointer.
+		gen pushTemp: 0;
+			oopToPointer;
+			storeLocalPointer: pointerTemp;
+			loadLocalPointer: pointerTemp;
+			pointerToInt32;
+			smallInt32ToOop;
+			returnTop
+	]
+]
+
+{ #category : #'lowcode methods' }
 LowcodeOnContextTest >> returnZero32 [
 	^ Lowcode here: [ :gen |
 		gen pushZero32;
@@ -95,12 +136,19 @@ LowcodeOnContextTest >> returnZero32 [
 
 { #category : #running }
 LowcodeOnContextTest >> setUp [
-	isdigitFunction := NativeBoost loadSymbol: 'isdigit' fromModule: 0
+	isdigitFunction := FFI loadSymbol: 'isdigit' fromModule: 0
 ]
 
 { #category : #tests }
 LowcodeOnContextTest >> testAdd [
 	self assert: (self add: 1 with: 3) equals: 4
+]
+
+{ #category : #tests }
+LowcodeOnContextTest >> testBranchTrue32 [
+	self assert: (self returnBranchTrue32: 0) equals: 0.
+	self assert: (self returnBranchTrue32: 1) equals: 1.
+	self assert: (self returnBranchTrue32: 2) equals: 1.
 ]
 
 { #category : #tests }
@@ -131,6 +179,12 @@ LowcodeOnContextTest >> testReturnOne32 [
 { #category : #tests }
 LowcodeOnContextTest >> testReturnSelf [
 	self assert: self returnSelf == self
+]
+
+{ #category : #'lowcode methods' }
+LowcodeOnContextTest >> testReturnUseLocalPointer [
+	self assert: (self returnUseLocalPointer: FFIExternalAddress null) value equals: 0.
+	self assert: (self returnUseLocalPointer: (FFIExternalAddress value: 16)) value equals: 16.
 ]
 
 { #category : #tests }

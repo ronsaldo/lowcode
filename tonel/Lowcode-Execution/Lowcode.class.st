@@ -20,6 +20,31 @@ Lowcode class >> here: aBlock [
 ]
 
 { #category : #'running in context' }
+Lowcode class >> inlinePrimitiveFailed: errorCode in: failureContext [
+	errorCode = LowcodeConstants errorSessionChanged ifTrue: [ 
+		^ self methodSessionChanged: failureContext
+	].
+
+	self error: 'Inline primitive failure ' , errorCode printString
+]
+
+{ #category : #'running in context' }
+Lowcode class >> methodSessionChanged: methodContext [
+	| method originalMethod selector class|
+	method := methodContext method.
+
+	"Restore the assembler method."
+	originalMethod := method lowcodeAssemblerMethod.
+	selector := method selector.
+	class := method methodClass.
+	class methodDict at: selector put: originalMethod.
+	
+
+	"Retry the context"
+	^ self retryContext: methodContext
+]
+
+{ #category : #'running in context' }
 Lowcode class >> onContext: aContext do: aBlock [
 	^ LowcodeEngine current emit: aBlock on: aContext
 ]

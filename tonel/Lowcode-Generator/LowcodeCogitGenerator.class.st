@@ -9,8 +9,11 @@ Class {
 		'allocatedFloatRegisters'
 	],
 	#classVars : [
+		'CTypeForType',
 		'FloatRegisters',
-		'IntegerRegisters'
+		'IntegerRegisters',
+		'PopMethodForType',
+		'PushMethodForType'
 	],
 	#category : #'Lowcode-Generator'
 }
@@ -32,8 +35,34 @@ LowcodeCogitGenerator class >> initialize [
 	
 	IntegerRegisters := #(Arg1Reg SendNumArgsReg ClassReg ReceiverResultReg).
 	FloatRegisters := #(DPFPReg0 DPFPReg1 DPFPReg2 DPFPReg3 DPFPReg4 DPFPReg5 DPFPReg6 DPFPReg7).
+
+	PopMethodForType := Dictionary newFromPairs: #(
+		int32 internalPopStackInt32
+		int64 internalPopStackInt64
+		float32 internalPopStackFloat32
+		float64 internalPopStackFloat64
+		pointer internalPopStackPointer
+		oop internalPopStack
+	).
 	
+	PushMethodForType := Dictionary newFromPairs: #(
+		int32 internalPushInt32:
+		int64 internalPushInt64:
+		float32 internalPushFloat32:
+		float64 internalPushFloat64:
+		pointer internalPushPointer:
+		oop internalPush:
+	).
 	
+	CTypeForType := Dictionary newFromPairs: #(
+		int32 sqInt
+		int64 sqLong
+		float32 float
+		float64 double
+		pointer 'char*'
+		oop sqInt
+		label 'char*'
+	).
 ]
 
 { #category : #'as yet unclassified' }
@@ -188,22 +217,20 @@ LowcodeCogitGenerator >> beginInstructionMethod: selector [
 ]
 
 { #category : #'as yet unclassified' }
-LowcodeCogitGenerator >> beginInstructionsMethod: selector numArgs: numArgs [
-	| varNames |
-	out nextPutAll: '!StackToRegisterMappingCogit methodsFor: ''inline primitive generators generated code'' !'; cr; cr.
-	out nextPutAll: selector, ' prim'; cr.
+LowcodeCogitGenerator >> beginInterpreterInstructionMethod: selector [
+	self resetAllocatedRegisterNames.
+	
+	out nextPutAll: '!StackInterpreter methodsFor: ''inline primitive generated code'' !'; cr; cr.
+	out nextPutAll: selector; cr.
 	out nextPutAll:
-'	"SistaV1: 248		11111000 	iiiiiiii		mjjjjjjj		Call Primitive #iiiiiiii + (jjjjjjj * 256) m=1 means inlined primitive, no hard return after execution.	 See EncoderForSistaV1''s class comment and StackInterpreter>>#inlinePrimitiveBytecode:"
+'	"Lowcode instruction generator"
 '.
 
-	varNames := Set new.
-	spec instructions do: [ :ins | ins stackArguments size == numArgs ifTrue: [
-			ins allArguments do: [ :arg | varNames add: arg name ]
-		]
-	].
-	self declareVariables: varNames.
-	self beginCaseOf.
+]
 
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> cTypeFor: type [
+	^ CTypeForType at: type ifAbsent: [ nil ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -233,6 +260,26 @@ LowcodeCogitGenerator >> cleanExtendedArgument: arg [
 { #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> cleanExtendedArguments: instruction [
 	instruction arguments do: [ :arg | self cleanExtendedArgument: arg]
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> declareInstructionInterpreterVariables: instruction [
+	| varNames cType |
+	varNames := Set new.
+	
+	"Always allocate arguments and stack arguments."
+	instruction allArguments do: [ :arg |
+		cType := self cTypeFor: arg type.
+		varNames add: arg name -> cType
+	].
+	(instruction hasSemanticFor: 'Smalltalk/StackInterpreter') ifTrue: [ self addSemanticLocals: 'Smalltalk/StackInterpreter' of: instruction to: varNames].
+
+	self declareVariables: (varNames collect: [:nt | nt key ]).
+	varNames do: [ :nt |
+		nt value ifNotNil: [
+			out tab; nextPutAll: '<var: #' , nt key , ' type: #''' , nt value , ''' >'; cr
+		]
+	]
 ]
 
 { #category : #'as yet unclassified' }
@@ -342,6 +389,11 @@ LowcodeCogitGenerator >> endInstructionsMethod: fallbackSelector [
 ]
 
 { #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> endInterpreterInstructionMethod [
+	out cr; nextPutAll: '! !'; cr; cr.
+]
+
+{ #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> fetchExtendedArgument: argument [
 	| type var |
 	type := argument type.
@@ -365,13 +417,39 @@ LowcodeCogitGenerator >> fetchExtendedArguments: instruction [
 	instruction arguments do: [ :arg | self fetchExtendedArgument: arg ]
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> fetchInterpreterExtendedArgument: argument [
+	| type var |
+	type := argument type.
+	type = 'literal' ifTrue: [ 
+		out tab; nextPutAll: argument name , ' := self literal: extA.'; cr.
+		^ self.
+	].
+
+	type = 'label' ifTrue: [ 
+		out tab; nextPutAll: argument name , ' := extB + localIP.'; cr.
+		^ self.
+	].
+
+	type = 'extend-a' ifTrue: [ var := 'extA' ].
+	type = 'extend-b' ifTrue: [ var := 'extB' ].
+	out tab; nextPutAll: argument name , ' := ' , var , '.'; cr
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> fetchInterpreterExtendedArguments: instruction [
+	instruction arguments do: [ :arg | self fetchInterpreterExtendedArgument: arg ]
+]
+
 { #category : #generation }
 LowcodeCogitGenerator >> generate [
 	out := destName asFileReference delete; writeStream.
 	[
 		self generateHeader;
 			generateInstructionMethods;
-			generateInstructionDispatchMethods.
+			generateInstructionDispatchMethods;
+			generateInstructionInterpreterMethods;
+			generateInstructionInterpreterDispatchMethods.
 	] ensure: [ out close ]
 
 ]
@@ -429,11 +507,42 @@ LowcodeCogitGenerator >> generateHeader [
 
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionDispatchMethods [
-	self generateInstructionsDispatch: #genNullaryInlinePrimitive args: 0 fallback: #genOptimizedNullaryInlinePrimitive: offset: 0;
-		generateInstructionsDispatch: #genUnaryInlinePrimitive args: 1 fallback: #genOptimizedUnaryInlinePrimitive: offset: -1000;
-		generateInstructionsDispatch: #genBinaryInlinePrimitive args: 2 fallback: #genOptimizedBinaryInlinePrimitive: offset: -2000;
-		generateInstructionsDispatch: #genTrinaryInlinePrimitive args: 3 fallback: #genOptimizedTrinaryInlinePrimitive: offset: -3000;
-		generateInstructionsDispatch: #genCuaternaryInlinePrimitive args: 4 fallback: #genOptimizedCuaternaryInlinePrimitive: offset: -4000
+	self generateInstructionsInterpreterDispatch: #genNullaryInlinePrimitive args: 0 fallback: #genOptimizedNullaryInlinePrimitive: offset: 0;
+		generateInstructionsInterpreterDispatch: #genUnaryInlinePrimitive args: 1 fallback: #genOptimizedUnaryInlinePrimitive: offset: -1000;
+		generateInstructionsInterpreterDispatch: #genBinaryInlinePrimitive args: 2 fallback: #genOptimizedBinaryInlinePrimitive: offset: -2000;
+		generateInstructionsInterpreterDispatch: #genTrinaryInlinePrimitive args: 3 fallback: #genOptimizedTrinaryInlinePrimitive: offset: -3000;
+		generateInstructionsInterpreterDispatch: #genCuaternaryInlinePrimitive args: 4 fallback: #genOptimizedCuaternaryInlinePrimitive: offset: -4000
+]
+
+{ #category : #generation }
+LowcodeCogitGenerator >> generateInstructionInterpreterDispatchMethods [
+	self generateInstructionsInterpreterDispatch: #nullaryInlinePrimitive args: 0 fallback: #optimizedNullaryInlinePrimitive: offset: 0;
+		generateInstructionsInterpreterDispatch: #unaryInlinePrimitive args: 1 fallback: #optimizedUnaryInlinePrimitive: offset: -1000;
+		generateInstructionsInterpreterDispatch: #binaryInlinePrimitive args: 2 fallback: #optimizedBinaryInlinePrimitive: offset: -2000;
+		generateInstructionsInterpreterDispatch: #trinaryInlinePrimitive args: 3 fallback: #optimizedTrinaryInlinePrimitive: offset: -3000;
+		generateInstructionsInterpreterDispatch: #cuaternaryInlinePrimitive args: 4 fallback: #optimizedCuaternaryInlinePrimitive: offset: -4000
+]
+
+{ #category : #generation }
+LowcodeCogitGenerator >> generateInstructionInterpreterMethod: instruction [
+	self beginInterpreterInstructionMethod: (self instructionInterpreterMethodSelector: instruction).
+	
+	self declareInstructionInterpreterVariables: instruction.
+		
+	self fetchInterpreterExtendedArguments: instruction.
+	self popInterpreterArguments: instruction.
+
+	out nextPutAll: (instruction semanticFor: 'Smalltalk/StackInterpreter' ifAbsent: [ 'self halt.' ]); cr.
+	
+	self pushInterpreterResults: instruction.
+	self cleanExtendedArguments: instruction.
+	
+	self endInterpreterInstructionMethod
+]
+
+{ #category : #generation }
+LowcodeCogitGenerator >> generateInstructionInterpreterMethods [
+	spec instructions do: [ :ins | self generateInstructionInterpreterMethod: ins]
 ]
 
 { #category : #generation }
@@ -494,6 +603,53 @@ LowcodeCogitGenerator >> generateInstructionsDispatch: dispatchSelector args: ar
 	self generateInstructionsDispatch: lastSelector args: argCount fallback: fallbackSelector instructions: instructions offset: offset.
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> generateInstructionsInterpreterDispatch: dispatchSelector args: argCount fallback: fallbackSelector instructions: instructions offset: offset [
+	out nextPutAll: '!StackInterpreter methodsFor: ''inline primitive dispatch generated code'' !'; cr; cr.
+	out nextPutAll: dispatchSelector, ' prim'; cr.
+	out nextPutAll:
+'	"Lowcode instruction interpreter dispatch"
+	prim
+		caseOf: {
+'.
+
+	instructions do: [ :ins |
+		ins stackArguments size == argCount ifTrue: [
+			out tab; tab; tab; nextPutAll: '[' , (ins opcode + offset) printString, ']'; tab; nextPutAll: '-> [ ^ self ' , (self instructionInterpreterMethodSelector: ins), ' ].'; cr
+		]
+	].
+
+	out tab; tab; nextPutAll: '}'; cr;
+		tab; tab; nextPutAll: 'otherwise: [ ^ self ' , fallbackSelector , ' prim ].'; cr. 
+	out tab; nextPutAll: ''; cr.
+	out cr; nextPutAll: '! !'; cr; cr.
+]
+
+{ #category : #generation }
+LowcodeCogitGenerator >> generateInstructionsInterpreterDispatch: dispatchSelector args: argCount fallback: fallbackSelector offset: offset [
+	|splitCount instructions selectorCount lastSelector nextSelector|
+	splitCount := 60.
+	selectorCount := 1.
+	lastSelector := (dispatchSelector , ':') asSymbol.
+	instructions := OrderedCollection new.
+	
+	spec instructions do: [ :ins |
+		ins stackArguments size == argCount ifTrue: [
+			instructions add: ins.
+			instructions size == splitCount ifTrue: [
+				selectorCount := selectorCount + 1.
+				nextSelector := (dispatchSelector , selectorCount printString , ':') asSymbol.
+				self generateInstructionsInterpreterDispatch: lastSelector args: argCount fallback: nextSelector instructions: instructions offset: offset.
+				
+				instructions removeAll.
+				lastSelector := nextSelector.
+			].
+		]
+	].
+
+	self generateInstructionsInterpreterDispatch: lastSelector args: argCount fallback: fallbackSelector instructions: instructions offset: offset.
+]
+
 { #category : #generation }
 LowcodeCogitGenerator >> generateNullaryInstructionMethod: instruction [
 	self beginInstructionMethod: (self instructionMethodSelector: instruction).
@@ -535,10 +691,27 @@ LowcodeCogitGenerator >> generateNullaryInstructionMethod: instruction [
 ]
 
 { #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> instructionInterpreterMethodSelector: instruction [
+	| mnemonic |
+	mnemonic := instruction mnemonic.
+	^ ('lowcodePrimitive' , mnemonic first asString asUppercase , mnemonic allButFirst) asSymbol
+]
+
+{ #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> instructionMethodSelector: instruction [
 	| mnemonic |
 	mnemonic := instruction mnemonic.
 	^ ('genLowcode' , mnemonic first asString asUppercase , mnemonic allButFirst) asSymbol
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> interpreterPopMethodFor: type [
+	^ PopMethodForType at: type
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> interpreterPushMethodFor: type [
+	^ PushMethodForType at: type
 ]
 
 { #category : #'as yet unclassified' }
@@ -556,6 +729,24 @@ LowcodeCogitGenerator >> popArguments: instruction pairAllocation: pairAllocatio
 			out tab; nextPutAll: 'self ssTop popToReg: ' , arg name, '.'; cr.
 			out tab; nextPutAll: 'self ssPop: 1.'; cr.
 		]
+	]
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> popInterpreterArguments: instruction [
+	| popMethod |
+	instruction stackArguments reverseDo: [ :arg |
+		popMethod := self interpreterPopMethodFor: arg type.
+		out tab; nextPutAll: arg name , ' := self ' , popMethod , '.'; cr.
+	]
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> pushInterpreterResults: instruction [
+	| pushMethod |
+	instruction stackResults do: [ :arg |
+		pushMethod := self interpreterPushMethodFor: arg type.
+		out tab; nextPutAll: ' self ' , pushMethod , ' ' , arg name , '.'; cr.
 	]
 ]
 

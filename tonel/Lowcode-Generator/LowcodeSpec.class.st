@@ -88,6 +88,16 @@ LowcodeSpec class >> todoList [
 	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/Cog') not and: [(ins hasSemanticFor: 'Smalltalk/Cog/32') not]]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
 ]
 
+{ #category : #scripts }
+LowcodeSpec class >> todoListInterpreter [
+	"
+	self todoListInterpreter
+	"
+	|spec|
+	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
+	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/StackInterpreter') not]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
+]
+
 { #category : #adding }
 LowcodeSpec >> addInstruction: anInstruction [
 	instructions add: anInstruction

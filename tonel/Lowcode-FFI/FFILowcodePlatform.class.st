@@ -16,6 +16,7 @@ FFILowcodePlatform >> emitLowcode: gen callout: calloutSpec [
 FFILowcodePlatform >> emitLowcode: gen callout: calloutSpec body: aBlock [
 	|functionSpec returnType |
 	
+	gen emitSessionCheck.
 	functionSpec := calloutSpec functionSpec.
 	returnType := functionSpec returnType.
 

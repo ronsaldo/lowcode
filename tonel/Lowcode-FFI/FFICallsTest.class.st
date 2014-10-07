@@ -19,6 +19,11 @@ FFICallsTest >> cLibraryName [
 ]
 
 { #category : #'callout functions' }
+FFICallsTest >> free: pointer [
+	^ self ffiCall: #(void free(void* pointer)) module: 0
+]
+
+{ #category : #'callout functions' }
 FFICallsTest >> isDigit: ch [
 	^ self ffiCall: #(bool isdigit (char ch) ) module: 0
 ]
@@ -26,6 +31,11 @@ FFICallsTest >> isDigit: ch [
 { #category : #'as yet unclassified' }
 FFICallsTest >> isDigitAsciiCode: ch [
 	^ self ffiCall: #(int isdigit (int32 ch) ) module: 0
+]
+
+{ #category : #'callout functions' }
+FFICallsTest >> malloc: size [
+	^ self ffiCall: #(void* malloc(size_t size)) module: 0
 ]
 
 { #category : #'callout functions' }

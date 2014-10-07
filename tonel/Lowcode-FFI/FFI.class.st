@@ -48,7 +48,7 @@ FFI class >> loadModule: aModuleNameOrHandle [
 	self checkSession.
 	^ LoadedModulesDictionary at: aModuleNameOrHandle ifAbsent: [
 		handle := self primitiveDLOpen: FFIExternalAddress path: (self slowStringEncode: aModuleNameOrHandle).
-		LoadedModulesDictionary at: aModuleNameOrHandle put: handle.
+		handle ifNotNil: [ LoadedModulesDictionary at: aModuleNameOrHandle put: handle ].
 		^ handle
 	]
 ]

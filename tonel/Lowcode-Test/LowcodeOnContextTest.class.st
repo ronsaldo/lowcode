@@ -153,7 +153,8 @@ LowcodeOnContextTest >> testBranchTrue32 [
 
 { #category : #tests }
 LowcodeOnContextTest >> testIsDigit [
-	self assert: (self isDigit: $3 charCode) ~= 0
+	self assert: (self isDigit: $3 charCode) ~= 0.
+	self assert: (self isDigit: $a charCode) equals: 0
 ]
 
 { #category : #tests }

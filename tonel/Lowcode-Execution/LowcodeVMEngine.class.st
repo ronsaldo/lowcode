@@ -4,23 +4,23 @@ Class {
 	#category : #'Lowcode-Execution'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 LowcodeVMEngine class >> isSuitable [
 	^ true
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 LowcodeVMEngine class >> isSupported [
 	^ true
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #interpret }
 LowcodeVMEngine >> emit: aBlock on: aContext [
 	self emit: aBlock onMethod: aContext method.
 	^ Lowcode retryContext: aContext
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #interpret }
 LowcodeVMEngine >> emit: aBlock onMethod: aCompiledMethod [
 	| assembler |
 	assembler := LowcodeAssembler new.
@@ -34,7 +34,7 @@ LowcodeVMEngine >> emit: aBlock onMethod: aCompiledMethod [
 	self install: assembler inMethod: aCompiledMethod.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #interpret }
 LowcodeVMEngine >> install: assembler inMethod: aCompiledMethod [
 	| newMethod class selector |
 	newMethod := assembler emitCompiledMethodWith: aCompiledMethod trailer.

@@ -38,7 +38,6 @@ Lowcode class >> methodSessionChanged: methodContext [
 	selector := method selector.
 	class := method methodClass.
 	class methodDict at: selector put: originalMethod.
-	
 
 	"Retry the context"
 	^ self retryContext: methodContext
@@ -59,7 +58,7 @@ Lowcode class >> retryContext: aContext [
 	args := Array new: method numArgs.
 	1 to: args size do: [ :i |  args at: i put: (aContext tempAt: i) ].
 
-	thisContext terminateTo: aContext sender. 
+	"thisContext terminateTo: aContext sender. "
 	^ aContext receiver perform: method selector withArguments: args.
 
 ]

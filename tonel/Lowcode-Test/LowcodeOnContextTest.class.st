@@ -2,7 +2,8 @@ Class {
 	#name : #LowcodeOnContextTest,
 	#superclass : #TestCase,
 	#instVars : [
-		'isdigitFunction'
+		'isdigitFunction',
+		'strlen'
 	],
 	#category : #'Lowcode-Test'
 }
@@ -17,6 +18,28 @@ LowcodeOnContextTest >> add: a with: b [
 			add32;
 			int32ToOop;
 			returnTop
+	]
+]
+
+{ #category : #'lowcode methods' }
+LowcodeOnContextTest >> byteSizeOf: object [
+	^ Lowcode here: [ :gen |
+		gen pushTemp: 0;
+			byteSizeOf;
+			uint32ToOop;
+			returnTop
+	]
+]
+
+{ #category : #'lowcode methods' }
+LowcodeOnContextTest >> failWithLocal [
+	| local |
+	^ Lowcode here: [ :gen |
+		local := gen allocateLocalInt32.
+		gen pushConstantUInt32: 0;
+			storeLocalInt32: local;
+			fail;
+			returnReceiver
 	]
 ]
 
@@ -136,7 +159,85 @@ LowcodeOnContextTest >> returnZero32 [
 
 { #category : #running }
 LowcodeOnContextTest >> setUp [
-	isdigitFunction := FFI loadSymbol: 'isdigit' fromModule: 0
+	isdigitFunction := FFI loadSymbol: 'isdigit' fromModule: 0.
+	strlen := FFI loadSymbol: 'strlen' fromModule: 0.
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeOnContextTest >> strlen: arg [
+	^ Lowcode here: [ :gen |
+		| doneConversion failedConversion sizeTemp sourcePointerTemp stringPointerTemp |
+		doneConversion := gen makeLabel: 'doneConversion'.
+		failedConversion := gen makeLabel: 'failedConversion'.
+		sizeTemp := gen allocateLocalInt32. 
+		sourcePointerTemp := gen allocateLocalPointer.
+		stringPointerTemp := gen allocateLocalPointer.
+		
+		"Check for ByteString"
+		gen argumentCount: 1;	
+			emitSessionCheck;
+			
+			pushMyInstanceVariable: #strlen;
+			oopToPointer;
+			
+			pushTemp: 0;
+			duplicateStackTop;
+			isBytes;
+			branchFalse32: failedConversion;
+			
+			"Get the source pointer"
+			duplicateStackTop;	
+				
+			firstIndexableFieldPointer;
+			storeLocalPointer: sourcePointerTemp;
+
+		"Get the string size"
+		byteSizeOf;
+	
+		"Store the string size."
+		duplicateInt32;
+		storeLocalInt32: sizeTemp;
+
+		"Allocate the C-string"
+		pushOne32;
+		add32;
+		malloc32;
+		duplicatePointer;
+		storeLocalPointer: stringPointerTemp;
+				
+		"Copy the string"
+		loadLocalPointer: sourcePointerTemp;
+		loadLocalInt32: sizeTemp;
+		memcpy32;
+		
+				"Put the trailing \0"
+		loadLocalPointer: stringPointerTemp;
+		loadLocalInt32: sizeTemp;
+		pointerAddOffset32;
+		pushZero32;
+		storeInt8ToMemory;
+		
+				"Return the pointer"
+		loadLocalPointer: stringPointerTemp;
+		jump: doneConversion;
+		
+			putLabel: failedConversion;
+			returnReceiver;
+			
+			putLabel: doneConversion;
+			
+			beginCall: 16;
+			callArgumentPointer;
+			performCallIndirectInt32;
+			endCall;
+		
+			loadLocalPointer: stringPointerTemp;
+			free;
+					
+			uint32ToOop;
+			returnTop
+			
+	]
 ]
 
 { #category : #tests }
@@ -149,6 +250,13 @@ LowcodeOnContextTest >> testBranchTrue32 [
 	self assert: (self returnBranchTrue32: 0) equals: 0.
 	self assert: (self returnBranchTrue32: 1) equals: 1.
 	self assert: (self returnBranchTrue32: 2) equals: 1.
+]
+
+{ #category : #tests }
+LowcodeOnContextTest >> testByteSizeOf [
+	self assert: (self byteSizeOf: '1') equals: 1.
+	self assert: (self byteSizeOf: '') equals: 0.
+	self assert: (self byteSizeOf: 'aa') equals: 2.
 ]
 
 { #category : #tests }
@@ -191,4 +299,9 @@ LowcodeOnContextTest >> testReturnUseLocalPointer [
 { #category : #tests }
 LowcodeOnContextTest >> testReturnZero32 [
 	self assert: self returnZero32 = 0
+]
+
+{ #category : #tests }
+LowcodeOnContextTest >> testStrLen [
+	self assert: (self strlen: 'ab') equals: 2
 ]

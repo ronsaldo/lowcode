@@ -56,7 +56,7 @@ FFICallsTest >> str: largeString str: smallerString [
 
 { #category : #'callout functions' }
 FFICallsTest >> strlen: str [
-	^ self ffiCall: #(size_t strlen(String str)) module: 0
+	^  self ffiCall: #(size_t strlen(String str)) module: 0
 ]
 
 { #category : #'callout functions' }
@@ -99,6 +99,7 @@ FFICallsTest >> testMemcpy [
 
 { #category : #'callout functions' }
 FFICallsTest >> testStlen [
+	self assert: (self strlen: 'a') equals: 1.
 	self assert: (self strlen: '') equals: 0.
 	self assert: (self strlen: 'abc') equals: 3.
 	self assert: (self strlen: 'abcasas') equals: 7

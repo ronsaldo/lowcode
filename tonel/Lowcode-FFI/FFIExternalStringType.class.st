@@ -40,7 +40,7 @@ FFIExternalStringType >> lowcode: gen coerceArgumentValue: calloutSpec [
 			pushNullPointer;
 			jump: doneConversion.
 	].
-	
+
 		"Check for ByteString"
 	gen putLabel: notNil;
 		duplicateStackTop;
@@ -49,23 +49,24 @@ FFIExternalStringType >> lowcode: gen coerceArgumentValue: calloutSpec [
 
 		"Get the source pointer"
 		duplicateStackTop;
+		
 		firstIndexableFieldPointer;
 		storeLocalPointer: sourcePointerTemp;
-		
+
 		"Get the string size"
 		byteSizeOf;
 	
 		"Store the string size."
 		duplicateInt32;
 		storeLocalInt32: sizeTemp;
-		
+
 		"Allocate the C-string"
 		pushOne32;
 		add32;
 		malloc32;
 		duplicatePointer;
 		storeLocalPointer: stringPointerTemp;
-		
+				
 		"Copy the string"
 		loadLocalPointer: sourcePointerTemp;
 		loadLocalInt32: sizeTemp;
@@ -84,6 +85,7 @@ FFIExternalStringType >> lowcode: gen coerceArgumentValue: calloutSpec [
 		
 		putLabel: failedConversion;
 		fail;
+		returnNil;
 		putLabel: doneConversion
 ]
 

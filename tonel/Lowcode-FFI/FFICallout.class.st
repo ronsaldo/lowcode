@@ -180,7 +180,7 @@ FFICallout >> argument: argumentName type: typeName pointerArity: pointerArity [
 { #category : #'callout generation' }
 FFICallout >> callFunction: functionSpecString module: aModuleNameOrHandle andRetry: context [
 	self generateFunction: functionSpecString module: aModuleNameOrHandle.
-	Lowcode retryContext: context
+	^ Lowcode retryContext: context
 ]
 
 { #category : #accessing }
@@ -230,7 +230,7 @@ FFICallout >> functionSpec [
 { #category : #'callout generation' }
 FFICallout >> genFunction: functionSpecString emit: aBlock andCall: context [
 	self generateFunction: functionSpecString emit: aBlock.
-	Lowcode retryContext: context
+	^ Lowcode retryContext: context
 ]
 
 { #category : #'callout generation' }
@@ -249,7 +249,7 @@ FFICallout >> generateFunction: functionSpecString module: aModuleNameOrHandle [
 	functionHandle := requestor ffiGetSymbolAddress: functionSpec functionName module: aModuleNameOrHandle.
 	functionHandle ifNil: [ self error: 'Failed to find function ''' , functionSpec functionName , ''' in module ' , aModuleNameOrHandle printString  ].
 
-	FFIPlatform current generateCallout: self
+	FFIPlatform current generateCallout: self.
 ]
 
 { #category : #initialization }

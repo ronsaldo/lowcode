@@ -395,6 +395,7 @@ LowcodeAssembler >> emitSessionCheck [
 	self checkSessionIdentifier: Lowcode uniqueSessionIdentifier;
 		branchTrue32: rest;
 		failWithCode: LowcodeConstants errorSessionChanged;
+		returnNil;
 		putLabel: rest
 		
 ]

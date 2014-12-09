@@ -85,6 +85,11 @@ LowcodeSpecArgument >> isLiteral [
 ]
 
 { #category : #accessing }
+LowcodeSpecArgument >> isOop [
+	^ type = 'oop'
+]
+
+{ #category : #accessing }
 LowcodeSpecArgument >> isRegister [
 	^ type endsWith: '-register'
 ]

@@ -42,9 +42,10 @@ LowcodeSpecSistaInstruction >> asXMLElement [
 	stackResults do: [ :arg | stackResultsElement addNode: arg asXMLElement].
 
 	semantics keysAndValuesDo: [ :k :v |
-		element addNode: ((XMLElement name: 'semantic') 
-			attributeAt: 'language' put: k;
-			contentString: v)
+		| contentNode |
+		contentNode := v asXMLElement.
+		contentNode attributeAt: 'language' put: k.
+		element addNode: contentNode
 	].
 	
 	^ element

@@ -8,6 +8,15 @@ Class {
 	#category : #'Lowcode-Generator'
 }
 
+{ #category : #'as yet unclassified' }
+LowcodeSpecInstructionSemantic >> asXMLElement [
+	| node |
+	node := XMLElement name: 'semantic'.
+	node  contentString: self code.
+	self locals ifNotEmpty: [ node attributeAt: 'locals' put: self locals ].
+	^ node
+]
+
 { #category : #accessing }
 LowcodeSpecInstructionSemantic >> code [
 	

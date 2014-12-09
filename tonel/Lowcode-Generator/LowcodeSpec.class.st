@@ -31,15 +31,15 @@ LowcodeSpec class >> generateOpcodes [
 |spec sortedInstructions currentArity currentResultArity arityCount arity resultArity arityStart |
 spec := LowcodeSpecLoader fromFileNamed: 'old-lowcode.xml'.
 sortedInstructions := spec instructions sort: [ :a :b | 
-	a stackArguments size == b stackArguments size ifTrue: [ 
-		a stackResults size == b stackResults size ifTrue: [ 
+	a oopStackArguments size == b oopStackArguments size ifTrue: [ 
+		a oopStackResults size == b oopStackResults size ifTrue: [ 
 			a mnemonic < b mnemonic
 		] ifFalse: [ 
-			a stackResults size < b stackResults size
+			a oopStackResults size < b oopStackResults size
 		]
 	]
 	ifFalse: [
-		a stackArguments size < b stackArguments size
+		a oopStackArguments size < b oopStackArguments size
 	]
 ].
 
@@ -48,8 +48,8 @@ currentResultArity := -1.
 arityCount := 0.
 arityStart := #(#(0 0 0) (0 7 0) (0 69 0) (0 5 0) (0 0 0) (0 0 0)).
 sortedInstructions do: [:ins |
-	arity := ins stackArguments size.
-	resultArity := ins stackResults size.
+	arity := ins oopStackArguments size.
+	resultArity := ins oopStackResults size.
 	(arity ~= currentArity or: [resultArity ~= currentResultArity]) ifTrue: [
 		currentArity := arity.
 		currentResultArity := resultArity.

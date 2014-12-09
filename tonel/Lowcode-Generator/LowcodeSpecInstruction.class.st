@@ -76,9 +76,10 @@ LowcodeSpecInstruction >> asXMLElement [
 	stackResults do: [ :arg | stackResultsElement addNode: arg asXMLElement].
 	
 	semantics keysAndValuesDo: [ :k :v |
-		element addNode: ((XMLElement name: 'semantic') 
-			attributeAt: 'language' put: k;
-			contentString: v)
+		| contentNode |
+		contentNode := v asXMLElement.
+		contentNode attributeAt: 'language' put: k.
+		element addNode: contentNode
 	].
 	
 	^ element
@@ -156,6 +157,16 @@ LowcodeSpecInstruction >> name [
 LowcodeSpecInstruction >> name: anObject [
 	
 	name := anObject
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> oopStackArguments [
+	^ stackArguments select: #isOop
+]
+
+{ #category : #accessing }
+LowcodeSpecInstruction >> oopStackResults [
+	^ stackResults select: #isOop
 ]
 
 { #category : #accessing }

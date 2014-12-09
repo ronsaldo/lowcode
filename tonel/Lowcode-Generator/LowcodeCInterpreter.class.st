@@ -358,7 +358,7 @@ LowcodeCInterpreter >> emitSistaInstruction: instruction [
 	
 	out nextPutAll:
 '			{'; lf.
-			out nextPutAll: semantic. 
+			out nextPutAll: semantic code. 
 			out lf; nextPutAll: 
 '			}
 				break;'; lf

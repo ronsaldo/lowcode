@@ -59,7 +59,7 @@ sortedInstructions do: [:ins |
 		arityCount := arityCount + 1
 	].
 
-	ins opcode: (currentArity *1000) + (resultArity*300)+ arityCount.
+	ins opcode: (currentArity *1000) + (resultArity*400)+ arityCount.
 ].
 
 (FileSystem workingDirectory / 'lowcode-new.xml') writeStreamDo: [ :out |

@@ -600,7 +600,7 @@ LowcodeAssembler >> initialize [
 	streamElements := OrderedCollection new.
 	literalTable := OrderedCollection new.
 	stackFrameAllocated := 0.
-	numberOfTemporals := 0.
+	numberOfTemporals := 2.
 	numberOfArguments := 0.
 	self localFrameSize: 0.
 ]

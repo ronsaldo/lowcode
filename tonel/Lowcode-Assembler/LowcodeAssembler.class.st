@@ -184,12 +184,12 @@ LowcodeAssembler >> beginCall: a1Nalignment [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> boolean32ToOop [
-	self addInstruction: 300
+	self addInstruction: 400
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> boolean64ToOop [
-	self addInstruction: 301
+	self addInstruction: 401
 ]
 
 { #category : #'lowcode instructions' }
@@ -497,7 +497,7 @@ LowcodeAssembler >> float32ToInt64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> float32ToOop [
-	self addInstruction: 302
+	self addInstruction: 402
 ]
 
 { #category : #'lowcode instructions' }
@@ -577,7 +577,7 @@ LowcodeAssembler >> float64ToInt64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> float64ToOop [
-	self addInstruction: 303
+	self addInstruction: 403
 ]
 
 { #category : #'lowcode instructions' }
@@ -607,17 +607,17 @@ LowcodeAssembler >> initialize [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> instantiateIndexable32Oop [
-	self addInstruction: 1307
+	self addInstruction: 1407
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> instantiateIndexableOop: a1NindexableSize [
-	self addInstruction: 1308  extendA: a1NindexableSize
+	self addInstruction: 1408  extendA: a1NindexableSize
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> instantiateOop [
-	self addInstruction: 1309
+	self addInstruction: 1409
 ]
 
 { #category : #'lowcode instructions' }
@@ -662,7 +662,7 @@ LowcodeAssembler >> int32ToFloat64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> int32ToOop [
-	self addInstruction: 304
+	self addInstruction: 404
 ]
 
 { #category : #'lowcode instructions' }
@@ -712,7 +712,7 @@ LowcodeAssembler >> int64ToFloat64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> int64ToOop [
-	self addInstruction: 305
+	self addInstruction: 405
 ]
 
 { #category : #'lowcode instructions' }
@@ -862,12 +862,12 @@ LowcodeAssembler >> loadLocalUInt8: a1NbaseOffset [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> loadObjectAt [
-	self addInstruction: 1310
+	self addInstruction: 1410
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> loadObjectField: a1NfieldIndex [
-	self addInstruction: 1311  extendA: a1NfieldIndex
+	self addInstruction: 1411  extendA: a1NfieldIndex
 ]
 
 { #category : #'lowcode instructions' }
@@ -1197,12 +1197,12 @@ LowcodeAssembler >> pointerToInt64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> pointerToOop: a1NpointerClassLiteral [
-	self addInstruction: 306  extendA: a1NpointerClassLiteral
+	self addInstruction: 406  extendA: a1NpointerClassLiteral
 ]
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> pointerToOopReinterprer [
-	self addInstruction: 307
+	self addInstruction: 407
 ]
 
 { #category : #'sista extended bytecode instructions' }
@@ -1486,7 +1486,7 @@ LowcodeAssembler >> signExtend64From8 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> smallInt32ToOop [
-	self addInstruction: 308
+	self addInstruction: 408
 ]
 
 { #category : #'instruction encoding' }
@@ -1652,7 +1652,7 @@ LowcodeAssembler >> uint32ToFloat64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> uint32ToOop [
-	self addInstruction: 309
+	self addInstruction: 409
 ]
 
 { #category : #'lowcode instructions' }
@@ -1687,7 +1687,7 @@ LowcodeAssembler >> uint64ToFloat64 [
 
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> uint64ToOop [
-	self addInstruction: 310
+	self addInstruction: 410
 ]
 
 { #category : #'lowcode instructions' }

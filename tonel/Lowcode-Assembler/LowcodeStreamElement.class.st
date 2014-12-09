@@ -244,17 +244,17 @@ LowcodeStreamElement class >> initMnemonicTables [
 			227 zeroExtend64From16
 			228 zeroExtend64From32
 			229 zeroExtend64From8
-			300 boolean32ToOop
-			301 boolean64ToOop
-			302 float32ToOop
-			303 float64ToOop
-			304 int32ToOop
-			305 int64ToOop
-			306 pointerToOop
-			307 pointerToOopReinterprer
-			308 smallInt32ToOop
-			309 uint32ToOop
-			310 uint64ToOop
+			400 boolean32ToOop
+			401 boolean64ToOop
+			402 float32ToOop
+			403 float64ToOop
+			404 int32ToOop
+			405 int64ToOop
+			406 pointerToOop
+			407 pointerToOopReinterprer
+			408 smallInt32ToOop
+			409 uint32ToOop
+			410 uint64ToOop
 			1000 byteSizeOf
 			1001 firstFieldPointer
 			1002 firstIndexableFieldPointer
@@ -279,11 +279,11 @@ LowcodeStreamElement class >> initMnemonicTables [
 			1021 oopToUInt64
 			1022 pin
 			1023 unpin
-			1307 instantiateIndexable32Oop
-			1308 instantiateIndexableOop
-			1309 instantiateOop
-			1310 loadObjectAt
-			1311 loadObjectField
+			1407 instantiateIndexable32Oop
+			1408 instantiateIndexableOop
+			1409 instantiateOop
+			1410 loadObjectAt
+			1411 loadObjectField
 			2000 oopEqual
 			2001 oopNotEqual
 			2002 storeObjectField

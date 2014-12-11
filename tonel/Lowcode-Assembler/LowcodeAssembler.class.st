@@ -415,6 +415,12 @@ LowcodeAssembler >> fail [
 	self addInstruction: 34
 ]
 
+{ #category : #utilities }
+LowcodeAssembler >> failAndExit [
+	self fail;
+		returnNil
+]
+
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> failWithCode: a1NerrorCode [
 	self addInstruction: 35  extendA: a1NerrorCode

@@ -415,12 +415,6 @@ LowcodeAssembler >> fail [
 	self addInstruction: 34
 ]
 
-{ #category : #utilities }
-LowcodeAssembler >> failAndExit [
-	self fail;
-		returnNil
-]
-
 { #category : #'lowcode instructions' }
 LowcodeAssembler >> failWithCode: a1NerrorCode [
 	self addInstruction: 35  extendA: a1NerrorCode
@@ -606,7 +600,7 @@ LowcodeAssembler >> initialize [
 	streamElements := OrderedCollection new.
 	literalTable := OrderedCollection new.
 	stackFrameAllocated := 0.
-	numberOfTemporals := 2.
+	numberOfTemporals := 3.
 	numberOfArguments := 0.
 	self localFrameSize: 0.
 ]

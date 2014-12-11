@@ -58,7 +58,7 @@ Lowcode class >> retryContext: aContext [
 	args := Array new: method numArgs.
 	1 to: args size do: [ :i |  args at: i put: (aContext tempAt: i) ].
 
-	"thisContext terminateTo: aContext sender. "
+	thisContext terminateTo: aContext sender.
 	^ aContext receiver perform: method selector withArguments: args.
 
 ]

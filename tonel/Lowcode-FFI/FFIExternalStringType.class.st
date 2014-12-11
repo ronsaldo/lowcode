@@ -63,7 +63,7 @@ FFIExternalStringType >> lowcode: gen coerceArgumentValue: calloutSpec [
 		"Allocate the C-string"
 		pushOne32;
 		add32;
-		malloc32;
+		alloca32;
 		duplicatePointer;
 		storeLocalPointer: stringPointerTemp;
 				

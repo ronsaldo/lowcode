@@ -84,8 +84,7 @@ FFIExternalStringType >> lowcode: gen coerceArgumentValue: calloutSpec [
 		jump: doneConversion;
 		
 		putLabel: failedConversion;
-		fail;
-		returnNil;
+		failAndExit;
 		putLabel: doneConversion
 ]
 

@@ -44,6 +44,21 @@ FFICallsTest >> memcpy: dest src: src n: n [
 ]
 
 { #category : #'callout functions' }
+FFICallsTest >> memcpyInternal: dest src: src n: n [
+	^ Lowcode here: [ :gen |
+		gen argumentCount: 3.
+		gen pushTemp: 0;
+			firstIndexableFieldPointer;
+			pushTemp: 1;
+			firstIndexableFieldPointer;
+			pushTemp: 2;
+			oopToUInt32;
+			memcpy32;
+			returnReceiver
+	]
+]
+
+{ #category : #'callout functions' }
 FFICallsTest >> nbStr: largeString str: smallerString [
 	<primitive: #primitiveNativeCall module: #NativeBoostPlugin>
 	^ self nbCall: #(String strstr(String largeString, String smallerString)) module: self cLibraryName
@@ -68,6 +83,28 @@ FFICallsTest >> strlenArray: str [
 FFICallsTest >> testAbs [
 	self assert: (self abs: 3) equals: 3.
 	self assert: (self abs: -3) equals: 3
+]
+
+{ #category : #'callout functions' }
+FFICallsTest >> testFFIMemcpy [
+	| dest src |
+	src := #[1 2 3 4 5].
+	dest := ByteArray new: 6.
+	dest at: 6 put: 9.
+	dest at: 1 put: 13.
+	FFI memCopy: src to: dest size: 5.
+	self assert: dest equals: #[1 2 3 4 5 9].
+]
+
+{ #category : #'callout functions' }
+FFICallsTest >> testInternalMemcpy [
+	| dest src |
+	src := #[1 2 3 4 5].
+	dest := ByteArray new: 6.
+	dest at: 6 put: 9.
+	dest at: 1 put: 13.
+	self memcpyInternal: dest src: src n: 5.
+	self assert: dest equals: #[1 2 3 4 5 9].
 ]
 
 { #category : #'as yet unclassified' }

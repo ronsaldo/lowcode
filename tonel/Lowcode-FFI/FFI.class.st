@@ -73,7 +73,7 @@ FFI class >> memCopy: source to: dest size: size [
 	^ self ffiCallout
 		function: #( void (void* dest, void* source, size_t size) ) emit: [ :gen :cs |
 			self pointerSize = 4 ifTrue: [ gen memcpy32 ]
-				ifFalse: [ gen memcpy64 ]
+				ifFalse: [ gen memcpy64 ].
 		]
 ]
 
@@ -113,6 +113,7 @@ FFI class >> slowStringEncode: string [
 FFI class >> uniqueSessionIdentifier [
 	^ Lowcode here: [ :gen |
 		gen pushSessionIdentifier;
-			returnUInt32
+			uint32ToOop;
+			returnTop
 	]
 ]

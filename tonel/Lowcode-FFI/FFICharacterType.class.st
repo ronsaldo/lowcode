@@ -48,7 +48,7 @@ FFICharacterType >> lowcode: gen coerceArgumentValue: calloutSpec [
 		
 		"Failure"
 		putLabel: notCharacter;
-		fail;
+		failAndExit;
 		putLabel: done
 ]
 

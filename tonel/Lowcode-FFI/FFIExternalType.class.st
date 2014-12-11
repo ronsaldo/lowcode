@@ -130,7 +130,7 @@ FFIExternalType >> lowcode: gen coerceArgumentPointer: calloutSpec [
 	].
 
 	gen putLabel: failed;
-		fail;
+		failAndExit;
 		putLabel: done	
 
 ]
@@ -189,7 +189,7 @@ FFIExternalType >> lowcode: gen convertPointerToOop: calloutSpec [
 		].
 
 	gen putLabel: failedLabel;
-		fail;
+		failAndExit;
 		putLabel: done
 ]
 
@@ -298,7 +298,7 @@ FFIExternalType >> lowcode: gen returnPointer: calloutSpec [
 		].
 
 	gen putLabel: failedLabel;
-		fail
+		failAndExit
 ]
 
 { #category : #'lowcode marshalling' }
@@ -316,7 +316,7 @@ FFIExternalType >> lowcode: gen verifyClassOfIs: aClass spec: calloutSpec [
 		pushLiteral: (gen addLiteral: aClass);
 		oopEqual;
 		branchTrue32: classOk;
-		fail;
+		failAndExit;
 		putLabel: classOk
 ]
 

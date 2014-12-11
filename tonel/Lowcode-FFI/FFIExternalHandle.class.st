@@ -39,7 +39,7 @@ FFIExternalHandle >> value [
 	^ Lowcode here: [ :gen |
 		gen emitSessionCheck;
 			pushReceiver;
-			firstFieldPointer;
+			firstIndexableFieldPointer;
 			loadPointerFromMemory.
 			
 		self class instanceSize = 4 ifTrue: [
@@ -59,7 +59,7 @@ FFIExternalHandle >> value: address [
 	^ Lowcode here: [ :gen |
 		gen emitSessionCheck;
 			pushReceiver;
-			firstFieldPointer;
+			firstIndexableFieldPointer;
 			pushTemp: 0.
 			self class instanceSize = 4 ifTrue: [
 				gen oopToUInt32;

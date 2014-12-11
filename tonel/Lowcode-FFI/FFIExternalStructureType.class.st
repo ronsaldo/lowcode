@@ -104,7 +104,7 @@ FFIExternalStructureType >> lowcode: gen fetchDataPointer: calloutSpec [
 		sendSpecialMessageClass;
 		pushLiteral: (gen addLiteral: objectClass);
 		oopEqual;
-		branchFalse32: fail;
+		branchFalse32: failClassCheck;
 		loadObjectField: self dataInstVarIndex;
 		
 		"Data could be FFIExternalAddress"
@@ -125,11 +125,9 @@ FFIExternalStructureType >> lowcode: gen fetchDataPointer: calloutSpec [
 		jump: done;
 
 		putLabel: failClassCheck;
-		fail;
-		returnNil;		
+		failAndExit;
 		putLabel: fail;
-		fail;
-		returnNil;
+		failAndExit;
 		putLabel: done
 ]
 

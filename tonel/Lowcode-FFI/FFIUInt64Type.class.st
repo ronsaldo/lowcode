@@ -9,6 +9,11 @@ FFIUInt64Type >> accept: visitor [
 	^ visitor visitUInt64Type: self
 ]
 
+{ #category : #'as yet unclassified' }
+FFIUInt64Type >> callbackValueReturnType [
+	^ CallbackReturnTypeWord64
+]
+
 { #category : #'lowcode marshalling' }
 FFIUInt64Type >> lowcode: gen callArgumentValue: calloutSpec [
 	gen callArgumentInt64

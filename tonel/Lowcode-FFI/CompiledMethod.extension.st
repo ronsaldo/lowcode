@@ -7,7 +7,12 @@ CompiledMethod >> ffiArgumentNames [
 	compile time. Useful, when there is no source code available (for some reason)"
 	
 	^ self propertyValueAt: #ffiArgumentNames ifAbsent: [ 
-		self  propertyValueAt: #ffibArgumentNames put: self argumentNames
+		self  propertyValueAt: #ffiArgumentNames put: self argumentNames
 	 ]
 
+]
+
+{ #category : #'*Lowcode-FFI' }
+CompiledMethod >> ffiCallback [
+	^ FFICallbackThunkTable current thunkFor: self
 ]

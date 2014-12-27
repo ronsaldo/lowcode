@@ -4,6 +4,11 @@ Class {
 	#category : #'Lowcode-FFI-Types'
 }
 
+{ #category : #'as yet unclassified' }
+FFIVoidType >> callbackValueReturnType [
+	^ CallbackReturnTypeWord
+]
+
 { #category : #'lowcode marshalling' }
 FFIVoidType >> lowcode: gen performCallWithValueResult: calloutSpec [
 	gen performCallInt32: calloutSpec functionAddress

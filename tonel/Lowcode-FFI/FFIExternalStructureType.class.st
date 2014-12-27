@@ -18,6 +18,11 @@ FFIExternalStructureType >> accept: aVisitor [
 	^ aVisitor visitExternalStructureType: self
 ]
 
+{ #category : #'as yet unclassified' }
+FFIExternalStructureType >> callbackValueReturnType [
+	^ CallbackReturnTypeStruct
+]
+
 { #category : #'lowcode marshalling' }
 FFIExternalStructureType >> dataInstVarIndex [
 	^ (objectClass instVarIndexFor: #data ifAbsent: [self error: 'this should not happen...'] ) - 1

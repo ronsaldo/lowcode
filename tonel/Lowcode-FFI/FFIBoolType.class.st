@@ -9,6 +9,11 @@ FFIBoolType >> accept: visitor [
 	^ visitor visitBoolType: self
 ]
 
+{ #category : #'as yet unclassified' }
+FFIBoolType >> callbackValueReturnType [
+	^ CallbackReturnTypeWord
+]
+
 { #category : #'lowcode marshalling' }
 FFIBoolType >> lowcode: gen callArgumentValue: calloutSpec [
 	gen callArgumentInt32

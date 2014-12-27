@@ -12,6 +12,9 @@ Class {
 		'pointerArity',
 		'loader'
 	],
+	#pools : [
+		'FFIInternalConstants'
+	],
 	#category : #'Lowcode-FFI-Types'
 }
 
@@ -23,6 +26,21 @@ FFIExternalType class >> asFFIExternalType: gen [
 { #category : #visitor }
 FFIExternalType >> accept: visitor [
 	self subclassResponsibility 
+]
+
+{ #category : #'callback support' }
+FFIExternalType >> callbackPointerReturnType [
+	^ CallbackReturnTypeWord
+]
+
+{ #category : #'callback support' }
+FFIExternalType >> callbackReturnType [
+	^ self pointerArity > 0 ifTrue: [ self callbackValueReturnType ] ifFalse: [ self callbackPointerReturnType ]
+]
+
+{ #category : #'callback support' }
+FFIExternalType >> callbackValueReturnType [
+	self subclassResponsibility
 ]
 
 { #category : #testing }

@@ -21,6 +21,11 @@ FFIExternalObjectType >> accept: aVisitor [
 	^ aVisitor visitExternalObjectType: self
 ]
 
+{ #category : #'as yet unclassified' }
+FFIExternalObjectType >> callbackValueReturnType [
+	^ CallbackReturnTypeWord
+]
+
 { #category : #'lowcode marshalling' }
 FFIExternalObjectType >> handleInstVarIndex [
 	^ (objectClass instVarIndexFor: #handle ifAbsent: [self error: 'this should not happen...'] ) - 1

@@ -9,6 +9,11 @@ FFIExternalStringType >> accept: aVisitor [
 	^ aVisitor visitExternalStringType: self
 ]
 
+{ #category : #'as yet unclassified' }
+FFIExternalStringType >> callbackValueReturnType [
+	^ CallbackReturnTypeWord
+]
+
 { #category : #'lowcode marshalling' }
 FFIExternalStringType >> lowcode: gen callArgumentValue: calloutSpec [
 	gen callArgumentPointer

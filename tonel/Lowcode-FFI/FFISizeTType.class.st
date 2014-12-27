@@ -12,6 +12,11 @@ Class {
 	#category : #'Lowcode-FFI-Types'
 }
 
+{ #category : #'as yet unclassified' }
+FFISizeTType >> callbackValueReturnType [
+	^ CallbackReturnTypeWord
+]
+
 { #category : #testing }
 FFISizeTType >> isPlatformDependent [
 	^ true

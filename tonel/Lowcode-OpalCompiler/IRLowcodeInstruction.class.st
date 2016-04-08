@@ -30,15 +30,14 @@ Class {
 		'opcode',
 		'extendA',
 		'extendB',
-		'label',
-		'literal'
+		'hasLiteral'
 	],
 	#category : #'Lowcode-OpalCompiler'
 }
 
 { #category : #visitor }
-IRLowcodeInstruction >> accept: aVisitor [
-	^ aVisitor visitLowcodeInstruction: self
+IRLowcodeInstruction >> accept: arg1 [
+	^ arg1 visitLowcodeInstruction: self
 ]
 
 { #category : #accessing }
@@ -47,8 +46,8 @@ IRLowcodeInstruction >> extendA [
 ]
 
 { #category : #accessing }
-IRLowcodeInstruction >> extendA: anObject [
-	extendA := anObject
+IRLowcodeInstruction >> extendA: arg1 [
+	extendA := arg1
 ]
 
 { #category : #accessing }
@@ -57,33 +56,29 @@ IRLowcodeInstruction >> extendB [
 ]
 
 { #category : #accessing }
-IRLowcodeInstruction >> extendB: anObject [
-	extendB := anObject
+IRLowcodeInstruction >> extendB: arg1 [
+	extendB := arg1
+]
+
+{ #category : #accessing }
+IRLowcodeInstruction >> hasLiteral [
+	^ hasLiteral
+]
+
+{ #category : #accessing }
+IRLowcodeInstruction >> hasLiteral: anObject [
+	hasLiteral := anObject
+]
+
+{ #category : #initialization }
+IRLowcodeInstruction >> initialize [
+	super initialize.
+	hasLiteral := false.
 ]
 
 { #category : #testing }
 IRLowcodeInstruction >> isLowcodeInstruction [
 	^ false
-]
-
-{ #category : #accessing }
-IRLowcodeInstruction >> label [
-	^ label
-]
-
-{ #category : #accessing }
-IRLowcodeInstruction >> label: anObject [
-	label := anObject
-]
-
-{ #category : #accessing }
-IRLowcodeInstruction >> literal [
-	^ literal
-]
-
-{ #category : #accessing }
-IRLowcodeInstruction >> literal: anObject [
-	literal := anObject
 ]
 
 { #category : #accessing }
@@ -97,13 +92,15 @@ IRLowcodeInstruction >> opcode [
 ]
 
 { #category : #accessing }
-IRLowcodeInstruction >> opcode: anObject [
-	opcode := anObject
+IRLowcodeInstruction >> opcode: arg1 [
+	opcode := arg1
 ]
 
 { #category : #accessing }
 IRLowcodeInstruction >> stackDifference [
-	| diff |
-	diff := opcode // 1000.
-	^ diff >= 16 ifTrue: [ diff - 33 ] ifFalse: [ diff ]
+	| tmp1 |
+	tmp1 := opcode // 1000.
+	^ (tmp1 >= 16
+		ifTrue: [ tmp1 - 33 ]
+		ifFalse: [ tmp1 ]) + 1
 ]

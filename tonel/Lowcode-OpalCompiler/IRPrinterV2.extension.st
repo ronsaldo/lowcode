@@ -3,7 +3,7 @@ Extension { #name : #IRPrinterV2 }
 { #category : #'*Lowcode-OpalCompiler' }
 IRPrinterV2 >> visitLowcodeInstruction: instruction [
 	stream nextPutAll: instruction lowcodeMnemonic.
-	instruction extendA ifNotNil: [
+	(instruction hasLiteral or: [ instruction extendA isNotNil ]) ifNotNil: [
 		stream nextPutAll: ': ';
 			print: instruction extendA.
 	].
@@ -13,13 +13,6 @@ IRPrinterV2 >> visitLowcodeInstruction: instruction [
 			print: instruction extendB.
 	].
 
-	instruction literal ifNotNil: [
-		stream nextPutAll: ': ';
-			print: instruction literal.
-	].
 
-	instruction label ifNotNil: [ 
-		stream nextPutAll: ': '.
-		instruction label orderNumber printOn: stream
-	].
+
 ]

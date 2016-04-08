@@ -30,9 +30,10 @@ IRInstruction class >> lowcodeInstruction: opcode extendA: extendA extendB: exte
 ]
 
 { #category : #'*Lowcode-OpalCompiler' }
-IRInstruction class >> lowcodeInstruction: opcode label: label [
+IRInstruction class >> lowcodeInstruction: opcode literal: literal [
 	^ IRLowcodeInstruction new
 		opcode: opcode;
-		label: label;
+		extendA: literal;
+		hasLiteral: true;
 		yourself
 ]

@@ -32,8 +32,8 @@ LowcodeSpec class >> generateOpcodes [
 spec := LowcodeSpecLoader fromFileNamed: 'old-lowcode.xml'.
 sortedInstructions := spec instructions sort: [ :a :b |
 	|adiff bdiff|
-	adiff := a oopStackResults size - a oopStackArguments size.
-	bdiff := b oopStackResults size - b oopStackArguments size.
+	adiff := (a oopStackResults size - 1) - a oopStackArguments size.
+	bdiff := (b oopStackResults size - 1) - b oopStackArguments size.
 	adiff < bdiff
 ].
 
@@ -42,7 +42,7 @@ arityCount := 0.
 arityStart := #(0 7 69 4).
 arityDiffs := OrderedCollection new.
 sortedInstructions do: [:ins |
-	arity := ins oopStackResults size - ins oopStackArguments size.
+	arity := (ins oopStackResults size - 1) - ins oopStackArguments size.
 	(arity ~= currentArity) ifTrue: [
 		currentArity := arity.
 		arityCount := 0.

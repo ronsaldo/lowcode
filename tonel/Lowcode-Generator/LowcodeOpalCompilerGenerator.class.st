@@ -21,8 +21,7 @@ LowcodeOpalCompilerGenerator class >> initialize [
 	self initialize
 	"
 	TypeMap := Dictionary newFromPairs: #(
-		label label:
-		literal extendA:
+		literal literal:
 		'extend-a' extendA:
 		'extend-b' extendB:
 	)

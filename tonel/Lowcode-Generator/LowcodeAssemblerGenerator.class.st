@@ -32,13 +32,13 @@ LowcodeAssemblerGenerator class >> initialize [
 { #category : #generation }
 LowcodeAssemblerGenerator >> compile: code [
 	Author useAuthor: 'Lowcode' during: [ 
-		LowcodeAssembler compile: code classified: self protocolName ].
+		(Smalltalk at: #LowcodeAssembler) compile: code classified: self protocolName ].
 ]
 
 { #category : #generation }
 LowcodeAssemblerGenerator >> compileSista: code [
 	Author useAuthor: 'Lowcode' during: [ 
-		LowcodeAssembler compile: code classified: self sistaProtocolName ].
+		(Smalltalk at: #LowcodeAssembler) compile: code classified: self sistaProtocolName ].
 ]
 
 { #category : #generation }

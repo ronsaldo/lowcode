@@ -28,44 +28,37 @@ LowcodeSpec class >> generateOpcodes [
 	"
 	self generateOpcodes
 	"
-|spec sortedInstructions currentArity currentResultArity arityCount arity resultArity arityStart |
+|spec sortedInstructions currentArity arityCount arity arityStart arityDiffs |
 spec := LowcodeSpecLoader fromFileNamed: 'old-lowcode.xml'.
-sortedInstructions := spec instructions sort: [ :a :b | 
-	a oopStackArguments size == b oopStackArguments size ifTrue: [ 
-		a oopStackResults size == b oopStackResults size ifTrue: [ 
-			a mnemonic < b mnemonic
-		] ifFalse: [ 
-			a oopStackResults size < b oopStackResults size
-		]
-	]
-	ifFalse: [
-		a oopStackArguments size < b oopStackArguments size
-	]
+sortedInstructions := spec instructions sort: [ :a :b |
+	|adiff bdiff|
+	adiff := a oopStackResults size - a oopStackArguments size.
+	bdiff := b oopStackResults size - b oopStackArguments size.
+	adiff < bdiff
 ].
 
-currentArity := -1.
-currentResultArity := -1.
+currentArity := -2.
 arityCount := 0.
-arityStart := #(#(0 0 0) (0 7 0) (0 69 0) (0 5 0) (0 0 0) (0 0 0)).
+arityStart := #(0 7 69 4).
+arityDiffs := OrderedCollection new.
 sortedInstructions do: [:ins |
-	arity := ins oopStackArguments size.
-	resultArity := ins oopStackResults size.
-	(arity ~= currentArity or: [resultArity ~= currentResultArity]) ifTrue: [
+	arity := ins oopStackResults size - ins oopStackArguments size.
+	(arity ~= currentArity) ifTrue: [
 		currentArity := arity.
-		currentResultArity := resultArity.
-		arityCount := ((arityStart at: arity + 1) at: resultArity + 1).
+		arityCount := 0.
+		arity >= 0 ifTrue: [ arityStart at: arity + 1 ].
 	]
 	ifFalse: [
 		arityCount := arityCount + 1
 	].
 
-	ins opcode: (currentArity *1000) + (resultArity*400)+ arityCount.
+	arity < 0 ifTrue: [ arity := 33 + arity ].
+	ins opcode: (arity *1000) + arityCount.
 ].
 
 (FileSystem workingDirectory / 'lowcode-new.xml') writeStreamDo: [ :out |
 	spec makeXML prettyPrintOn: out
 ]
-
 ]
 
 { #category : #scripts }

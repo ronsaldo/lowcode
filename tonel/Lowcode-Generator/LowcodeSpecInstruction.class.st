@@ -165,6 +165,11 @@ LowcodeSpecInstruction >> oopStackArguments [
 ]
 
 { #category : #accessing }
+LowcodeSpecInstruction >> oopStackDifference [
+	^ (self oopStackResults size - 1) - self oopStackArguments size
+]
+
+{ #category : #accessing }
 LowcodeSpecInstruction >> oopStackResults [
 	^ stackResults select: #isOop
 ]

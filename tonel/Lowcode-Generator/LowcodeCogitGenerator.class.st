@@ -446,8 +446,8 @@ LowcodeCogitGenerator >> generate [
 	out := destName asFileReference delete; writeStream.
 	[
 		self generateHeader;
-			generateInstructionMethods;
-			generateInstructionDispatchMethods;
+			"generateInstructionMethods;
+			generateInstructionDispatchMethods;"
 			generateInstructionInterpreterMethods;
 			generateInstructionInterpreterDispatchMethods.
 	] ensure: [ out close ]
@@ -517,10 +517,9 @@ LowcodeCogitGenerator >> generateInstructionDispatchMethods [
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionInterpreterDispatchMethods [
 	self generateInstructionsInterpreterDispatch: #nullaryInlinePrimitive args: 0 fallback: #optimizedNullaryInlinePrimitive: offset: 0;
-		generateInstructionsInterpreterDispatch: #unaryInlinePrimitive args: 1 fallback: #optimizedUnaryInlinePrimitive: offset: -1000;
-		generateInstructionsInterpreterDispatch: #binaryInlinePrimitive args: 2 fallback: #optimizedBinaryInlinePrimitive: offset: -2000;
-		generateInstructionsInterpreterDispatch: #trinaryInlinePrimitive args: 3 fallback: #optimizedTrinaryInlinePrimitive: offset: -3000;
-		generateInstructionsInterpreterDispatch: #cuaternaryInlinePrimitive args: 4 fallback: #optimizedCuaternaryInlinePrimitive: offset: -4000
+		generateInstructionsInterpreterDispatch: #negativeUnaryInlinePrimitive args: -1 fallback: #optimizedNegativeUnaryInlinePrimitive: offset: -32000;
+		generateInstructionsInterpreterDispatch: #negativeBinaryInlinePrimitive args: -2 fallback: #optimizedNegativeBinaryInlinePrimitive: offset: -31000;
+		generateInstructionsInterpreterDispatch: #negativeTrinaryInlinePrimitive args: -3 fallback: #optimizedNegativeTrinaryInlinePrimitive: offset: -30000
 ]
 
 { #category : #generation }
@@ -587,7 +586,7 @@ LowcodeCogitGenerator >> generateInstructionsDispatch: dispatchSelector args: ar
 	instructions := OrderedCollection new.
 	
 	spec instructions do: [ :ins |
-		ins stackArguments size == argCount ifTrue: [
+		ins oopStackDifference == argCount ifTrue: [
 			instructions add: ins.
 			instructions size == splitCount ifTrue: [
 				selectorCount := selectorCount + 1.
@@ -614,7 +613,7 @@ LowcodeCogitGenerator >> generateInstructionsInterpreterDispatch: dispatchSelect
 '.
 
 	instructions do: [ :ins |
-		ins stackArguments size == argCount ifTrue: [
+		ins oopStackDifference == argCount ifTrue: [
 			out tab; tab; tab; nextPutAll: '[' , (ins opcode + offset) printString, ']'; tab; nextPutAll: '-> [ ^ self ' , (self instructionInterpreterMethodSelector: ins), ' ].'; cr
 		]
 	].
@@ -634,7 +633,7 @@ LowcodeCogitGenerator >> generateInstructionsInterpreterDispatch: dispatchSelect
 	instructions := OrderedCollection new.
 	
 	spec instructions do: [ :ins |
-		ins stackArguments size == argCount ifTrue: [
+		ins oopStackDifference == argCount ifTrue: [
 			instructions add: ins.
 			instructions size == splitCount ifTrue: [
 				selectorCount := selectorCount + 1.

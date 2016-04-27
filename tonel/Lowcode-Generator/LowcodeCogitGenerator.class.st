@@ -73,7 +73,7 @@ LowcodeCogitGenerator >> addSemanticLocals: semanticName of: instruction to: var
 	semanticData ifNotNil: [
 		semanticData locals ifNotEmpty: [
 			(semanticData locals findTokens: ' ' ) do: [ :loc |
-				varNames add: loc.
+				varNames add: loc -> nil.
 			]
 		]
 	].
@@ -274,7 +274,7 @@ LowcodeCogitGenerator >> declareInstructionInterpreterVariables: instruction [
 	].
 	(instruction hasSemanticFor: 'Smalltalk/StackInterpreter') ifTrue: [ self addSemanticLocals: 'Smalltalk/StackInterpreter' of: instruction to: varNames].
 
-	self declareVariables: (varNames collect: [:nt | nt key ]).
+	self declareVariables: varNames.
 	varNames do: [ :nt |
 		nt value ifNotNil: [
 			out tab; nextPutAll: '<var: #' , nt key , ' type: #''' , nt value , ''' >'; cr
@@ -289,24 +289,24 @@ LowcodeCogitGenerator >> declareInstructionVariables: instruction [
 	
 	"Always allocate arguments and stack arguments."
 	instruction arguments do: [ :arg |
-		varNames add: arg name
+		varNames add: arg name -> nil
 	].
 
 	instruction stackArguments do: [ :arg |
-		varNames add: arg name.
+		varNames add: arg name -> nil.
 		arg type = 'int64' ifTrue: [
-			varNames add: arg name , 'Low'.
-			varNames add: arg name , 'High'.
+			varNames add: (arg name , 'Low')  -> nil.
+			varNames add: (arg name , 'High')  -> nil.
 		]
 	].
 
 	"Not always allocate stack results"
 	instruction stackResults do: [ :arg | 
 		arg aliased ~~ true ifTrue: [
-			varNames add: arg name.
+			varNames add: arg name -> nil.
 			arg type = 'int64' ifTrue: [
-				varNames add: arg name , 'Low'.
-				varNames add: arg name , 'High'.
+				varNames add: (arg name , 'Low') -> nil.
+				varNames add: (arg name , 'High') -> nil.
 			]
 		]
 	].
@@ -325,15 +325,15 @@ LowcodeCogitGenerator >> declareInstructionVariablesIfAllocated: instruction [
 	
 	"Always allocate extended arguments."
 	instruction arguments do: [ :arg | 
-		varNames add: arg name
+		varNames add: arg name -> nil
 	].
 
 	instruction stackResults do: [ :arg | 
 		arg allocate == true ifTrue: [
-			varNames add: arg name.
+			varNames add: (arg name) -> nil.
 			arg type = 'int64' ifTrue: [
-				varNames add: arg name , 'Low'.
-				varNames add: arg name , 'High'.
+				varNames add: (arg name , 'Low') -> nil.
+				varNames add: (arg name , 'High') -> nil.
 			]
 		]
 	].
@@ -351,7 +351,7 @@ LowcodeCogitGenerator >> declareInstructionVariablesIfAllocated: instruction [
 LowcodeCogitGenerator >> declareVariables: varNames [
 	varNames ifEmpty: [ ^ self ].
 	out tab; nextPutAll: '| '.
-	varNames do: [ :name | out nextPutAll: name; nextPut: $ . ].
+	varNames do: [ :name | out nextPutAll: name key; nextPut: $ . ].
 	out nextPut: $|; cr.
 ]
 

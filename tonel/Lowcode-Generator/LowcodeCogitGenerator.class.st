@@ -355,6 +355,11 @@ LowcodeCogitGenerator >> declareVariables: varNames [
 	out nextPut: $|; cr.
 ]
 
+{ #category : #generation }
+LowcodeCogitGenerator >> defaultImplementationCode [
+	^ '	self abort.' "'	self cCode: ''abort()'' inSmalltalk: [nil halt].'"
+]
+
 { #category : #accessing }
 LowcodeCogitGenerator >> destName [
 	
@@ -446,8 +451,8 @@ LowcodeCogitGenerator >> generate [
 	out := destName asFileReference delete; writeStream.
 	[
 		self generateHeader;
-			"generateInstructionMethods;
-			generateInstructionDispatchMethods;"
+			generateInstructionMethods;
+			generateInstructionDispatchMethods;
 			generateInstructionInterpreterMethods;
 			generateInstructionInterpreterDispatchMethods.
 	] ensure: [ out close ]
@@ -458,7 +463,7 @@ LowcodeCogitGenerator >> generate [
 LowcodeCogitGenerator >> generateGenericInstructionMethod: instruction [
 	self beginInstructionMethod: (self instructionMethodSelector: instruction).
 	(instruction hasSemanticFor: 'Smalltalk/Cog/Raw') ifTrue: [
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/Raw' ifAbsent: [ 'self halt.' ]); cr.
+			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/Raw' ifAbsent: [ self defaultImplementationCode ]); cr.
 		]
 	ifFalse: [
 		self declareInstructionVariables: instruction.
@@ -473,7 +478,7 @@ LowcodeCogitGenerator >> generateGenericInstructionMethod: instruction [
 			self checkReceiverRegisterLive.
 			self popArguments: instruction pairAllocation: true.
 
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/32' ifAbsent: [ 'self halt.' ]); cr.
+			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/32' ifAbsent: [ self defaultImplementationCode ]); cr.
 
 			out tab; nextPutAll: '] ifFalse: ['; cr.
 
@@ -483,7 +488,7 @@ LowcodeCogitGenerator >> generateGenericInstructionMethod: instruction [
 			self checkReceiverRegisterLive.
 			self popArguments: instruction pairAllocation: false.
 
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/64' ifAbsent: [ 'self halt.' ]); cr.
+			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/64' ifAbsent: [ self defaultImplementationCode ]); cr.
 
 			out tab; nextPutAll: '].'; cr.
 		] ifFalse: [
@@ -517,26 +522,35 @@ LowcodeCogitGenerator >> generateInstructionDispatchMethods [
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionInterpreterDispatchMethods [
 	self generateInstructionsInterpreterDispatch: #nullaryInlinePrimitive args: 0 fallback: #optimizedNullaryInlinePrimitive: offset: 0;
-		generateInstructionsInterpreterDispatch: #negativeUnaryInlinePrimitive args: -1 fallback: #optimizedNegativeUnaryInlinePrimitive: offset: -32000;
-		generateInstructionsInterpreterDispatch: #negativeBinaryInlinePrimitive args: -2 fallback: #optimizedNegativeBinaryInlinePrimitive: offset: -31000;
-		generateInstructionsInterpreterDispatch: #negativeTrinaryInlinePrimitive args: -3 fallback: #optimizedNegativeTrinaryInlinePrimitive: offset: -30000
+		generateInstructionsInterpreterDispatch: #unaryInlinePrimitive args: 1 fallback: #optimizedUnaryInlinePrimitive: offset: -1000;
+		generateInstructionsInterpreterDispatch: #binaryInlinePrimitive args: 2 fallback: #optimizedBinaryInlinePrimitive: offset: -2000;
+		generateInstructionsInterpreterDispatch: #trinaryInlinePrimitive args: 3 fallback: #optimizedTrinaryInlinePrimitive: offset: -3000;
+		generateInstructionsInterpreterDispatch: #cuaternaryInlinePrimitive args: 4 fallback: #optimizedCuaternaryInlinePrimitive: offset: -4000
 ]
 
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionInterpreterMethod: instruction [
+	| rawSemantic |
 	self beginInterpreterInstructionMethod: (self instructionInterpreterMethodSelector: instruction).
-	
-	self declareInstructionInterpreterVariables: instruction.
-		
-	self fetchInterpreterExtendedArguments: instruction.
-	self popInterpreterArguments: instruction.
 
-	out nextPutAll: (instruction semanticFor: 'Smalltalk/StackInterpreter' ifAbsent: [ 'self halt.' ]); cr.
+	rawSemantic := instruction semanticFor: 'Smalltalk/StackInterpreter/Raw' ifAbsent: [	
+		self declareInstructionInterpreterVariables: instruction.
+		
+		self fetchInterpreterExtendedArguments: instruction.
+		self popInterpreterArguments: instruction.
+
+		out nextPutAll: (instruction semanticFor: 'Smalltalk/StackInterpreter' ifAbsent: [ self defaultImplementationCode ]); cr.
 	
-	self pushInterpreterResults: instruction.
-	self cleanExtendedArguments: instruction.
+		self pushInterpreterResults: instruction.
+		self cleanExtendedArguments: instruction.
 	
-	self endInterpreterInstructionMethod
+		self endInterpreterInstructionMethod.
+		^ self
+	].
+
+	out nextPutAll: rawSemantic.
+	self endInterpreterInstructionMethod.
+	
 ]
 
 { #category : #generation }
@@ -566,7 +580,7 @@ LowcodeCogitGenerator >> generateInstructionsDispatch: dispatchSelector args: ar
 '.
 
 	instructions do: [ :ins |
-		ins stackArguments size == argCount ifTrue: [
+		ins oopStackDifference = argCount ifTrue: [
 			out tab; tab; tab; nextPutAll: '[' , (ins opcode + offset) printString, ']'; tab; nextPutAll: '-> [ ^ self ' , (self instructionMethodSelector: ins), ' ].'; cr
 		]
 	].

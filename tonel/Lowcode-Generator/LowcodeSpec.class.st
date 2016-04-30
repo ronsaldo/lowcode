@@ -31,22 +31,19 @@ LowcodeSpec class >> generateOpcodes [
 |spec sortedInstructions currentArity arityCount arity arityStart arityDiffs |
 spec := LowcodeSpecLoader fromFileNamed: 'old-lowcode.xml'.
 sortedInstructions := spec instructions sort: [ :a :b |
-	|adiff bdiff|
-	adiff := (a oopStackResults size - 1) - a oopStackArguments size.
-	bdiff := (b oopStackResults size - 1) - b oopStackArguments size.
-	adiff < bdiff
+	a oopStackDifference < b oopStackDifference
 ].
 
 currentArity := -2.
 arityCount := 0.
-arityStart := #(0 7 69 4).
+arityStart := #(0 7 70 5).
 arityDiffs := OrderedCollection new.
 sortedInstructions do: [:ins |
-	arity := (ins oopStackResults size - 1) - ins oopStackArguments size.
+	arity := ins oopStackDifference.
 	(arity ~= currentArity) ifTrue: [
 		currentArity := arity.
 		arityCount := 0.
-		arity >= 0 ifTrue: [ arityStart at: arity + 1 ].
+		arity >= 0 ifTrue: [ arityCount := arityStart at: arity + 1 ].
 	]
 	ifFalse: [
 		arityCount := arityCount + 1
@@ -88,7 +85,7 @@ LowcodeSpec class >> todoListInterpreter [
 	"
 	|spec|
 	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
-	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/StackInterpreter') not]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
+	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/StackInterpreter') not and: [(ins hasSemanticFor: 'Smalltalk/StackInterpreter/Raw') not] ]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
 ]
 
 { #category : #adding }

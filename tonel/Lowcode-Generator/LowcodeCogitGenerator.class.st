@@ -6,7 +6,8 @@ Class {
 		'out',
 		'allocatedIntRegisters',
 		'allocatedRegisterVarNames',
-		'allocatedFloatRegisters'
+		'allocatedFloatRegisters',
+		'currentIndentationLevel'
 	],
 	#classVars : [
 		'CTypeForType',
@@ -96,12 +97,13 @@ LowcodeCogitGenerator >> allocateArgumentRegisters: instruction pairAllocation: 
 LowcodeCogitGenerator >> allocateFloatRegisterTo: name [
 	| templ code |
 	templ := '
-	($var := backEnd availableFloatRegisterOrNilFor: $liveRegisters) ifNil:
-		[self ssAllocateRequiredReg: ($var := $reg)].
+$tabs($var := backEnd availableFloatRegisterOrNoneFor: $liveRegisters) = NoReg ifTrue:
+$tabs	[self ssAllocateRequiredFloatReg: ($var := $reg)].
 '.
-	code := ((templ copyReplaceAll: '$var' with: name)
+	code := (((templ copyReplaceAll: '$var' with: name)
 					copyReplaceAll: '$liveRegisters' with: self allocatedRegisterMask)
-					copyReplaceAll: '$reg' with: (FloatRegisters at: allocatedFloatRegisters + 1).
+					copyReplaceAll: '$reg' with: (FloatRegisters at: allocatedFloatRegisters + 1))
+					copyReplaceAll: '$tabs' with: self indentationTabs.
 	out nextPutAll: code.
 	allocatedFloatRegisters := allocatedFloatRegisters + 1.
 	self allocatedRegisterName: name
@@ -122,21 +124,23 @@ LowcodeCogitGenerator >> allocateIntegerRegisterTo: name [
 	| templ code |
 	allocatedIntRegisters == 0 ifTrue: [ 
 		templ := '
-	($var := backEnd availableRegisterOrNilFor: self liveRegisters) ifNil:
-		[self ssAllocateRequiredReg:
-			($var := optStatus isReceiverResultRegLive
-				ifTrue: [Arg0Reg]
-				ifFalse: [ReceiverResultReg])].
+$tabs($var := backEnd availableRegisterOrNoneFor: self liveRegisters) = NoReg ifTrue:
+$tabs	[self ssAllocateRequiredReg:
+$tabs		($var := optStatus isReceiverResultRegLive
+$tabs			ifTrue: [Arg0Reg]
+$tabs			ifFalse: [ReceiverResultReg])].
 '.
-		code := templ copyReplaceAll: '$var' with: name.
+		code := (templ copyReplaceAll: '$var' with: name)
+					copyReplaceAll: '$tabs' with: self indentationTabs.
 	] ifFalse: [
 		templ := '
-	($var := backEnd availableRegisterOrNilFor: $liveRegisters) ifNil:
-		[self ssAllocateRequiredReg: ($var := $reg)].
+$tabs($var := backEnd availableRegisterOrNilFor: $liveRegisters) ifNil:
+$tabs	[self ssAllocateRequiredReg: ($var := $reg)].
 '.
-		code := ((templ copyReplaceAll: '$var' with: name)
+		code := (((templ copyReplaceAll: '$var' with: name)
 					copyReplaceAll: '$liveRegisters' with: self allocatedRegisterMask)
-					copyReplaceAll: '$reg' with: (IntegerRegisters at: allocatedIntRegisters).
+					copyReplaceAll: '$reg' with: (IntegerRegisters at: allocatedIntRegisters))
+					copyReplaceAll: '$tabs' with: self indentationTabs.
 	].
 
 	out nextPutAll: code.
@@ -213,6 +217,7 @@ LowcodeCogitGenerator >> beginInstructionMethod: selector [
 	out nextPutAll:
 '	"Lowcode instruction generator"
 '.
+	currentIndentationLevel := 1.
 
 ]
 
@@ -225,7 +230,7 @@ LowcodeCogitGenerator >> beginInterpreterInstructionMethod: selector [
 	out nextPutAll:
 '	"Lowcode instruction generator"
 '.
-
+	currentIndentationLevel := 1.
 ]
 
 { #category : #'as yet unclassified' }
@@ -244,16 +249,18 @@ LowcodeCogitGenerator >> checkReceiverRegisterLive [
 			code := '(' , code , ' or: [' , name , ' = ReceiverResultReg])'
 		]
 	].
-	out tab; nextPutAll: code , ' ifTrue:'; cr;
-		tab; tab; nextPutAll: '[ optStatus isReceiverResultRegLive: false ].'; cr.
+	self emitIndentations.
+	out nextPutAll: code , ' ifTrue:'; cr.
+	self emitIndentations.
+	out tab; nextPutAll: '[ optStatus isReceiverResultRegLive: false ].'; cr.
 ]
 
 { #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> cleanExtendedArgument: arg [
 	| type |
 	type := arg type.
-	(type = 'extend-a' or: [ type = 'literal' ]) ifTrue: [ ^ out tab; nextPutAll: 'extA := 0.'; cr. ].
-	(type = 'extend-b' or: [ type = 'label' ]) ifTrue: [ ^ out tab; nextPutAll: 'extB := 0.'; cr. ].
+	(type = 'extend-a' or: [ type = 'literal' ]) ifTrue: [ self emitIndentations. ^ out nextPutAll: 'extA := 0.'; cr. ].
+	(type = 'extend-b' or: [ type = 'label' ]) ifTrue: [ self emitIndentations. ^ out nextPutAll: 'extB := 0.'; cr. ].
 	self error: 'Unknown extended argument.'
 ]
 
@@ -373,6 +380,11 @@ LowcodeCogitGenerator >> destName: anObject [
 ]
 
 { #category : #'as yet unclassified' }
+LowcodeCogitGenerator >> emitIndentations [
+	1 to: currentIndentationLevel do: [:i | out tab ]
+]
+
+{ #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> endCaseOf: fallbackSelector [
 	out tab; tab; tab; nextPutAll: '}'; cr;
 		tab; tab; nextPutAll: 'otherwise: [ ^ self ', fallbackSelector , ' prim ].'; cr.
@@ -402,19 +414,22 @@ LowcodeCogitGenerator >> endInterpreterInstructionMethod [
 LowcodeCogitGenerator >> fetchExtendedArgument: argument [
 	| type var |
 	type := argument type.
-	type = 'literal' ifTrue: [ 
-		out tab; nextPutAll: argument name , ' := self getLiteral: extA.'; cr.
+	type = 'literal' ifTrue: [
+		self emitIndentations.
+		out nextPutAll: argument name , ' := self getLiteral: extA.'; cr.
 		^ self.
 	].
 
-	type = 'label' ifTrue: [ 
-		out tab; nextPutAll: argument name , ' := extB + 3 + bytecodePC.'; cr.
+	type = 'label' ifTrue: [
+		self emitIndentations.
+		out nextPutAll: argument name , ' := extB + 3 + bytecodePC.'; cr.
 		^ self.
 	].
 
 	type = 'extend-a' ifTrue: [ var := 'extA' ].
 	type = 'extend-b' ifTrue: [ var := 'extB' ].
-	out tab; nextPutAll: argument name , ' := ' , var , '.'; cr
+	self emitIndentations.
+	out nextPutAll: argument name , ' := ' , var , '.'; cr
 ]
 
 { #category : #'as yet unclassified' }
@@ -463,7 +478,7 @@ LowcodeCogitGenerator >> generate [
 LowcodeCogitGenerator >> generateGenericInstructionMethod: instruction [
 	self beginInstructionMethod: (self instructionMethodSelector: instruction).
 	(instruction hasSemanticFor: 'Smalltalk/Cog/Raw') ifTrue: [
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/Raw' ifAbsent: [ self defaultImplementationCode ]); cr.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog/Raw' ifAbsent: [ self defaultImplementationCode ]).
 		]
 	ifFalse: [
 		self declareInstructionVariables: instruction.
@@ -471,14 +486,15 @@ LowcodeCogitGenerator >> generateGenericInstructionMethod: instruction [
 
 		((instruction hasSemanticFor: 'Smalltalk/Cog/32') and: [ instruction hasSemanticFor: 'Smalltalk/Cog/64' ]) ifTrue: [ 
 			out tab; nextPutAll: 'BytesPerWord = 4 ifTrue: ['; cr.
-
+			currentIndentationLevel := 2.
+			
 			self resetAllocatedRegisterNames.
 			self allocateArgumentRegisters: instruction pairAllocation: true.
 			self allocateResultRegisters: instruction pairAllocation: true.
 			self checkReceiverRegisterLive.
 			self popArguments: instruction pairAllocation: true.
 
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/32' ifAbsent: [ self defaultImplementationCode ]); cr.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog/32' ifAbsent: [ self defaultImplementationCode ]) indentationLevels: 2.
 
 			out tab; nextPutAll: '] ifFalse: ['; cr.
 
@@ -488,7 +504,7 @@ LowcodeCogitGenerator >> generateGenericInstructionMethod: instruction [
 			self checkReceiverRegisterLive.
 			self popArguments: instruction pairAllocation: false.
 
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/64' ifAbsent: [ self defaultImplementationCode ]); cr.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog/64' ifAbsent: [ self defaultImplementationCode ]) indentationLevels: 2.
 
 			out tab; nextPutAll: '].'; cr.
 		] ifFalse: [
@@ -497,7 +513,7 @@ LowcodeCogitGenerator >> generateGenericInstructionMethod: instruction [
 			self checkReceiverRegisterLive.
 			self popArguments: instruction.
 
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ 'self halt.' ]); cr.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ 'self halt.' ]).
 		].		
 		self cleanExtendedArguments: instruction.
 	].
@@ -512,11 +528,10 @@ LowcodeCogitGenerator >> generateHeader [
 
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionDispatchMethods [
-	self generateInstructionsInterpreterDispatch: #genNullaryInlinePrimitive args: 0 fallback: #genOptimizedNullaryInlinePrimitive: offset: 0;
-		generateInstructionsInterpreterDispatch: #genUnaryInlinePrimitive args: 1 fallback: #genOptimizedUnaryInlinePrimitive: offset: -1000;
-		generateInstructionsInterpreterDispatch: #genBinaryInlinePrimitive args: 2 fallback: #genOptimizedBinaryInlinePrimitive: offset: -2000;
-		generateInstructionsInterpreterDispatch: #genTrinaryInlinePrimitive args: 3 fallback: #genOptimizedTrinaryInlinePrimitive: offset: -3000;
-		generateInstructionsInterpreterDispatch: #genCuaternaryInlinePrimitive args: 4 fallback: #genOptimizedCuaternaryInlinePrimitive: offset: -4000
+	self generateInstructionsDispatch: #genNullaryInlinePrimitive args: 0 fallback: #genOptimizedNullaryInlinePrimitive: offset: 0;
+		generateInstructionsDispatch: #genUnaryInlinePrimitive args: 1 fallback: #genOptimizedUnaryInlinePrimitive: offset: -1000;
+		generateInstructionsDispatch: #genBinaryInlinePrimitive args: 2 fallback: #genOptimizedBinaryInlinePrimitive: offset: -2000;
+		generateInstructionsDispatch: #genTrinaryInlinePrimitive args: 3 fallback: #genOptimizedTrinaryInlinePrimitive: offset: -3000
 ]
 
 { #category : #generation }
@@ -524,8 +539,7 @@ LowcodeCogitGenerator >> generateInstructionInterpreterDispatchMethods [
 	self generateInstructionsInterpreterDispatch: #nullaryInlinePrimitive args: 0 fallback: #optimizedNullaryInlinePrimitive: offset: 0;
 		generateInstructionsInterpreterDispatch: #unaryInlinePrimitive args: 1 fallback: #optimizedUnaryInlinePrimitive: offset: -1000;
 		generateInstructionsInterpreterDispatch: #binaryInlinePrimitive args: 2 fallback: #optimizedBinaryInlinePrimitive: offset: -2000;
-		generateInstructionsInterpreterDispatch: #trinaryInlinePrimitive args: 3 fallback: #optimizedTrinaryInlinePrimitive: offset: -3000;
-		generateInstructionsInterpreterDispatch: #cuaternaryInlinePrimitive args: 4 fallback: #optimizedCuaternaryInlinePrimitive: offset: -4000
+		generateInstructionsInterpreterDispatch: #trinaryInlinePrimitive args: 3 fallback: #optimizedTrinaryInlinePrimitive: offset: -3000
 ]
 
 { #category : #generation }
@@ -539,7 +553,7 @@ LowcodeCogitGenerator >> generateInstructionInterpreterMethod: instruction [
 		self fetchInterpreterExtendedArguments: instruction.
 		self popInterpreterArguments: instruction.
 
-		out nextPutAll: (instruction semanticFor: 'Smalltalk/StackInterpreter' ifAbsent: [ self defaultImplementationCode ]); cr.
+		self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/StackInterpreter' ifAbsent: [ self defaultImplementationCode ]).
 	
 		self pushInterpreterResults: instruction.
 		self cleanExtendedArguments: instruction.
@@ -548,7 +562,7 @@ LowcodeCogitGenerator >> generateInstructionInterpreterMethod: instruction [
 		^ self
 	].
 
-	out nextPutAll: rawSemantic.
+	self writeOn: out implementationCode: rawSemantic.
 	self endInterpreterInstructionMethod.
 	
 ]
@@ -668,7 +682,7 @@ LowcodeCogitGenerator >> generateNullaryInstructionMethod: instruction [
 	self beginInstructionMethod: (self instructionMethodSelector: instruction).
 	
 	(instruction hasSemanticFor: 'Smalltalk/Cog/Raw') ifTrue: [
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/Raw' ifAbsent: [ 'self halt.' ]); cr.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog/Raw' ifAbsent: [ self defaultImplementationCode ]).
 		]
 	ifFalse: [
 		self declareInstructionVariablesIfAllocated: instruction.
@@ -676,31 +690,37 @@ LowcodeCogitGenerator >> generateNullaryInstructionMethod: instruction [
 
 		((instruction hasSemanticFor: 'Smalltalk/Cog/32') and: [ instruction hasSemanticFor: 'Smalltalk/Cog/64' ]) ifTrue: [ 
 			out tab; nextPutAll: 'BytesPerWord = 4 ifTrue: ['; cr.
-
+			currentIndentationLevel := 2.
+			
 			self resetAllocatedRegisterNames.
 			self allocateResultRegistersForNullary: instruction pairAllocation: true.
 			self checkReceiverRegisterLive.
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/32' ifAbsent: [ 'self halt.' ]); cr.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog/32' ifAbsent: [ self defaultImplementationCode ]) indentationLevels: 2.
 
 			out tab; nextPutAll: '] ifFalse: ['; cr.
 
 			self resetAllocatedRegisterNames.
 			self allocateResultRegistersForNullary: instruction pairAllocation: false.
 			self checkReceiverRegisterLive.
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog/64' ifAbsent: [ 'self halt.' ]); cr.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog/64' ifAbsent: [ self defaultImplementationCode ]) indentationLevels: 2.
 
 			out tab; nextPutAll: '].'; cr.
 		] ifFalse: [
 			self allocateResultRegistersForNullary: instruction.
 			self checkReceiverRegisterLive.
 	
-			out nextPutAll: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ 'self halt.' ]); cr.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ self defaultImplementationCode ]) indentationLevels: 2.
 		].
 	
 		self cleanExtendedArguments: instruction.
 	].
 
 	self endInstructionMethod
+]
+
+{ #category : #'register allocation' }
+LowcodeCogitGenerator >> indentationTabs [
+	^ ByteString streamContents: [ :otab | 1 to: currentIndentationLevel do: [ :i | otab tab ] ]
 ]
 
 { #category : #'as yet unclassified' }
@@ -735,12 +755,23 @@ LowcodeCogitGenerator >> popArguments: instruction [
 { #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> popArguments: instruction pairAllocation: pairAllocation [
 	instruction stackArguments reverseDo: [ :arg |
-		(pairAllocation and: [arg type = 'int64']) ifTrue: [
-			out tab; nextPutAll: 'self ssTop popToReg: ' , arg name, 'Low secondReg: ', arg name ,'High.'; cr.
-			out tab; nextPutAll: 'self ssPop: 1.'; cr.
-		] ifFalse: [ 
-			out tab; nextPutAll: 'self ssTop popToReg: ' , arg name, '.'; cr.
-			out tab; nextPutAll: 'self ssPop: 1.'; cr.
+		arg type = 'oop' ifTrue: [
+			self emitIndentations.
+			out nextPutAll: 'self ssTop popToReg: ' , arg name, '.'; cr.
+			self emitIndentations.
+			out nextPutAll: 'self ssPop: 1.'; cr.
+		] ifFalse: [
+			(pairAllocation and: [arg type = 'int64']) ifTrue: [
+				self emitIndentations.
+				out nextPutAll: 'self ssNativeTop popToReg: ' , arg name, 'Low secondReg: ', arg name ,'High.'; cr.
+				self emitIndentations.
+				out nextPutAll: 'self ssNativePop: 1.'; cr.
+			] ifFalse: [ 
+				self emitIndentations.
+				out nextPutAll: 'self ssNativeTop popToReg: ' , arg name, '.'; cr.
+				self emitIndentations.
+				out nextPutAll: 'self ssNativePop: 1.'; cr.
+			]
 		]
 	]
 ]
@@ -759,7 +790,7 @@ LowcodeCogitGenerator >> pushInterpreterResults: instruction [
 	| pushMethod |
 	instruction stackResults do: [ :arg |
 		pushMethod := self interpreterPushMethodFor: arg type.
-		out tab; nextPutAll: ' self ' , pushMethod , ' ' , arg name , '.'; cr.
+		out tab; nextPutAll: 'self ' , pushMethod , ' ' , arg name , '.'; cr.
 	]
 ]
 
@@ -768,4 +799,22 @@ LowcodeCogitGenerator >> resetAllocatedRegisterNames [
 	allocatedIntRegisters := 0.
 	allocatedFloatRegisters := 0.
 	allocatedRegisterVarNames := OrderedCollection new.
+]
+
+{ #category : #generation }
+LowcodeCogitGenerator >> writeOn: aStream implementationCode: implementationCode [
+	self writeOn: aStream implementationCode: implementationCode indentationLevels: 1
+]
+
+{ #category : #generation }
+LowcodeCogitGenerator >> writeOn: aStream implementationCode: implementationCode indentationLevels: indentationLevels [
+	| trimmedStringLines |
+	trimmedStringLines := implementationCode trimBoth substrings: String cr.
+	aStream cr.
+	trimmedStringLines do: [ :line |
+		1 to: indentationLevels do: [ :i | aStream tab ].
+		aStream nextPutAll: line trimBoth.
+		aStream cr.
+	].
+	aStream cr.
 ]

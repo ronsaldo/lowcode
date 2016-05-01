@@ -101,12 +101,12 @@ $tabs($var := backEnd availableFloatRegisterOrNoneFor: $liveRegisters) = NoReg i
 $tabs	[self ssAllocateRequiredFloatReg: ($var := $reg)].
 '.
 	code := (((templ copyReplaceAll: '$var' with: name)
-					copyReplaceAll: '$liveRegisters' with: self allocatedRegisterMask)
+					copyReplaceAll: '$liveRegisters' with: self allocatedFloatRegisterMask)
 					copyReplaceAll: '$reg' with: (FloatRegisters at: allocatedFloatRegisters + 1))
 					copyReplaceAll: '$tabs' with: self indentationTabs.
 	out nextPutAll: code.
 	allocatedFloatRegisters := allocatedFloatRegisters + 1.
-	self allocatedRegisterName: name
+	self allocatedRegisterName: name type: #float
 ]
 
 { #category : #'register allocation' }
@@ -134,7 +134,7 @@ $tabs			ifFalse: [ReceiverResultReg])].
 					copyReplaceAll: '$tabs' with: self indentationTabs.
 	] ifFalse: [
 		templ := '
-$tabs($var := backEnd availableRegisterOrNilFor: $liveRegisters) ifNil:
+$tabs($var := backEnd availableRegisterOrNoneFor: $liveRegisters) = NoReg ifTrue:
 $tabs	[self ssAllocateRequiredReg: ($var := $reg)].
 '.
 		code := (((templ copyReplaceAll: '$var' with: name)
@@ -145,7 +145,7 @@ $tabs	[self ssAllocateRequiredReg: ($var := $reg)].
 
 	out nextPutAll: code.
 	allocatedIntRegisters := allocatedIntRegisters + 1.
-	self allocatedRegisterName: name.
+	self allocatedRegisterName: name type: #int.
 ]
 
 { #category : #'register allocation' }
@@ -187,19 +187,37 @@ LowcodeCogitGenerator >> allocateResultRegistersForNullary: instruction pairAllo
 ]
 
 { #category : #'register allocation' }
-LowcodeCogitGenerator >> allocatedRegisterMask [
-	| res |
-	res := 'self liveRegisters'.
-	allocatedRegisterVarNames do: [ :name |
-		res := '(' , res , ' bitOr: (self registerMaskFor: ' , name , '))'.
+LowcodeCogitGenerator >> allocatedFloatRegisterMask [
+	| res name |
+	res := 'self liveFloatRegisters'.
+	allocatedRegisterVarNames do: [ :nameType |
+		nameType value == #float ifTrue: [
+			name := nameType key. 
+			res := '(' , res , ' bitOr: (self registerMaskFor: ' , name , '))'.
+		]
 	].
 	^ res
 
 ]
 
 { #category : #'register allocation' }
-LowcodeCogitGenerator >> allocatedRegisterName: name [
-	allocatedRegisterVarNames add: name
+LowcodeCogitGenerator >> allocatedRegisterMask [
+	| res name |
+	res := 'self liveRegisters'.
+	allocatedRegisterVarNames do: [ :nameType |
+		name := nameType key. 
+		nameType value == #int ifTrue: [
+			name := nameType key. 
+			res := '(' , res , ' bitOr: (self registerMaskFor: ' , name , '))'.
+		]
+	].
+	^ res
+
+]
+
+{ #category : #'register allocation' }
+LowcodeCogitGenerator >> allocatedRegisterName: name type: type [
+	allocatedRegisterVarNames add: name -> type
 ]
 
 { #category : #'as yet unclassified' }
@@ -240,19 +258,24 @@ LowcodeCogitGenerator >> cTypeFor: type [
 
 { #category : #'as yet unclassified' }
 LowcodeCogitGenerator >> checkReceiverRegisterLive [
-	| code |
+	| code name |
 	allocatedRegisterVarNames ifEmpty: [ ^ self ].
 	code := nil.
-	allocatedRegisterVarNames do: [ :name |
-		code ifNil: [ code := name , ' = ReceiverResultReg' ]
-			ifNotNil: [
-			code := '(' , code , ' or: [' , name , ' = ReceiverResultReg])'
+	allocatedRegisterVarNames do: [ :nameType |
+		name := nameType key.
+		nameType value == #int ifTrue: [
+			code ifNil: [ code := name , ' = ReceiverResultReg' ]
+				ifNotNil: [
+				code := '(' , code , ' or: [' , name , ' = ReceiverResultReg])'
+			]
 		]
 	].
-	self emitIndentations.
-	out nextPutAll: code , ' ifTrue:'; cr.
-	self emitIndentations.
-	out tab; nextPutAll: '[ optStatus isReceiverResultRegLive: false ].'; cr.
+	code ifNotNil: [
+		self emitIndentations.
+		out nextPutAll: code , ' ifTrue:'; cr.
+		self emitIndentations.
+		out tab; nextPutAll: '[ optStatus isReceiverResultRegLive: false ].'; cr.
+	]
 ]
 
 { #category : #'as yet unclassified' }
@@ -513,7 +536,7 @@ LowcodeCogitGenerator >> generateGenericInstructionMethod: instruction [
 			self checkReceiverRegisterLive.
 			self popArguments: instruction.
 
-			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ 'self halt.' ]).
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [  self defaultImplementationCode ]).
 		].		
 		self cleanExtendedArguments: instruction.
 	].
@@ -709,7 +732,7 @@ LowcodeCogitGenerator >> generateNullaryInstructionMethod: instruction [
 			self allocateResultRegistersForNullary: instruction.
 			self checkReceiverRegisterLive.
 	
-			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ self defaultImplementationCode ]) indentationLevels: 2.
+			self writeOn: out implementationCode: (instruction semanticFor: 'Smalltalk/Cog' ifAbsent: [ self defaultImplementationCode ]).
 		].
 	
 		self cleanExtendedArguments: instruction.
@@ -763,12 +786,12 @@ LowcodeCogitGenerator >> popArguments: instruction pairAllocation: pairAllocatio
 		] ifFalse: [
 			(pairAllocation and: [arg type = 'int64']) ifTrue: [
 				self emitIndentations.
-				out nextPutAll: 'self ssNativeTop popToReg: ' , arg name, 'Low secondReg: ', arg name ,'High.'; cr.
+				out nextPutAll: 'self ssNativeTop nativePopToReg: ' , arg name, 'Low secondReg: ', arg name ,'High.'; cr.
 				self emitIndentations.
 				out nextPutAll: 'self ssNativePop: 1.'; cr.
 			] ifFalse: [ 
 				self emitIndentations.
-				out nextPutAll: 'self ssNativeTop popToReg: ' , arg name, '.'; cr.
+				out nextPutAll: 'self ssNativeTop nativePopToReg: ' , arg name, '.'; cr.
 				self emitIndentations.
 				out nextPutAll: 'self ssNativePop: 1.'; cr.
 			]

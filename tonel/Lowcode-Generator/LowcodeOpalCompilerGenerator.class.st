@@ -22,6 +22,8 @@ LowcodeOpalCompilerGenerator class >> initialize [
 	"
 	TypeMap := Dictionary newFromPairs: #(
 		literal literal:
+		local extendA:
+		'instance-var' extendA:
 		'extend-a' extendA:
 		'extend-b' extendB:
 	)
@@ -30,7 +32,7 @@ LowcodeOpalCompilerGenerator class >> initialize [
 { #category : #generation }
 LowcodeOpalCompilerGenerator >> compileIRBuilder: code [
 	Author useAuthor: 'Lowcode' during: [ 
-		IRBuilder compile: code classified: '*Lowcode-OpalCompiler' ].
+		IRLowcodeBuilder compile: code classified: 'lowcode instructions' ].
 ]
 
 { #category : #generation }
@@ -69,10 +71,16 @@ LowcodeOpalCompilerGenerator >> generateTo: out instructionArgument: argument in
 	| map |
 	map := TypeMap at: argument type ifAbsent: [ self error: 'expected a type map' ].
 	out nextPutAll: map asString;
-		nextPutAll: ' a';
+		nextPutAll: ' '.
+	argument type = 'local' ifTrue: [ out nextPutAll: '(self nativeLocalOffsetOf: ' ].
+	
+	out nextPut: $a;
 		nextPutAll: index asString;
 		nextPut: $N;
-		nextPutAll: argument name
+		nextPutAll: argument name.
+		
+	argument type = 'local' ifTrue: [ out nextPutAll: ')' ].
+	
 ]
 
 { #category : #generation }

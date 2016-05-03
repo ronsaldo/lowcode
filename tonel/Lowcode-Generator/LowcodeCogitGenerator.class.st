@@ -282,7 +282,7 @@ LowcodeCogitGenerator >> checkReceiverRegisterLive [
 LowcodeCogitGenerator >> cleanExtendedArgument: arg [
 	| type |
 	type := arg type.
-	(type = 'extend-a' or: [ type = 'literal' ]) ifTrue: [ self emitIndentations. ^ out nextPutAll: 'extA := 0.'; cr. ].
+	(((type = 'extend-a' or: [ type = 'literal' ]) or: [ type = 'local' ]) or: [ type = 'instance-var' ]) ifTrue: [ self emitIndentations. ^ out nextPutAll: 'extA := 0.'; cr. ].
 	(type = 'extend-b' or: [ type = 'label' ]) ifTrue: [ self emitIndentations. ^ out nextPutAll: 'extB := 0.'; cr. ].
 	self error: 'Unknown extended argument.'
 ]
@@ -449,7 +449,7 @@ LowcodeCogitGenerator >> fetchExtendedArgument: argument [
 		^ self.
 	].
 
-	type = 'extend-a' ifTrue: [ var := 'extA' ].
+	((type = 'extend-a' or: [type = 'local']) or: [type = 'instance-var']) ifTrue: [ var := 'extA' ].
 	type = 'extend-b' ifTrue: [ var := 'extB' ].
 	self emitIndentations.
 	out nextPutAll: argument name , ' := ' , var , '.'; cr
@@ -474,7 +474,7 @@ LowcodeCogitGenerator >> fetchInterpreterExtendedArgument: argument [
 		^ self.
 	].
 
-	type = 'extend-a' ifTrue: [ var := 'extA' ].
+	((type = 'extend-a' or: [type = 'local']) or: [type = 'instance-var']) ifTrue: [ var := 'extA' ].
 	type = 'extend-b' ifTrue: [ var := 'extB' ].
 	out tab; nextPutAll: argument name , ' := ' , var , '.'; cr
 ]

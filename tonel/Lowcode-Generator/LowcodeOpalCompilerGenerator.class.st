@@ -32,12 +32,19 @@ LowcodeOpalCompilerGenerator class >> initialize [
 { #category : #generation }
 LowcodeOpalCompilerGenerator >> compileIRBuilder: code [
 	Author useAuthor: 'Lowcode' during: [ 
-		IRLowcodeBuilder compile: code classified: 'lowcode instructions' ].
+		(Smalltalk at: #IRLowcodeBuilder) compile: code classified: 'lowcode instructions' ].
+]
+
+{ #category : #generation }
+LowcodeOpalCompilerGenerator >> compileInstructionTable: code [
+	Author useAuthor: 'Lowcode' during: [ 
+		(Smalltalk at: #IRLowcodeInstruction) class compile: code classified: 'lowcode instructions' ].
 ]
 
 { #category : #generation }
 LowcodeOpalCompilerGenerator >> generate [
-	self generateIRBuilder
+	self generateIRBuilder;
+		generateInstructionTable
 ]
 
 { #category : #generation }
@@ -64,6 +71,21 @@ LowcodeOpalCompilerGenerator >> generateIRBuilderInstruction: instruction [
 	].
 
 	self compileIRBuilder: code
+]
+
+{ #category : #generation }
+LowcodeOpalCompilerGenerator >> generateInstructionTable [
+	| code |
+	code := ByteString streamContents: [ :out |
+		out nextPutAll: 'lowcodeInstructionTable'; cr;
+			tab; nextPutAll: '^ #('; cr.
+		spec instructions do: [ :ins |
+			out tab; tab; print: ins opcode; tab; nextPutAll: ins mnemonic; cr.
+		].
+	
+		out tab; nextPutAll: ')'; cr.
+	].
+	self compileInstructionTable: code.
 ]
 
 { #category : #generation }

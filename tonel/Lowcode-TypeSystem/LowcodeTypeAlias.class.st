@@ -32,6 +32,16 @@ LowcodeTypeAlias >> alignment [
 	^ aliasedType alignment
 ]
 
+{ #category : #emitting }
+LowcodeTypeAlias >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+	aliasedType emitLowcodeStore: aMethodBuilder selfOffset: offset
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
+	aliasedType emitLowcodeValue: aMethodBuilder selfOffset: offset
+]
+
 { #category : #'read write' }
 LowcodeTypeAlias >> fromStructure: anObject offset: offset [
 	^ aliasedType fromStructure: anObject offset: offset

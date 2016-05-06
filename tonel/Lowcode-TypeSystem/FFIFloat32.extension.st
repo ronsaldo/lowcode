@@ -1,6 +1,16 @@
 Extension { #name : #FFIFloat32 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
+	aMethodBuilder
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePushConstantUInt32: offset;
+		lowcodePointerAddOffset32;
+		lowcodeLoadFloat32FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> readFromInternalStructure: anObject at: offset [
 	^ Float fromIEEE32Bit: ((((anObject basicAt: offset + 1)
 		bitOr: ((anObject basicAt: offset + 2) bitShift: 8))

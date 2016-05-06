@@ -22,6 +22,16 @@ LowcodeFFIType >> alignment [
 	^ ffiType typeAlignment
 ]
 
+{ #category : #emitting }
+LowcodeFFIType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+	ffiType emitLowcodeValue: aMethodBuilder selfOffset: offset
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
+	ffiType emitLowcodeValue: aMethodBuilder selfOffset: offset
+]
+
 { #category : #accessing }
 LowcodeFFIType >> ffiType [
 	^ ffiType

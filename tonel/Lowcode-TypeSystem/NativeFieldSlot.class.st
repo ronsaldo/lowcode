@@ -22,6 +22,16 @@ NativeFieldSlot >> alignment [
 	^ type alignment
 ]
 
+{ #category : #emitting }
+NativeFieldSlot >> emitLowcodeStore: aMethodBuilder [
+	type emitLowcodeStore: aMethodBuilder selfOffset: offset
+]
+
+{ #category : #emitting }
+NativeFieldSlot >> emitLowcodeValue: aMethodBuilder [
+	type emitLowcodeValue: aMethodBuilder selfOffset: offset
+]
+
 { #category : #accessing }
 NativeFieldSlot >> fieldSize [
 	^ type size

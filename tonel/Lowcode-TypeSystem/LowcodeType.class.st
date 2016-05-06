@@ -186,6 +186,16 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 	^ minimalCoercionSize <= 4 ifTrue: [ self class int32 ] ifFalse: [ self class int64 ].
 ]
 
+{ #category : #emitting }
+LowcodeType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
+	self subclassResponsibility
+]
+
 { #category : #'read write' }
 LowcodeType >> fromStructure: anObject offset: offset [
 	self subclassResponsibility

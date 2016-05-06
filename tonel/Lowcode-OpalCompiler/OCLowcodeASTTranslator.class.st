@@ -48,3 +48,8 @@ OCLowcodeASTTranslator >> visitReturnNode: aReturnNode [
 		
 
 ]
+
+{ #category : #'visitor-double dispatching' }
+OCLowcodeASTTranslator >> visitVariableNode: aVariableNode [
+	aVariableNode binding emitLowcodeValue: methodBuilder
+]

@@ -3,7 +3,7 @@ Extension { #name : #IRPrinterV2 }
 { #category : #'*Lowcode-IRBuilder' }
 IRPrinterV2 >> visitLowcodeInstruction: instruction [
 	stream nextPutAll: instruction lowcodeMnemonic.
-	(instruction hasLiteral or: [ instruction extendA isNotNil ]) ifNotNil: [
+	(instruction hasLiteral or: [ instruction extendA isNotNil ]) ifTrue: [
 		stream nextPutAll: ': ';
 			print: instruction extendA.
 	].

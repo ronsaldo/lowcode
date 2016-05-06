@@ -11,7 +11,7 @@ Class {
 		'parentLowcodeScope',
 		'nativeScopeSize'
 	],
-	#category : #'Lowcode-OpalCompiler'
+	#category : #'Lowcode-OpalCompiler-IR'
 }
 
 { #category : #construction }

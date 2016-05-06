@@ -32,7 +32,7 @@ Class {
 		'extendB',
 		'hasLiteral'
 	],
-	#category : #'Lowcode-OpalCompiler'
+	#category : #'Lowcode-OpalCompiler-IR'
 }
 
 { #category : #visitor }

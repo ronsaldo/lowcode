@@ -7,7 +7,7 @@ Class {
 	#instVars : [
 		'localFrameInstruction'
 	],
-	#category : #'Lowcode-OpalCompiler'
+	#category : #'Lowcode-OpalCompiler-IR'
 }
 
 { #category : #adding }

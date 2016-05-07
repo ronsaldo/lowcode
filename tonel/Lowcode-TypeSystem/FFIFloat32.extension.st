@@ -23,6 +23,11 @@ FFIFloat32 >> emitLowcodeDivide: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeDuplicate: aMethodBuilder [
+	aMethodBuilder lowcodeDuplicateFloat32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodeEquals: aMethodBuilder [
 	aMethodBuilder lowcodeFloat32Equal
 ]
@@ -48,6 +53,16 @@ FFIFloat32 >> emitLowcodeLessThan: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeLocalStore: aMethodBuilder name: localName [
+	aMethodBuilder lowcodeStoreLocalFloat32: localName
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeLocalValue: aMethodBuilder name: localName [
+	aMethodBuilder lowcodeLoadLocalFloat32: localName
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodeMultiply: aMethodBuilder [
 	aMethodBuilder lowcodeFloat32Mul
 ]
@@ -58,8 +73,14 @@ FFIFloat32 >> emitLowcodeNotEquals: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodePop: aMethodBuilder [
+	aMethodBuilder lowcodePopFloat32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 	aMethodBuilder
+		lowcodeDuplicateFloat32;
 		pushReceiver;
 		lowcodeFirstFieldPointer;
 		lowcodePointerAddConstantOffset: offset;

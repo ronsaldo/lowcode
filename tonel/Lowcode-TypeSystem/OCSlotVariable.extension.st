@@ -1,12 +1,12 @@
 Extension { #name : #OCSlotVariable }
 
 { #category : #'*Lowcode-TypeSystem' }
-OCSlotVariable >> emitLowcodeStore: aLowcodeMethodBuilder [
+OCSlotVariable >> emitLowcodeStore: aLowcodeMethodBuilder type: variableType [
 	^ slot emitLowcodeStore: aLowcodeMethodBuilder
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
-OCSlotVariable >> emitLowcodeValue: aLowcodeMethodBuilder [
+OCSlotVariable >> emitLowcodeValue: aLowcodeMethodBuilder type: variableType [
 	^ slot emitLowcodeValue: aLowcodeMethodBuilder
 ]
 

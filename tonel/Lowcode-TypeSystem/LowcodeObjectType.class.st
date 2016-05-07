@@ -10,6 +10,11 @@ LowcodeObjectType >> = other [
 ]
 
 { #category : #emitting }
+LowcodeObjectType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
+	"Nothing to do. By default the arguments are objects."
+]
+
+{ #category : #emitting }
 LowcodeObjectType >> emitConversionFromObject: aMethodBuilder [
 	"Nothing to do"
 ]
@@ -22,6 +27,16 @@ LowcodeObjectType >> emitConversionToObject: aMethodBuilder [
 { #category : #emitting }
 LowcodeObjectType >> emitDuplicate: aMethodBuilder [
 	aMethodBuilder pushDup
+]
+
+{ #category : #emitting }
+LowcodeObjectType >> emitLocalStore: aMethodBuilder name: localName [
+	aMethodBuilder storeTemp: localName
+]
+
+{ #category : #emitting }
+LowcodeObjectType >> emitLocalValue: aMethodBuilder name: localName [
+	aMethodBuilder pushTemp: localName
 ]
 
 { #category : #comparing }

@@ -28,6 +28,11 @@ LowcodeFFIType >> emitAdd: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeFFIType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
+	ffiType emitArgumentTypeCheck: aMethodBuilder name: argumentName
+]
+
+{ #category : #emitting }
 LowcodeFFIType >> emitConversionFromObject: aMethodBuilder [
 	ffiType emitLowcodeConvertFromObject: aMethodBuilder
 ]
@@ -73,8 +78,18 @@ LowcodeFFIType >> emitLessThan: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeFFIType >> emitLocalStore: aMethodBuilder name: localName [
+	ffiType emitLowcodeLocalStore: aMethodBuilder name: localName
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitLocalValue: aMethodBuilder name: localName [
+	ffiType emitLowcodeLocalValue: aMethodBuilder name: localName
+]
+
+{ #category : #emitting }
 LowcodeFFIType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
-	ffiType emitLowcodeValue: aMethodBuilder selfOffset: offset
+	ffiType emitLowcodeStore: aMethodBuilder selfOffset: offset
 ]
 
 { #category : #emitting }
@@ -90,6 +105,11 @@ LowcodeFFIType >> emitMultiply: aMethodBuilder [
 { #category : #emitting }
 LowcodeFFIType >> emitNotEquals: aMethodBuilder [
 	ffiType emitLowcodeNotEquals: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitPop: aMethodBuilder [
+	ffiType emitLowcodePop: aMethodBuilder
 ]
 
 { #category : #emitting }

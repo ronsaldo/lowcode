@@ -42,6 +42,11 @@ LowcodeTypeAlias >> doesNotUnderstand: aMessage [
 ]
 
 { #category : #emitting }
+LowcodeTypeAlias >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
+	aliasedType emitArgumentTypeCheck: aMethodBuilder name: argumentName
+]
+
+{ #category : #emitting }
 LowcodeTypeAlias >> emitConversionFromObject: aMethodBuilder [
 	aliasedType emitConversionFromObject: aMethodBuilder
 
@@ -59,6 +64,18 @@ LowcodeTypeAlias >> emitDuplicate: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeTypeAlias >> emitLocalStore: aMethodBuilder name: localName [
+	aliasedType emitLocalStore: aMethodBuilder name: localName
+
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitLocalValue: aMethodBuilder name: localName [
+	aliasedType emitLocalValue: aMethodBuilder name: localName
+
+]
+
+{ #category : #emitting }
 LowcodeTypeAlias >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 	aliasedType emitLowcodeStore: aMethodBuilder selfOffset: offset
 
@@ -67,6 +84,11 @@ LowcodeTypeAlias >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 { #category : #emitting }
 LowcodeTypeAlias >> emitLowcodeValue: aMethodBuilder selfOffset: selfOffset [
 	aliasedType emitLowcodeValue: aMethodBuilder selfOffset: selfOffset
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitPop: aMethodBuilder [
+	aliasedType emitPop: aMethodBuilder
 ]
 
 { #category : #'read write' }

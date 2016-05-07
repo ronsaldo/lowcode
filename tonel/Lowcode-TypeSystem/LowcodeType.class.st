@@ -187,6 +187,11 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 ]
 
 { #category : #emitting }
+LowcodeType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
 LowcodeType >> emitConversionFromObject: aMethodBuilder [
 	self subclassResponsibility
 ]
@@ -202,12 +207,27 @@ LowcodeType >> emitDuplicate: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeType >> emitLocalStore: aMethodBuilder name: localName [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitLocalValue: aMethodBuilder name: localName [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
 LowcodeType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 	self subclassResponsibility
 ]
 
 { #category : #emitting }
 LowcodeType >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitPop: aMethodBuilder [
 	self subclassResponsibility
 ]
 

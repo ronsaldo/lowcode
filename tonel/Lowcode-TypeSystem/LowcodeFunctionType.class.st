@@ -13,7 +13,7 @@ LowcodeFunctionType class >> arguments: arguments returnType: returnType [
 	^ self new arguments: arguments; returnType: returnType
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #comparing }
 LowcodeFunctionType >> = other [
 	^ self class == other class and: [ arguments = other arguments and: [ returnType = other returnType ] ]
 ]
@@ -28,7 +28,7 @@ LowcodeFunctionType >> arguments: anObject [
 	arguments := anObject
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #comparing }
 LowcodeFunctionType >> hash [
 	^ (self class hash bitXor: arguments) hash bitXor: returnType hash
 ]

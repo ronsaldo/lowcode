@@ -41,7 +41,9 @@ OCLowcodeASTTranslatorForEffect >> visitArrayNode: anArrayNode [
 
 { #category : #'as yet unclassified' }
 OCLowcodeASTTranslatorForEffect >> visitAssignmentNode: anAssignmentNode [
-	self halt.
+
+	super visitAssignmentNode: anAssignmentNode .
+	self popOfType: (anAssignmentNode propertyAt: #type).
 ]
 
 { #category : #'as yet unclassified' }

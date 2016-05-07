@@ -1,3 +1,6 @@
+"
+I am an extension of the CompilationContext that uses the the classes of the OpalCompiler extended with Lowcode.
+"
 Class {
 	#name : #LowcodeCompilationContext,
 	#superclass : #CompilationContext,

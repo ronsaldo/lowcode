@@ -4,6 +4,9 @@ I am an extension to the semantic analyser that adds support for type checking.
 Class {
 	#name : #OCLowcodeASTSemanticAnalyzer,
 	#superclass : #OCASTSemanticAnalyzer,
+	#instVars : [
+		'variableTypeMap'
+	],
 	#classVars : [
 		'ArithmeticMessages',
 		'ComparisonMessages',
@@ -99,13 +102,12 @@ OCLowcodeASTSemanticAnalyzer >> checkComparisonMessage: aMessageNode [
 
 { #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkConversionMessage: aMessageNode [
-	| selector receiverType argumentTypes argumentType |
-	selector := aMessageNode.
+	| selector receiverType messageType |
+	selector := aMessageNode selector.
 	receiverType := aMessageNode receiver propertyAt: #type.
-	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
-	self assert: argumentTypes size == 1.
-	argumentType := argumentTypes first.
-	self halt.
+	self assert: aMessageNode arguments size == 0.
+	messageType := SpecialTypeConversionMessages at: selector.
+	aMessageNode propertyAt: #type put: messageType returnType.
 	aMessageNode propertyAt: #nativeInline put: true.
 ]
 
@@ -123,9 +125,27 @@ OCLowcodeASTSemanticAnalyzer >> checkIdentityEqualityMessage: aMessageNode [
 	aMessageNode propertyAt: #nativeInline put: true.
 ]
 
+{ #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkImplicitConversionFrom: sourceType to: targetType on: aNode [
+	(sourceType hasImplicitConversionTo: targetType) ifFalse: [
+		OCLowcodeCannotCoerceTypeError new
+				node: aNode;
+				compilationContext: compilationContext;
+				messageText: 'Cannot perform implicit conversion from type ' , sourceType printString , ' and ', targetType printString, '.';
+				signal
+	].
+
+]
+
 { #category : #variables }
 OCLowcodeASTSemanticAnalyzer >> declareVariableNode: aVariableNode as: anOCTempVariable [
 	^ super declareVariableNode: aVariableNode as: anOCTempVariable
+]
+
+{ #category : #'as yet unclassified' }
+OCLowcodeASTSemanticAnalyzer >> initialize [
+	super initialize.
+	variableTypeMap := IdentityDictionary new.
 ]
 
 { #category : #testing }
@@ -149,11 +169,17 @@ OCLowcodeASTSemanticAnalyzer >> isSpecialConversionMessage: aSelector [
 ]
 
 { #category : #parsing }
-OCLowcodeASTSemanticAnalyzer >> parseArgumentTypePragma: pragmaArguments [
-	| name type |
+OCLowcodeASTSemanticAnalyzer >> parseArgumentTypePragma: pragmaArguments scopeNode: aScopeNode [
+	| name type var |
 	name := pragmaArguments first.
 	type := self parseTypeExpression: pragmaArguments second.
-	self halt.
+	var := scope lookupVar: name.
+	var isArg ifFalse: [ 
+	].
+
+	variableTypeMap at: var put: type.
+	(aScopeNode propertyAt: #argumentTypes ifAbsentPut: [ Dictionary new ]) at: name put: type.
+	
 ]
 
 { #category : #parsing }
@@ -165,7 +191,7 @@ OCLowcodeASTSemanticAnalyzer >> parseReturnTypePragma: pragmaArguments [
 
 { #category : #parsing }
 OCLowcodeASTSemanticAnalyzer >> parseTypeExpression: typeExpression [
-	^ typeExpression asNativeFieldType
+	^ typeExpression asLowcodeType
 ]
 
 { #category : #parsing }
@@ -178,12 +204,19 @@ OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaArguments [
 
 { #category : #accessing }
 OCLowcodeASTSemanticAnalyzer >> typeForTemporary: aTemporaryVariable [
-	^ LowcodeType object
+	^ variableTypeMap at: aTemporaryVariable ifAbsent: [ LowcodeType object ]
 ]
 
 { #category : #visitor }
 OCLowcodeASTSemanticAnalyzer >> visitAssignmentNode: anAssignmentNode [
-	super visitAssignmentNode: anAssignmentNode
+	| valueType type binding |
+	super visitAssignmentNode: anAssignmentNode.
+	binding := anAssignmentNode variable propertyAt: #binding.
+	type := binding lowcodeTypeFor: self.
+	anAssignmentNode variable propertyAt: #type put: type.
+	anAssignmentNode propertyAt: #type put: type.
+	valueType := anAssignmentNode value propertyAt: #type.
+	self checkImplicitConversionFrom: valueType to: type on: anAssignmentNode.
 ]
 
 { #category : #visitor }
@@ -230,7 +263,7 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 OCLowcodeASTSemanticAnalyzer >> visitPragmaNode: aPragmaNode [
 	super visitPragmaNode: aPragmaNode.
 	(aPragmaNode selector = #argument:type:)
-		ifTrue: [ self parseArgumentTypePragma: aPragmaNode asPragma arguments ].
+		ifTrue: [ self parseArgumentTypePragma: aPragmaNode asPragma arguments scopeNode: aPragmaNode parent].
 	(aPragmaNode selector = #var:type:)
 		ifTrue: [ self parseVariableTypePragma: aPragmaNode asPragma arguments ].
 	(aPragmaNode selector = #returnType:)

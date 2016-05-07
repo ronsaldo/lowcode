@@ -1,3 +1,6 @@
+"
+I am an extended version of the OpalCompier AST translator that uses the Lowcode IRMethodBuilder, and the lowcode instructions.
+"
 Class {
 	#name : #OCLowcodeASTTranslator,
 	#superclass : #OCASTTranslator,
@@ -62,6 +65,25 @@ OCLowcodeASTTranslator class >> initialize [
 	IdentityEqualityMessages := Set newFrom: #(== ~~).
 ]
 
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> addTemps: names types: typeDictionary isArgs: isArgs [
+	| objectTemps nativeTemps type |
+	objectTemps := OrderedCollection new.
+	nativeTemps := OrderedCollection new.
+	names do: [ :name |
+		type := typeDictionary at: name ifAbsent: [ LowcodeType object ].
+		type isObject ifTrue: [
+			objectTemps add: name.
+		] ifFalse: [
+			nativeTemps add: name -> type size. 
+			isArgs ifTrue: [ objectTemps add: ('__object_' , name ) asSymbol ] 
+		]
+	].
+
+	methodBuilder addTemps: objectTemps.
+	methodBuilder addNativeTemps: nativeTemps.
+]
+
 { #category : #initialization }
 OCLowcodeASTTranslator >> classForEffect [
 	^ OCLowcodeASTTranslatorForEffect
@@ -70,6 +92,26 @@ OCLowcodeASTTranslator >> classForEffect [
 { #category : #initialization }
 OCLowcodeASTTranslator >> classForValue [
 	^ OCLowcodeASTTranslatorForValue
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitArgumentLoads: names types: typeDictionary [
+	| objectTemps nativeTemps type objectArgTempName |
+	objectTemps := OrderedCollection new.
+	nativeTemps := OrderedCollection new.
+	names do: [ :name |
+		type := typeDictionary at: name ifAbsent: [ LowcodeType object ].
+		type isObject ifFalse: [
+			objectArgTempName := ('__object_' , name ) asSymbol.
+			methodBuilder pushTemp: objectArgTempName.
+			type emitArgumentTypeCheck: methodBuilder name: name.
+			self emitConversionFrom: LowcodeType object to: type. 
+			type emitLocalStore: methodBuilder name: name. 
+		]
+	].
+
+	methodBuilder addTemps: objectTemps.
+	methodBuilder addNativeTemps: nativeTemps.
 ]
 
 { #category : #'native code emition' }
@@ -94,14 +136,17 @@ OCLowcodeASTTranslator >> emitCoercionsOfSpecialMessage: aMessageNode [
 
 { #category : #'native code emition' }
 OCLowcodeASTTranslator >> emitComparisonMessage: aMessageNode [
-	self halt.
+	| coercionType |
+	self emitCoercionsOfSpecialMessage: aMessageNode.
+	coercionType := aMessageNode propertyAt: #coercionType.
+	coercionType perform: (ComparisonMessages at: aMessageNode selector) with: methodBuilder
 ]
 
 { #category : #'native code emition' }
 OCLowcodeASTTranslator >> emitConversionFrom: sourceType to: targetType [
 	sourceType withoutAliases = targetType withoutAliases ifTrue: [ ^ self ].
 	targetType isObject ifTrue: [ ^ sourceType emitConversionToObject: methodBuilder ].
-	sourceType isObject ifTrue: [ ^ sourceType emitConversionFromObject: methodBuilder ].
+	sourceType isObject ifTrue: [ ^ targetType emitConversionFromObject: methodBuilder ].
 	
 	Transcript show: 'Convert from ' , sourceType printString , ' -> ' , targetType printString.
 	self halt.
@@ -164,9 +209,26 @@ OCLowcodeASTTranslator >> initialize [
 ]
 
 { #category : #'visitor-double dispatching' }
+OCLowcodeASTTranslator >> popOfType: aType [
+	aType emitPop: methodBuilder
+	
+]
+
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslator >> pushDupOfType: aType [
 	aType emitDuplicate: methodBuilder
 	
+]
+
+{ #category : #'visitor-double dispatching' }
+OCLowcodeASTTranslator >> visitAssignmentNode: anAssignmentNode [
+
+	| valueType variableType |
+	valueTranslator visitNode: anAssignmentNode value.
+	valueType := anAssignmentNode value propertyAt: #type.
+	variableType := anAssignmentNode propertyAt: #type.
+	self emitConversionFrom: valueType to: variableType.
+	anAssignmentNode variable binding emitLowcodeStore: methodBuilder type: variableType
 ]
 
 { #category : #'visitor-double dispatching' }
@@ -186,18 +248,22 @@ OCLowcodeASTTranslator >> visitCascadeNode: aCascadeNode [
 { #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslator >> visitMethodNode: aMethodNode [
 	
-	| allTempNames argumentTemporaries temporaryVariables |
+	| allTempNames argumentTemporaries temporaryVariables argumentTypes temporaryTypes |
 	aMethodNode arguments size > 15 ifTrue: [self backendError: 'Too many arguments' forNode: aMethodNode ].
 
 	methodBuilder compilationContext: aMethodNode compilationContext.
 	
 	"Add the temporary variables, including the special variables that are required by Lowcode methods."
 	allTempNames := aMethodNode scope tempVarNames asArray.
+	argumentTypes := aMethodNode propertyAt: #argumentTypes ifAbsent: [Dictionary new].
+	temporaryTypes := aMethodNode propertyAt: #temporaryTypes ifAbsent: [Dictionary new].
+	
 	argumentTemporaries := allTempNames first: aMethodNode arguments size.
 	temporaryVariables := allTempNames allButFirst: aMethodNode arguments size.
-	methodBuilder addTemps: argumentTemporaries.
+	
+	self addTemps: argumentTemporaries types: argumentTypes isArgs: true.
 	methodBuilder addTemps: #(__lowcodePreviousNativeStackPointer__ __lowcodeNativeFramePointer__ __lowcodeNativeStackPointer__ __lowcodeCalloutState__).
-	methodBuilder addTemps: temporaryVariables.
+	self addTemps: temporaryVariables types: temporaryTypes isArgs: false. 
 		
 	methodBuilder properties: aMethodNode properties.
 	methodBuilder irPrimitive: aMethodNode primitiveFromPragma.
@@ -209,6 +275,7 @@ OCLowcodeASTTranslator >> visitMethodNode: aMethodNode [
 			createTempVectorNamed: aMethodNode scope tempVectorName 
 			withVars: (aMethodNode scope tempVector collect: [:each| each name]) asArray.
 	].
+	self emitArgumentLoads: argumentTemporaries types: argumentTypes.
 	effectTranslator visitNode: aMethodNode body.
 	aMethodNode body lastIsReturn ifFalse:  [methodBuilder pushReceiver; returnTop]
 ]
@@ -227,5 +294,7 @@ OCLowcodeASTTranslator >> visitReturnNode: aReturnNode [
 
 { #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslator >> visitVariableNode: aVariableNode [
-	aVariableNode binding emitLowcodeValue: methodBuilder
+	| type |
+	type := aVariableNode propertyAt: #type.
+	aVariableNode binding emitLowcodeValue: methodBuilder type: type.
 ]

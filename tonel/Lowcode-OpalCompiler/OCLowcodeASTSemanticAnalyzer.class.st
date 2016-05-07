@@ -45,7 +45,7 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 		SpecialTypeConversionMessages at: selector put: signature asLowcodeType
 	].
 
-	ArithmeticMessages := Set newFrom: #(+ - * / % **).
+	ArithmeticMessages := Set newFrom: #(+ - * / % \\).
 	ComparisonMessages := Set newFrom: #(< <= > >= = ~).
 	IdentityEqualityMessages := Set newFrom: #(== ~~).
 ]
@@ -78,6 +78,7 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticMessage: aMessageNode [
 	coercionType := self arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode.
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: coercionType.
+	aMessageNode propertyAt: #nativeInline put: true.
 ]
 
 { #category : #'message type checking' }
@@ -93,6 +94,7 @@ OCLowcodeASTSemanticAnalyzer >> checkComparisonMessage: aMessageNode [
 	coercionType := self arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode.
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: LowcodeType bool.
+	aMessageNode propertyAt: #nativeInline put: true.
 ]
 
 { #category : #'message type checking' }
@@ -104,6 +106,7 @@ OCLowcodeASTSemanticAnalyzer >> checkConversionMessage: aMessageNode [
 	self assert: argumentTypes size == 1.
 	argumentType := argumentTypes first.
 	self halt.
+	aMessageNode propertyAt: #nativeInline put: true.
 ]
 
 { #category : #'message type checking' }
@@ -117,6 +120,7 @@ OCLowcodeASTSemanticAnalyzer >> checkIdentityEqualityMessage: aMessageNode [
 	leftType := receiverType.
 	rightType := argumentTypes first.
 	self halt.
+	aMessageNode propertyAt: #nativeInline put: true.
 ]
 
 { #category : #variables }
@@ -201,6 +205,9 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 	selector := aMessageNode selector.
 	receiverType := aMessageNode receiver propertyAt: #type.
 	aMessageNode propertyAt: #type put: LowcodeType object.
+	aMessageNode propertyAt: #nativeInline put: false.
+	aMessageNode isSuperSend ifTrue: [ ^ self ].
+	
 	(self isSpecialConversionMessage: selector) ifTrue: [
 		self checkConversionMessage: aMessageNode
 	].
@@ -216,7 +223,7 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 	(self isIdentityEqualityMessage: selector) ifTrue: [
 		self checkIdentityEqualityMessage: aMessageNode
 	]. 
-	"self halt"
+
 ]
 
 { #category : #visitor }

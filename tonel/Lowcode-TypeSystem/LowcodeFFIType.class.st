@@ -23,6 +23,56 @@ LowcodeFFIType >> alignment [
 ]
 
 { #category : #emitting }
+LowcodeFFIType >> emitAdd: aMethodBuilder [
+	ffiType emitLowcodeAdd: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitConversionFromObject: aMethodBuilder [
+	ffiType emitLowcodeConvertFromObject: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitConversionToObject: aMethodBuilder [
+	ffiType emitLowcodeConvertToObject: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitDivide: aMethodBuilder [
+	ffiType emitLowcodeDivide: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitDuplicate: aMethodBuilder [
+	ffiType emitLowcodeDuplicate: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitEquals: aMethodBuilder [
+	ffiType emitLowcodeEquals: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitGreaterEqualThan: aMethodBuilder [
+	ffiType emitLowcodeGreaterEqualThan: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitGreaterThan: aMethodBuilder [
+	ffiType emitLowcodeGreaterThan: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitLessEqualThan: aMethodBuilder [
+	ffiType emitLowcodeLessEqualThan: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitLessThan: aMethodBuilder [
+	ffiType emitLowcodeLessThan: aMethodBuilder
+]
+
+{ #category : #emitting }
 LowcodeFFIType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 	ffiType emitLowcodeValue: aMethodBuilder selfOffset: offset
 ]
@@ -30,6 +80,26 @@ LowcodeFFIType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 { #category : #emitting }
 LowcodeFFIType >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 	ffiType emitLowcodeValue: aMethodBuilder selfOffset: offset
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitMultiply: aMethodBuilder [
+	ffiType emitLowcodeMultiply: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitNotEquals: aMethodBuilder [
+	ffiType emitLowcodeNotEquals: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitRem: aMethodBuilder [
+	ffiType emitLowcodeRem: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitSubtract: aMethodBuilder [
+	ffiType emitLowcodeSubtract: aMethodBuilder
 ]
 
 { #category : #accessing }

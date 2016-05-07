@@ -1,12 +1,82 @@
 Extension { #name : #FFIFloat32 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeAdd: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Add
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeConvertFromObject: aMethodBuilder [
+	aMethodBuilder
+		lowcodeOopToFloat32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeConvertToObject: aMethodBuilder [
+	aMethodBuilder
+		lowcodeFloat32ToOop
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeDivide: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Div
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeEquals: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Equal
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeGreaterEqualThan: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32GreatEqual
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeGreaterThan: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Great
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeLessEqualThan: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32LessEqual
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeLessThan: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Less
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeMultiply: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Mul
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeNotEquals: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32NotEqual
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+	aMethodBuilder
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset;
+		lowcodeStoreFloat32ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeSubtract: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Sub
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 	aMethodBuilder
 		pushReceiver;
 		lowcodeFirstFieldPointer;
-		lowcodePushConstantUInt32: offset;
-		lowcodePointerAddOffset32;
+		lowcodePointerAddConstantOffset: offset;
 		lowcodeLoadFloat32FromMemory
 ]
 

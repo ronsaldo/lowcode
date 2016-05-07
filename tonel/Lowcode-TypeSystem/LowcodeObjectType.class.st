@@ -9,6 +9,21 @@ LowcodeObjectType >> = other [
 	^ self class = other class
 ]
 
+{ #category : #emitting }
+LowcodeObjectType >> emitConversionFromObject: aMethodBuilder [
+	"Nothing to do"
+]
+
+{ #category : #emitting }
+LowcodeObjectType >> emitConversionToObject: aMethodBuilder [
+	"Nothing to do"
+]
+
+{ #category : #emitting }
+LowcodeObjectType >> emitDuplicate: aMethodBuilder [
+	aMethodBuilder pushDup
+]
+
 { #category : #comparing }
 LowcodeObjectType >> hash [
 	^ self class hash

@@ -187,6 +187,21 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 ]
 
 { #category : #emitting }
+LowcodeType >> emitConversionFromObject: aMethodBuilder [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitConversionToObject: aMethodBuilder [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitDuplicate: aMethodBuilder [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
 LowcodeType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 	self subclassResponsibility
 ]

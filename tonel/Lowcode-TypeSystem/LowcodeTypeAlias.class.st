@@ -32,14 +32,41 @@ LowcodeTypeAlias >> alignment [
 	^ aliasedType alignment
 ]
 
-{ #category : #emitting }
-LowcodeTypeAlias >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
-	aliasedType emitLowcodeStore: aMethodBuilder selfOffset: offset
+{ #category : #'reflective operations' }
+LowcodeTypeAlias >> doesNotUnderstand: aMessage [
+	(aMessage selector beginsWith: #emit) ifTrue: [ 
+		^ aMessage sendTo: aliasedType 
+	].
+
+	^ super doesNotUnderstand: aMessage
 ]
 
 { #category : #emitting }
-LowcodeTypeAlias >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
-	aliasedType emitLowcodeValue: aMethodBuilder selfOffset: offset
+LowcodeTypeAlias >> emitConversionFromObject: aMethodBuilder [
+	aliasedType emitConversionFromObject: aMethodBuilder
+
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitConversionToObject: aMethodBuilder [
+	aliasedType emitConversionToObject: aMethodBuilder
+
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitDuplicate: aMethodBuilder [
+	aliasedType emitDuplicate: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+	aliasedType emitLowcodeStore: aMethodBuilder selfOffset: offset
+
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitLowcodeValue: aMethodBuilder selfOffset: selfOffset [
+	aliasedType emitLowcodeValue: aMethodBuilder selfOffset: selfOffset
 ]
 
 { #category : #'read write' }
@@ -79,7 +106,7 @@ LowcodeTypeAlias >> size [
 
 { #category : #accessing }
 LowcodeTypeAlias >> withoutAliases [
-	^ aliasedType
+	^ aliasedType withoutAliases
 ]
 
 { #category : #'read write' }

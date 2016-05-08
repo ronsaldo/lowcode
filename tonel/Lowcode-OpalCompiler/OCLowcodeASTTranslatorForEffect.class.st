@@ -26,7 +26,10 @@ OCLowcodeASTTranslatorForEffect >> emitIfTrue: aMessageNode [
 
 { #category : #'as yet unclassified' }
 OCLowcodeASTTranslatorForEffect >> emitMessageNode: aMessageNode [
-	self halt.
+	| resultType |
+	super emitMessageNode: aMessageNode.
+	resultType := aMessageNode propertyAt: #type.
+	resultType emitPop: methodBuilder
 ]
 
 { #category : #'as yet unclassified' }

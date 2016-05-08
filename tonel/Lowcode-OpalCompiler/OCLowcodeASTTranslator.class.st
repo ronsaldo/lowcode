@@ -6,6 +6,7 @@ Class {
 	#superclass : #OCASTTranslator,
 	#classVars : [
 		'ArithmeticMessages',
+		'ArithmeticUnaryMessages',
 		'ComparisonMessages',
 		'IdentityEqualityMessages',
 		'SpecialTypeConversionMessages'
@@ -62,6 +63,14 @@ OCLowcodeASTTranslator class >> initialize [
 		~ emitNotEquals:
 	).
 	
+	ArithmeticUnaryMessages := Dictionary newFromPairs: #(
+		not emitNot:
+		negated emitNegated:
+		bitInvert emitBitInvert:
+		bitInvert32 emitBitInvert:
+		sqrt emitSqrt:
+	).
+
 	IdentityEqualityMessages := Set newFrom: #(== ~~).
 ]
 
@@ -120,6 +129,15 @@ OCLowcodeASTTranslator >> emitArithmeticMessage: aMessageNode [
 	self emitCoercionsOfSpecialMessage: aMessageNode.
 	coercionType := aMessageNode propertyAt: #coercionType.
 	coercionType perform: (ArithmeticMessages at: aMessageNode selector) with: methodBuilder
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitArithmeticUnaryMessage: aMessageNode [
+	| coercionType |
+	self emitCoercionsOfSpecialMessage: aMessageNode.
+	coercionType := aMessageNode propertyAt: #coercionType.
+	coercionType perform: (ArithmeticUnaryMessages at: aMessageNode selector) with: methodBuilder
+	
 ]
 
 { #category : #'native code emition' }
@@ -207,7 +225,11 @@ OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
 		
 			^ self emitConversionFrom: (aMessageNode receiver propertyAt: #type) to: (aMessageNode propertyAt: #type)
 		].
-	
+
+		(ArithmeticUnaryMessages includesKey: selector) ifTrue: [
+			^ self emitArithmeticUnaryMessage: aMessageNode.
+		].
+		
 		(ArithmeticMessages includesKey: selector) ifTrue: [
 			^ self emitArithmeticMessage: aMessageNode.
 		].
@@ -216,7 +238,7 @@ OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
 			^ self emitComparisonMessage: aMessageNode.
 		].
 	
-		(IdentityEqualityMessages includesKey: selector) ifTrue: [
+		(IdentityEqualityMessages includes: selector) ifTrue: [
 			^ self emitIdentityEqualityMessage: aMessageNode.
 		]
 	].

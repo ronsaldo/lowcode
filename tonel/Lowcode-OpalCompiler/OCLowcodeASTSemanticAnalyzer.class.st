@@ -9,6 +9,7 @@ Class {
 	],
 	#classVars : [
 		'ArithmeticMessages',
+		'ArithmeticUnaryMessages',
 		'ComparisonMessages',
 		'IdentityEqualityMessages',
 		'OptimizedInlineMessages',
@@ -49,6 +50,18 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 		SpecialTypeConversionMessages at: selector put: signature asLowcodeType
 	].
 
+	ArithmeticUnaryMessages := Dictionary new.
+	#(
+		not (bool boolean)
+		bitInvert (uint32 integer)
+		bitInvert32 (uint32 integer)
+		negated (int32 any)
+		sqrt (float32 any)
+	) pairsDo: [ :selector :signature |
+		
+		ArithmeticUnaryMessages at: selector put: signature first asLowcodeType -> signature second
+	].
+	
 	ArithmeticMessages := Set newFrom: #(+ - * / % \\).
 	ComparisonMessages := Set newFrom: #(< <= > >= = ~).
 	IdentityEqualityMessages := Set newFrom: #(== ~~).
@@ -73,7 +86,7 @@ OCLowcodeASTSemanticAnalyzer >> arithmeticCoerceImplicitly: leftType with: right
 		OCLowcodeCannotCoerceTypeError new
 				node: aMessageNode;
 				compilationContext: compilationContext;
-				messageText: 'Cannot perform arithmetic coercion for type ' , leftType printString , ' and ', rightType , '.';
+				messageText: 'Cannot perform arithmetic coercion for type ' , leftType printString , ' and ', rightType printString , '.';
 				signal
 	].
 	^ coercionType
@@ -93,7 +106,42 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticMessage: aMessageNode [
 	coercionType := self arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode.
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: coercionType.
-	aMessageNode propertyAt: #nativeInline put: true.
+	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
+]
+
+{ #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkArithmeticUnaryMessage: aMessageNode [
+	| selector receiverType coercionType valueType signatureType signatureTypeAndConstraint signatureConstraint |
+	selector := aMessageNode selector.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	self assert: aMessageNode arguments size == 0.
+	
+	valueType := receiverType.
+	signatureTypeAndConstraint := ArithmeticUnaryMessages at: selector.
+	signatureType := signatureTypeAndConstraint key.
+	signatureConstraint := signatureTypeAndConstraint value.
+	coercionType := self arithmeticCoerceImplicitly: valueType with: signatureType on: aMessageNode.
+	coercionType isObject ifFalse: [
+		((signatureConstraint == #boolean) and: [ coercionType isBooleanType not ]) ifTrue: [
+			OCLowcodeInvalidTypesError new
+				node: aMessageNode;
+				compilationContext: compilationContext;
+				messageText: 'Cannot send message ' , selector printString, ' to object of non boolean (or object) type.';
+				signal
+		].
+
+		((signatureConstraint == #integer) and: [ coercionType isIntegerType not ]) ifTrue: [
+			OCLowcodeInvalidTypesError new
+				node: aMessageNode;
+				compilationContext: compilationContext;
+				messageText: 'Cannot send message ' , selector printString, ' to object of non integer (or object) type.';
+				signal
+		].
+	].
+
+	aMessageNode propertyAt: #coercionType put: coercionType.
+	aMessageNode propertyAt: #type put: coercionType.
+	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
 ]
 
 { #category : #'message type checking' }
@@ -109,7 +157,7 @@ OCLowcodeASTSemanticAnalyzer >> checkComparisonMessage: aMessageNode [
 	coercionType := self arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode.
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: LowcodeType bool.
-	aMessageNode propertyAt: #nativeInline put: true.
+	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
 ]
 
 { #category : #'message type checking' }
@@ -188,6 +236,11 @@ OCLowcodeASTSemanticAnalyzer >> initialize [
 { #category : #testing }
 OCLowcodeASTSemanticAnalyzer >> isArithmeticMessage: aSelector [
 	^ ArithmeticMessages includes: aSelector 
+]
+
+{ #category : #testing }
+OCLowcodeASTSemanticAnalyzer >> isArithmeticUnaryMessage: aSelector [
+	^ ArithmeticUnaryMessages includesKey: aSelector 
 ]
 
 { #category : #testing }
@@ -322,6 +375,10 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 
 	(self isArithmeticMessage: selector) ifTrue: [
 		self checkArithmeticMessage: aMessageNode
+	].
+
+	(self isArithmeticUnaryMessage: selector) ifTrue: [ 
+		self checkArithmeticUnaryMessage: aMessageNode
 	].
 
 	(self isComparisonMessage: selector) ifTrue: [ 

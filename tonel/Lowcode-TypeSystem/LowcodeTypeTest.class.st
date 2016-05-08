@@ -30,6 +30,24 @@ LowcodeTypeTest >> testHasImplicitConversionTo [
 ]
 
 { #category : #tests }
+LowcodeTypeTest >> testInstantiateTemplate [
+	| template argumentTypes instantiatedTemplate |
+	template := #(bool , ( -> 1) , ( -> 1) -> 1) asLowcodeType.
+	argumentTypes := #( bool ( -> float32 ) ( -> float) ) collect: #asLowcodeType.
+	instantiatedTemplate := template instantiateTemplate: argumentTypes.
+	self assert: instantiatedTemplate returnType withoutAliases = #float asLowcodeType withoutAliases.
+]
+
+{ #category : #tests }
+LowcodeTypeTest >> testInstantiateTemplate2 [
+	| template argumentTypes instantiatedTemplate |
+	template := #(bool , ( -> 1) , ( -> 1) -> 1) asLowcodeType.
+	argumentTypes := #( bool ( -> float32 ) ( -> int) ) collect: #asLowcodeType.
+	instantiatedTemplate := template instantiateTemplate: argumentTypes.
+	self assert: instantiatedTemplate isNil.
+]
+
+{ #category : #tests }
 LowcodeTypeTest >> testPrimitiveTypes [ 
 	self assert: LowcodeType int8 isNumberType.
 	self assert: LowcodeType int8 isIntegerType.

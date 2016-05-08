@@ -142,6 +142,11 @@ LowcodeFFIType >> hash [
 	^ self class hash bitXor: ffiType hash
 ]
 
+{ #category : #template }
+LowcodeFFIType >> instantiateTemplate: templateArguments withEnvironment: templateEnvironment [
+	^ self
+]
+
 { #category : #testing }
 LowcodeFFIType >> isFloatingPointType [
 	^ ffiType isFloatingPointType

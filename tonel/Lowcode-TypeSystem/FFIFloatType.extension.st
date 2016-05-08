@@ -8,7 +8,7 @@ FFIFloatType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 		jumpAheadTo: #validArgument if: true;
 		pushReceiver;
 		pushLiteral: 'Argument ' , argumentName printString , ' has to be a float object.';
-		send: #error;
+		send: #error:;
 		pushReceiver;
 		returnTop;
 		jumpAheadTarget: #validArgument.

@@ -254,6 +254,21 @@ LowcodeType >> hasImplicitConversionTo: otherType [
 	^ false
 ]
 
+{ #category : #template }
+LowcodeType >> instantiateTemplate: templateArguments [
+	^ self instantiateTemplate: templateArguments withEnvironment: Dictionary new
+]
+
+{ #category : #template }
+LowcodeType >> instantiateTemplate: templateArguments withEnvironment: templateEnvironment [
+	^ (self matchesType: templateArguments withEnvironment: templateEnvironment) ifTrue: [ templateArguments ] ifFalse: [ ^ nil ]
+]
+
+{ #category : #template }
+LowcodeType >> instantiateTemplateWithEnvironment: templateEnvironment [
+	^ self
+]
+
 { #category : #testing }
 LowcodeType >> isAny [
 	^ false
@@ -261,6 +276,11 @@ LowcodeType >> isAny [
 
 { #category : #testing }
 LowcodeType >> isFloatingPointType [
+	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isFunctionType [
 	^ false
 ]
 
@@ -282,6 +302,16 @@ LowcodeType >> isNumberType [
 { #category : #testing }
 LowcodeType >> isObject [
 	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isPlaceHolderType [
+	^ false
+]
+
+{ #category : #template }
+LowcodeType >> matchesType: templateArgument withEnvironment: templateEnvironment [
+	^ self withoutAliases = templateArgument withoutAliases
 ]
 
 { #category : #accessing }

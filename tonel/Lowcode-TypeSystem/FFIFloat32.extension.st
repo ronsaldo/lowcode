@@ -54,7 +54,9 @@ FFIFloat32 >> emitLowcodeLessThan: aMethodBuilder [
 
 { #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodeLocalStore: aMethodBuilder name: localName [
-	aMethodBuilder lowcodeStoreLocalFloat32: localName
+	aMethodBuilder
+		lowcodeDuplicateFloat32;
+		lowcodeStoreLocalFloat32: localName
 ]
 
 { #category : #'*Lowcode-TypeSystem' }

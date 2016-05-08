@@ -39,6 +39,11 @@ LowcodeObjectType >> emitLocalValue: aMethodBuilder name: localName [
 	aMethodBuilder pushTemp: localName
 ]
 
+{ #category : #emitting }
+LowcodeObjectType >> emitPop: aMethodBuilder [
+	aMethodBuilder popTop
+]
+
 { #category : #comparing }
 LowcodeObjectType >> hash [
 	^ self class hash
@@ -48,6 +53,11 @@ LowcodeObjectType >> hash [
 LowcodeObjectType >> initialize [
 	super initialize.
 	self name: #object.
+]
+
+{ #category : #template }
+LowcodeObjectType >> instantiateTemplate: templateArguments withEnvironment: templateEnvironment [
+	^ self
 ]
 
 { #category : #testing }

@@ -8,7 +8,7 @@ FFIIntegerType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 		jumpAheadTo: #validArgument if: true;
 		pushReceiver;
 		pushLiteral: 'Argument ' , argumentName printString , ' has to be an integer object.';
-		send: #error;
+		send: #error:;
 		pushReceiver;
 		returnTop;
 		jumpAheadTarget: #validArgument.

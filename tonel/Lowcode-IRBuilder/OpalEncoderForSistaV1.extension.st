@@ -3,7 +3,7 @@ Extension { #name : #OpalEncoderForSistaV1 }
 { #category : #'*Lowcode-IRBuilder' }
 OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction [
 	instruction extendA ifNotNil: [ self genUnsignedMultipleExtendA: instruction extendA. ].
-	instruction extendB ifNotNil: [ self genLowcodeSignedMultipleExtendA: instruction extendB ].
+	instruction extendB ifNotNil: [ self genLowcodeSignedMultipleExtendB: instruction extendB ].
 	
 	self genCallInlinePrimitive: instruction opcode.
 ]
@@ -11,7 +11,7 @@ OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction [
 { #category : #'*Lowcode-IRBuilder' }
 OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction literal: literalIndex [
 	self genUnsignedMultipleExtendA: literalIndex.
-	instruction extendB ifNotNil: [ self genLowcodeSignedMultipleExtendA: instruction extendB ].
+	instruction extendB ifNotNil: [ self genLowcodeSignedMultipleExtendB: instruction extendB ].
 	
 	self genCallInlinePrimitive: instruction opcode.
 ]

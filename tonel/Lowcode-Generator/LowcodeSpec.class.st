@@ -31,12 +31,16 @@ LowcodeSpec class >> generateOpcodes [
 |spec sortedInstructions currentArity arityCount arity arityStart arityDiffs |
 spec := LowcodeSpecLoader fromFileNamed: 'old-lowcode.xml'.
 sortedInstructions := spec instructions sort: [ :a :b |
-	a oopStackDifference < b oopStackDifference
+	a oopStackDifference = b oopStackDifference ifTrue: [
+		a mnemonic < b mnemonic
+	] ifFalse: [
+		a oopStackDifference < b oopStackDifference
+	]
 ].
 
 currentArity := -2.
 arityCount := 0.
-arityStart := #(0 7 70 5).
+arityStart := #(1 7 70 5).
 arityDiffs := OrderedCollection new.
 sortedInstructions do: [:ins |
 	arity := ins oopStackDifference.

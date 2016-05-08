@@ -38,7 +38,8 @@ LowcodeOpalCompilerGenerator >> compileIRBuilder: code [
 { #category : #generation }
 LowcodeOpalCompilerGenerator >> compileInstructionTable: code [
 	Author useAuthor: 'Lowcode' during: [ 
-		(Smalltalk at: #IRLowcodeInstruction) class compile: code classified: 'lowcode instructions' ].
+		(Smalltalk at: #IRLowcodeInstruction) class compile: code classified: 'lowcode instructions'.
+		(Smalltalk at: #IRLowcodeInstruction) initialize. ].
 ]
 
 { #category : #generation }

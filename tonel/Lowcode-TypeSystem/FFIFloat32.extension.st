@@ -70,6 +70,11 @@ FFIFloat32 >> emitLowcodeMultiply: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeNegated: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Neg
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodeNotEquals: aMethodBuilder [
 	aMethodBuilder lowcodeFloat32NotEqual
 ]
@@ -77,6 +82,11 @@ FFIFloat32 >> emitLowcodeNotEquals: aMethodBuilder [
 { #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodePop: aMethodBuilder [
 	aMethodBuilder lowcodePopFloat32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeSqrt: aMethodBuilder [
+	aMethodBuilder lowcodeFloat32Sqrt
 ]
 
 { #category : #'*Lowcode-TypeSystem' }

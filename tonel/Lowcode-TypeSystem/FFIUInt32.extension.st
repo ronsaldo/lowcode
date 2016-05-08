@@ -1,6 +1,18 @@
 Extension { #name : #FFIUInt32 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> emitLowcodeConvertFromObject: aMethodBuilder [
+	aMethodBuilder
+		lowcodeOopToUInt32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> emitLowcodeConvertToObject: aMethodBuilder [
+	aMethodBuilder
+		lowcodeUint32ToOop
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt32 >> readFromInternalStructure: anObject at: offset [
 	^ (((anObject basicAt: offset + 1)
 		bitOr: ((anObject basicAt: offset + 2) bitShift: 8))

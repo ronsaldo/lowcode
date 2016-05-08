@@ -15,6 +15,31 @@ FFIIntegerType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIIntegerType >> emitLowcodeBitInvert: aMethodBuilder [
+	aMethodBuilder lowcodeNot32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIIntegerType >> emitLowcodeDuplicate: aMethodBuilder [
+	aMethodBuilder lowcodeDuplicateInt32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIIntegerType >> emitLowcodeNegated: aMethodBuilder [
+	aMethodBuilder lowcodeNeg32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIIntegerType >> emitLowcodePop: aMethodBuilder [
+	aMethodBuilder lowcodePopInt32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIIntegerType >> isBooleanType [
+	^ false
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIIntegerType >> isFloatingPointType [
 	^ false
 ]

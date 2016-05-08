@@ -275,6 +275,11 @@ LowcodeType >> isAny [
 ]
 
 { #category : #testing }
+LowcodeType >> isBooleanType [
+	^ false
+]
+
+{ #category : #testing }
 LowcodeType >> isFloatingPointType [
 	^ false
 ]

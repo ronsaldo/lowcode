@@ -1,6 +1,26 @@
 Extension { #name : #FFIUInt64 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeBitInvert: aMethodBuilder [
+	aMethodBuilder lowcodeNot64
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeDuplicate: aMethodBuilder [
+	aMethodBuilder lowcodeDuplicateInt64
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeNegated: aMethodBuilder [
+	aMethodBuilder lowcodeNeg64
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodePop: aMethodBuilder [
+	aMethodBuilder lowcodePopInt64
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt64 >> readFromInternalStructure: anObject at: offset [
 	^ (((((((anObject basicAt: offset + 1)
 		bitOr: ((anObject basicAt: offset + 2) bitShift: 8))

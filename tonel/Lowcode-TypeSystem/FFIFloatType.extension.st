@@ -16,6 +16,11 @@ FFIFloatType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloatType >> isBooleanType [
+	^ false
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloatType >> isFloatingPointType [
 	^ true
 ]

@@ -33,6 +33,11 @@ LowcodeFFIType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 ]
 
 { #category : #emitting }
+LowcodeFFIType >> emitBitInvert: aMethodBuilder [
+	ffiType emitLowcodeBitInvert: aMethodBuilder
+]
+
+{ #category : #emitting }
 LowcodeFFIType >> emitConversionFromObject: aMethodBuilder [
 	ffiType emitLowcodeConvertFromObject: aMethodBuilder
 ]
@@ -103,6 +108,16 @@ LowcodeFFIType >> emitMultiply: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeFFIType >> emitNegated: aMethodBuilder [
+	ffiType emitLowcodeNegated: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitNot: aMethodBuilder [
+	ffiType emitLowcodeNot: aMethodBuilder
+]
+
+{ #category : #emitting }
 LowcodeFFIType >> emitNotEquals: aMethodBuilder [
 	ffiType emitLowcodeNotEquals: aMethodBuilder
 ]
@@ -115,6 +130,11 @@ LowcodeFFIType >> emitPop: aMethodBuilder [
 { #category : #emitting }
 LowcodeFFIType >> emitRem: aMethodBuilder [
 	ffiType emitLowcodeRem: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitSqrt: aMethodBuilder [
+	ffiType emitLowcodeSqrt: aMethodBuilder
 ]
 
 { #category : #emitting }
@@ -145,6 +165,11 @@ LowcodeFFIType >> hash [
 { #category : #template }
 LowcodeFFIType >> instantiateTemplate: templateArguments withEnvironment: templateEnvironment [
 	^ self
+]
+
+{ #category : #testing }
+LowcodeFFIType >> isBooleanType [
+	^ ffiType isBooleanType
 ]
 
 { #category : #testing }

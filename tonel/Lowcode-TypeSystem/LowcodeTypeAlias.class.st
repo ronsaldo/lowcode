@@ -102,6 +102,11 @@ LowcodeTypeAlias >> hash [
 ]
 
 { #category : #testing }
+LowcodeTypeAlias >> isBooleanType [
+	^ aliasedType isBooleanType
+]
+
+{ #category : #testing }
 LowcodeTypeAlias >> isFloatingPointType [
 	^ aliasedType isFloatingPointType
 ]

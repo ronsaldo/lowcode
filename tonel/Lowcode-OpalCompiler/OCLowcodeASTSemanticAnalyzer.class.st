@@ -11,6 +11,7 @@ Class {
 		'ArithmeticMessages',
 		'ComparisonMessages',
 		'IdentityEqualityMessages',
+		'OptimizedInlineMessages',
 		'SpecialTypeConversionMessages'
 	],
 	#category : #'Lowcode-OpalCompiler-Semantic'
@@ -51,6 +52,17 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 	ArithmeticMessages := Set newFrom: #(+ - * / % \\).
 	ComparisonMessages := Set newFrom: #(< <= > >= = ~).
 	IdentityEqualityMessages := Set newFrom: #(== ~~).
+	
+	OptimizedInlineMessages := Dictionary new.
+	#(
+		ifTrue:ifFalse: (bool , (-> 1), (-> 1) -> 1)
+		ifFalse:ifTrue: (bool , (-> 1), (-> 1) -> 1)
+		ifNil:ifNotNil: (object , (-> 1), (-> 1) -> 1)
+		ifNotNil:ifNil: (object , (-> 1), (-> 1) -> 1)
+	) pairsDo: [ :selector :signature |
+		OptimizedInlineMessages at: selector put: signature asLowcodeType
+	].
+
 ]
 
 { #category : #'message type checking' }
@@ -71,7 +83,7 @@ OCLowcodeASTSemanticAnalyzer >> arithmeticCoerceImplicitly: leftType with: right
 { #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkArithmeticMessage: aMessageNode [
 	| selector receiverType argumentTypes leftType rightType coercionType |
-	selector := aMessageNode.
+	selector := aMessageNode selector.
 	receiverType := aMessageNode receiver propertyAt: #type.
 	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
 	self assert: argumentTypes size == 1.
@@ -87,7 +99,7 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticMessage: aMessageNode [
 { #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkComparisonMessage: aMessageNode [
 	| selector receiverType argumentTypes leftType rightType coercionType |
-	selector := aMessageNode.
+	selector := aMessageNode selector.
 	receiverType := aMessageNode receiver propertyAt: #type.
 	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
 	self assert: argumentTypes size == 1.
@@ -128,13 +140,38 @@ OCLowcodeASTSemanticAnalyzer >> checkIdentityEqualityMessage: aMessageNode [
 { #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkImplicitConversionFrom: sourceType to: targetType on: aNode [
 	(sourceType hasImplicitConversionTo: targetType) ifFalse: [
-		OCLowcodeCannotCoerceTypeError new
+		OCLowcodeCannotConvertImplicitlyTypeError  new
 				node: aNode;
 				compilationContext: compilationContext;
-				messageText: 'Cannot perform implicit conversion from type ' , sourceType printString , ' and ', targetType printString, '.';
+				messageText: 'Cannot perform implicit conversion from type ' , sourceType printString , ' to ', targetType printString, '.';
 				signal
 	].
 
+]
+
+{ #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkOptimizedInlineMessage: aMessageNode [
+	| selector receiverType argumentTypes messageSignature allArgumentTypes instantiatedMessageType |
+	selector := aMessageNode selector.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
+	messageSignature := OptimizedInlineMessages at: selector.
+	allArgumentTypes := { receiverType } , argumentTypes asArray.
+	self assert: allArgumentTypes size == messageSignature arguments size.
+	
+	instantiatedMessageType := messageSignature instantiateTemplate: allArgumentTypes.
+	instantiatedMessageType ifNil: [ 
+		OCLowcodeCannotConvertImplicitlyTypeError new
+			node: aMessageNode;
+			compilationContext: compilationContext;
+			messageText: 'Invalid types for special message ' , selector printString , '.';
+			signal
+	].
+
+	aMessageNode propertyAt: #messageType put: instantiatedMessageType.
+	aMessageNode propertyAt: #type put: instantiatedMessageType returnType.
+
+	
 ]
 
 { #category : #variables }
@@ -161,6 +198,11 @@ OCLowcodeASTSemanticAnalyzer >> isComparisonMessage: aSelector [
 { #category : #testing }
 OCLowcodeASTSemanticAnalyzer >> isIdentityEqualityMessage: aSelector [
 	^ IdentityEqualityMessages includes: aSelector 
+]
+
+{ #category : #testing }
+OCLowcodeASTSemanticAnalyzer >> isOptimizedInlineMessage: aSelector [
+	^ OptimizedInlineMessages includesKey: aSelector 
 ]
 
 { #category : #testing }
@@ -195,16 +237,29 @@ OCLowcodeASTSemanticAnalyzer >> parseTypeExpression: typeExpression [
 ]
 
 { #category : #parsing }
-OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaArguments [
-	| name type |
+OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaArguments scopeNode: aScopeNode [
+	| name type var |
 	name := pragmaArguments first.
 	type := self parseTypeExpression: pragmaArguments second.
-	self halt.
+	var := scope lookupVar: name.
+	(var ~~nil and: [ var isArg ]) ifTrue: [ 
+	].
+
+	variableTypeMap at: var put: type.
+	(aScopeNode propertyAt: #temporaryTypes ifAbsentPut: [ Dictionary new ]) at: name put: type.
+	
 ]
 
 { #category : #accessing }
 OCLowcodeASTSemanticAnalyzer >> typeForTemporary: aTemporaryVariable [
-	^ variableTypeMap at: aTemporaryVariable ifAbsent: [ LowcodeType object ]
+	| name temporaryTypes varType |
+	^ variableTypeMap at: aTemporaryVariable ifAbsent: [
+		name := aTemporaryVariable name.
+		temporaryTypes := aTemporaryVariable scope node propertyAt: #temporaryTypes ifAbsentPut: [ Dictionary new ].
+		varType := temporaryTypes at: name ifAbsent: [ ^ LowcodeType object ].
+		variableTypeMap at: aTemporaryVariable put: varType.
+		varType
+	]
 ]
 
 { #category : #visitor }
@@ -220,9 +275,26 @@ OCLowcodeASTSemanticAnalyzer >> visitAssignmentNode: anAssignmentNode [
 ]
 
 { #category : #visitor }
+OCLowcodeASTSemanticAnalyzer >> visitBlockNode: aBlockNode [
+	super visitBlockNode: aBlockNode.
+	aBlockNode isInlined ifTrue: [^ self visitInlinedBlockNode: aBlockNode ].
+	self halt.
+]
+
+{ #category : #visitor }
 OCLowcodeASTSemanticAnalyzer >> visitCascadeNode: aCascadeNode [
 	super visitCascadeNode: aCascadeNode.
 	aCascadeNode propertyAt: #type put: (aCascadeNode messages last propertyAt: #type)
+]
+
+{ #category : #visitor }
+OCLowcodeASTSemanticAnalyzer >> visitInlinedBlockNode: aBlockNode [
+	| argumentTypes returnType blockType |
+	super visitInlinedBlockNode: aBlockNode.
+	argumentTypes := aBlockNode arguments collect: [ :arg | self halt. ].
+	returnType := aBlockNode statements last propertyAt: #type.
+	blockType := LowcodeFunctionType arguments: argumentTypes asArray returnType: returnType.
+	aBlockNode propertyAt: #type put: blockType
 ]
 
 { #category : #visitor }
@@ -240,6 +312,9 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 	aMessageNode propertyAt: #type put: LowcodeType object.
 	aMessageNode propertyAt: #nativeInline put: false.
 	aMessageNode isSuperSend ifTrue: [ ^ self ].
+	(aMessageNode isInlined and: [ self isOptimizedInlineMessage: selector ]) ifTrue: [
+		self checkOptimizedInlineMessage: aMessageNode
+	].
 	
 	(self isSpecialConversionMessage: selector) ifTrue: [
 		self checkConversionMessage: aMessageNode
@@ -265,9 +340,24 @@ OCLowcodeASTSemanticAnalyzer >> visitPragmaNode: aPragmaNode [
 	(aPragmaNode selector = #argument:type:)
 		ifTrue: [ self parseArgumentTypePragma: aPragmaNode asPragma arguments scopeNode: aPragmaNode parent].
 	(aPragmaNode selector = #var:type:)
-		ifTrue: [ self parseVariableTypePragma: aPragmaNode asPragma arguments ].
+		ifTrue: [ self parseVariableTypePragma: aPragmaNode asPragma arguments scopeNode: aPragmaNode parent].
 	(aPragmaNode selector = #returnType:)
 		ifTrue: [ self parseReturnTypePragma: aPragmaNode asPragma arguments ]
+]
+
+{ #category : #visitor }
+OCLowcodeASTSemanticAnalyzer >> visitReturnNode: aReturnNode [
+	super visitReturnNode: aReturnNode.
+	aReturnNode propertyAt: #type put: LowcodeType object.
+]
+
+{ #category : #visitor }
+OCLowcodeASTSemanticAnalyzer >> visitSequenceNode: aSequenceNode [
+	| type |
+	super visitSequenceNode: aSequenceNode.
+
+	type := aSequenceNode statements last propertyAt: #type.
+	aSequenceNode propertyAt: #type put: type.
 ]
 
 { #category : #visitor }

@@ -143,6 +143,17 @@ OCLowcodeASTTranslator >> emitComparisonMessage: aMessageNode [
 ]
 
 { #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitCondition: args boolean: aBoolean [
+	"emits the jumps so that one of the 2 blocks in args is evaluated depending on boolean"
+	methodBuilder jumpAheadTo: #else if: aBoolean.
+	self visitInlinedBlockNode: args first.
+	methodBuilder jumpAheadTo: #end.
+	methodBuilder jumpAheadTarget: #else.
+	self visitInlinedBlockNode: args last.
+	methodBuilder jumpAheadTarget: #end.
+]
+
+{ #category : #'native code emition' }
 OCLowcodeASTTranslator >> emitConversionFrom: sourceType to: targetType [
 	sourceType withoutAliases = targetType withoutAliases ifTrue: [ ^ self ].
 	targetType isObject ifTrue: [ ^ sourceType emitConversionToObject: methodBuilder ].
@@ -155,6 +166,33 @@ OCLowcodeASTTranslator >> emitConversionFrom: sourceType to: targetType [
 { #category : #'native code emition' }
 OCLowcodeASTTranslator >> emitIdentityEqualityMessage: aMessageNode [
 	self halt.
+]
+
+{ #category : #'inline messages factored' }
+OCLowcodeASTTranslator >> emitIf: aMessageNode boolean: aBoolean [
+
+	| receiverType |
+	valueTranslator visitNode: aMessageNode receiver.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	self emitConversionFrom: receiverType to: LowcodeType object.
+	self emitCondition: aMessageNode arguments boolean: aBoolean
+]
+
+{ #category : #'inline messages factored' }
+OCLowcodeASTTranslator >> emitIfNil: aMessageNode boolean: aBoolean [
+	| args notNilBlock |
+	
+	valueTranslator visitNode: aMessageNode receiver.
+	self halt.
+	
+	"emits the == nil code and push correct value on stack if the ifNotNil block has an argument"
+	args := aMessageNode arguments.
+	notNilBlock := aBoolean ifTrue: [args first] ifFalse: [args last].
+	notNilBlock arguments ifNotEmpty: [ notNilBlock arguments first binding emitStore: methodBuilder ].
+	methodBuilder pushLiteral: nil.
+	methodBuilder send: #==.
+	
+	self emitCondition: args boolean: aBoolean
 ]
 
 { #category : #'visitor-double dispatching' }

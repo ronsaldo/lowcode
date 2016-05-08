@@ -30,6 +30,13 @@ OCLowcodeASTTranslatorForValue >> emitWhileTrue: aMessageNode [
 ]
 
 { #category : #'visitor-double dispatching' }
-OCLowcodeASTTranslatorForValue >> visitSequenceNode: aSequenceNode [
-	self halt.
+OCLowcodeASTTranslatorForValue >> visitSequenceNode: aSequenceNode [ 
+	| statements |
+	statements := aSequenceNode statements.
+	statements ifEmpty: [
+		self halt.
+		methodBuilder pushLiteral: nil.
+		^self].
+	statements allButLastDo: [:each | effectTranslator visitNode: each].
+	self visitNode: statements last.
 ]

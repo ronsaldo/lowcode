@@ -103,6 +103,16 @@ LowcodeFFIType >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 ]
 
 { #category : #emitting }
+LowcodeFFIType >> emitMemoryStoreAndPop: aMethodBuilder [
+	ffiType emitLowcodeMemoryStoreAndPop: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitMemoryValue: aMethodBuilder [
+	ffiType emitLowcodeMemoryValue: aMethodBuilder
+]
+
+{ #category : #emitting }
 LowcodeFFIType >> emitMultiply: aMethodBuilder [
 	ffiType emitLowcodeMultiply: aMethodBuilder
 ]

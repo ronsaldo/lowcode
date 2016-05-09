@@ -3,3 +3,8 @@ Class {
 	#superclass : #LowcodeType,
 	#category : #'Lowcode-TypeSystem'
 }
+
+{ #category : #'as yet unclassified' }
+LowcodeStructureType >> isStructureType [
+	^ true
+]

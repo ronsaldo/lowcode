@@ -12,6 +12,11 @@ LowcodePointerType class >> pointed: aType [
 	^ self new pointed: aType
 ]
 
+{ #category : #testing }
+LowcodePointerType >> isPointerType [
+	^ true
+]
+
 { #category : #accessing }
 LowcodePointerType >> pointed [
 	^ pointed

@@ -35,6 +35,13 @@ LowcodeObjectType >> emitLocalStore: aMethodBuilder name: localName [
 ]
 
 { #category : #emitting }
+LowcodeObjectType >> emitLocalStoreAndPop: aMethodBuilder name: localName [
+	aMethodBuilder
+		storeTemp: localName;
+		popTop
+]
+
+{ #category : #emitting }
 LowcodeObjectType >> emitLocalValue: aMethodBuilder name: localName [
 	aMethodBuilder pushTemp: localName
 ]

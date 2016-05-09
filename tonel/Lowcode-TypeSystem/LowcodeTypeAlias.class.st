@@ -64,8 +64,19 @@ LowcodeTypeAlias >> emitDuplicate: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeTypeAlias >> emitFieldPointerFromObject: aMethodBuilder offset: aFieldOffset [
+	aliasedType emitFieldPointerFromObject: aMethodBuilder offset: aFieldOffset
+]
+
+{ #category : #emitting }
 LowcodeTypeAlias >> emitLocalStore: aMethodBuilder name: localName [
 	aliasedType emitLocalStore: aMethodBuilder name: localName
+
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitLocalStoreAndPop: aMethodBuilder name: localName [
+	aliasedType emitLocalStoreAndPop: aMethodBuilder name: localName
 
 ]
 
@@ -87,8 +98,28 @@ LowcodeTypeAlias >> emitLowcodeValue: aMethodBuilder selfOffset: selfOffset [
 ]
 
 { #category : #emitting }
+LowcodeTypeAlias >> emitMemoryStoreAndPop: aMethodBuilder [
+	aliasedType emitMemoryStoreAndPop: aMethodBuilder
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitMemoryValue: aMethodBuilder [
+	aliasedType emitMemoryValue: aMethodBuilder
+]
+
+{ #category : #emitting }
 LowcodeTypeAlias >> emitPop: aMethodBuilder [
 	aliasedType emitPop: aMethodBuilder
+]
+
+{ #category : #accessing }
+LowcodeTypeAlias >> fieldOffset: fieldName [
+	^ aliasedType fieldOffset: fieldName
+]
+
+{ #category : #accessing }
+LowcodeTypeAlias >> fieldType: fieldName [
+	^ aliasedType fieldName
 ]
 
 { #category : #'read write' }
@@ -99,6 +130,11 @@ LowcodeTypeAlias >> fromStructure: anObject offset: offset [
 { #category : #comparing }
 LowcodeTypeAlias >> hash [
 	^ self class hash bitXor: aliasedType hash
+]
+
+{ #category : #testing }
+LowcodeTypeAlias >> isAccessorMessage: aSelector [
+	^ aliasedType isAccessorMessage: aSelector
 ]
 
 { #category : #testing }

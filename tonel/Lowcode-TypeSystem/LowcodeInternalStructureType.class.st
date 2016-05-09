@@ -23,6 +23,30 @@ LowcodeInternalStructureType >> emitArgumentTypeCheck: aMethodBuilder name: argu
 		jumpAheadTarget: #validArgument.
 ]
 
+{ #category : #emitting }
+LowcodeInternalStructureType >> emitFieldPointerFromObject: aMethodBuilder offset: anOffset [
+	aMethodBuilder
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: anOffset
+]
+
+{ #category : #accessing }
+LowcodeInternalStructureType >> fieldOffset: fieldName [
+	^ (structureClass slotNamed: fieldName) offset
+]
+
+{ #category : #accessing }
+LowcodeInternalStructureType >> fieldType: fieldName [
+	^ structureClass slotNamed: fieldName ifFound: [ :slot | slot lowcodeType ] ifNone: [ nil ].
+]
+
+{ #category : #testing }
+LowcodeInternalStructureType >> isAccessorMessage: aSelector [
+	| method |
+	method := structureClass methodDict at: aSelector ifAbsent: [ ^ false ].
+	^ method hasPragmaNamed: #accessor
+]
+
 { #category : #printing }
 LowcodeInternalStructureType >> printOn: aStream [
 	aStream print: structureClass name

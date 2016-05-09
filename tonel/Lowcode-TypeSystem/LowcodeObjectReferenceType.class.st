@@ -18,6 +18,37 @@ LowcodeObjectReferenceType >> emitArgumentTypeCheck: aMethodBuilder name: argume
 
 ]
 
+{ #category : #emitting }
+LowcodeObjectReferenceType >> emitFieldStoreAndPop: aMethodBuilder type: fieldType offset: fieldOffset [
+	self assert: referenced isStructureType.
+	referenced emitFieldPointerFromObject: aMethodBuilder offset: fieldOffset.
+	fieldType emitMemoryStoreAndPop: aMethodBuilder
+	
+]
+
+{ #category : #emitting }
+LowcodeObjectReferenceType >> emitFieldValue: aMethodBuilder type: fieldType offset: fieldOffset [
+	self assert: referenced isStructureType.
+	referenced emitFieldPointerFromObject: aMethodBuilder offset: fieldOffset.
+	fieldType emitMemoryValue: aMethodBuilder
+	
+]
+
+{ #category : #accessing }
+LowcodeObjectReferenceType >> fieldOffset: fieldName [
+	^ referenced fieldOffset: fieldName
+]
+
+{ #category : #accessing }
+LowcodeObjectReferenceType >> fieldType: aFieldName [
+	^ referenced fieldType: aFieldName
+]
+
+{ #category : #testing }
+LowcodeObjectReferenceType >> isAccessorMessage: aSelector [
+	^ referenced isAccessorMessage: aSelector
+]
+
 { #category : #testing }
 LowcodeObjectReferenceType >> isObjectReference [
 	^ true

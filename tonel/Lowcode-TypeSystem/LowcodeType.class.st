@@ -189,6 +189,11 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 	^ minimalCoercionSize <= 4 ifTrue: [ self class int32 ] ifFalse: [ self class int64 ].
 ]
 
+{ #category : #'type decorators' }
+LowcodeType >> classType [
+	^ LowcodeClassType referenced: self.
+]
+
 { #category : #emitting }
 LowcodeType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 	self subclassResponsibility
@@ -210,7 +215,17 @@ LowcodeType >> emitDuplicate: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeType >> emitFieldPointerFromObject: aMethodBuilder offset: aFieldOffset [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
 LowcodeType >> emitLocalStore: aMethodBuilder name: localName [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitLocalStoreAndPop: aMethodBuilder name: localName [
 	self subclassResponsibility
 ]
 
@@ -230,8 +245,28 @@ LowcodeType >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 ]
 
 { #category : #emitting }
+LowcodeType >> emitMemoryStoreAndPop: aMethodBuilder [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitMemoryValue: aMethodBuilder [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
 LowcodeType >> emitPop: aMethodBuilder [
 	self subclassResponsibility
+]
+
+{ #category : #accessing }
+LowcodeType >> fieldOffset: aFieldName [
+	self subclassResponsibility
+]
+
+{ #category : #accessing }
+LowcodeType >> fieldType: fieldName [
+	^ nil
 ]
 
 { #category : #'read write' }
@@ -273,12 +308,22 @@ LowcodeType >> instantiateTemplateWithEnvironment: templateEnvironment [
 ]
 
 { #category : #testing }
+LowcodeType >> isAccessorMessage: aSelector [
+	^ false
+]
+
+{ #category : #testing }
 LowcodeType >> isAny [
 	^ false
 ]
 
 { #category : #testing }
 LowcodeType >> isBooleanType [
+	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isClassType [
 	^ false
 ]
 
@@ -319,6 +364,16 @@ LowcodeType >> isObjectReference [
 
 { #category : #testing }
 LowcodeType >> isPlaceHolderType [
+	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isPointerType [
+	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isStructureType [
 	^ false
 ]
 

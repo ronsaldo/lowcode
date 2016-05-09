@@ -65,6 +65,18 @@ FFIFloat32 >> emitLowcodeLocalValue: aMethodBuilder name: localName [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeMemoryStoreAndPop: aMethodBuilder [
+	aMethodBuilder
+		lowcodeStoreFloat32ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcodeMemoryValue: aMethodBuilder [
+	aMethodBuilder
+		lowcodeLoadFloat32FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodeMultiply: aMethodBuilder [
 	aMethodBuilder lowcodeFloat32Mul
 ]

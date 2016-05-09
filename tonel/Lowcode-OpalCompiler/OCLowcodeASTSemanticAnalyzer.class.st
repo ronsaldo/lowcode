@@ -413,6 +413,10 @@ OCLowcodeASTSemanticAnalyzer >> visitSequenceNode: aSequenceNode [
 	| type |
 	super visitSequenceNode: aSequenceNode.
 
+	aSequenceNode statements ifEmpty: [
+		^ aSequenceNode propertyAt: #type put: LowcodeType object.
+	].
+
 	type := aSequenceNode statements last propertyAt: #type.
 	aSequenceNode propertyAt: #type put: type.
 ]

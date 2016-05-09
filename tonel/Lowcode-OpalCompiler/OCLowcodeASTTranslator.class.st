@@ -110,7 +110,13 @@ OCLowcodeASTTranslator >> emitArgumentLoads: names types: typeDictionary [
 	nativeTemps := OrderedCollection new.
 	names do: [ :name |
 		type := typeDictionary at: name ifAbsent: [ LowcodeType object ].
-		type isObject ifFalse: [
+		type isObject ifTrue: [
+			type isObjectReference ifTrue: [ 
+				methodBuilder pushTemp: name.
+				type emitArgumentTypeCheck: methodBuilder name: name.
+				methodBuilder popTop.
+			].
+		] ifFalse: [
 			objectArgTempName := ('__object_' , name ) asSymbol.
 			methodBuilder pushTemp: objectArgTempName.
 			type emitArgumentTypeCheck: methodBuilder name: name.

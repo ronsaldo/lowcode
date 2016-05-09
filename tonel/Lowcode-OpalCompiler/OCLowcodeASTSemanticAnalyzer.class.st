@@ -12,6 +12,7 @@ Class {
 		'ArithmeticUnaryMessages',
 		'ComparisonMessages',
 		'IdentityEqualityMessages',
+		'NewObjectMessages',
 		'OptimizedInlineMessages',
 		'SpecialTypeConversionMessages'
 	],
@@ -65,6 +66,7 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 	ArithmeticMessages := Set newFrom: #(+ - * / % \\).
 	ComparisonMessages := Set newFrom: #(< <= > >= = ~).
 	IdentityEqualityMessages := Set newFrom: #(== ~~).
+	NewObjectMessages := Set newFrom: #(basicNew basicNew: new new:).
 	
 	OptimizedInlineMessages := Dictionary new.
 	#(
@@ -94,6 +96,38 @@ OCLowcodeASTSemanticAnalyzer >> arithmeticCoerceImplicitly: leftType with: right
 ]
 
 { #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkAccessorMessage: aMessageNode [
+	| selector receiverType argumentTypes fieldName fieldType fieldOffset |
+	selector := aMessageNode selector.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
+	self assert: argumentTypes size <= 1.
+	fieldName := argumentTypes ifEmpty: [ selector ] ifNotEmpty: [ selector allButLast asSymbol ].
+	fieldType := receiverType fieldType: fieldName.
+	fieldType ifNil: [
+		OCLowcodeFieldNotPresentError new
+			node: aMessageNode;
+			compilationContext: compilationContext;
+			messageText: 'Cannot access unexistent field named ' , fieldName , ' in object of type ' , receiverType printString , '.';
+			signal
+	].
+	fieldOffset := receiverType fieldOffset: fieldName.
+	
+	argumentTypes ifEmpty: [
+		"Nothing to check"
+		aMessageNode propertyAt: #type put: fieldType. 
+	] ifNotEmpty: [ 
+		self checkImplicitConversionFrom: argumentTypes first to: fieldType on: aMessageNode.
+		aMessageNode propertyAt: #type put: receiverType.
+	].
+ 
+	aMessageNode propertyAt: #fieldType put: fieldType.
+	aMessageNode propertyAt: #fieldOffset put: fieldOffset.
+	aMessageNode propertyAt: #nativeInline put: true.
+	aMessageNode propertyAt: #nativeInlineKind put: #Accessor.
+]
+
+{ #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkArithmeticMessage: aMessageNode [
 	| selector receiverType argumentTypes leftType rightType coercionType |
 	selector := aMessageNode selector.
@@ -107,6 +141,7 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticMessage: aMessageNode [
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: coercionType.
 	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
+	aMessageNode propertyAt: #nativeInlineKind put: #Arithmetic.
 ]
 
 { #category : #'message type checking' }
@@ -142,6 +177,7 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticUnaryMessage: aMessageNode [
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: coercionType.
 	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
+	aMessageNode propertyAt: #nativeInlineKind put: #ArithmeticUnary.
 ]
 
 { #category : #'message type checking' }
@@ -158,6 +194,7 @@ OCLowcodeASTSemanticAnalyzer >> checkComparisonMessage: aMessageNode [
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: LowcodeType bool.
 	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
+	aMessageNode propertyAt: #nativeInlineKind put: #Comparison.
 ]
 
 { #category : #'message type checking' }
@@ -183,6 +220,7 @@ OCLowcodeASTSemanticAnalyzer >> checkIdentityEqualityMessage: aMessageNode [
 	rightType := argumentTypes first.
 	self halt.
 	aMessageNode propertyAt: #nativeInline put: true.
+	aMessageNode propertyAt: #nativeInlineKind put: #IdentityEquality.
 ]
 
 { #category : #'message type checking' }
@@ -195,6 +233,11 @@ OCLowcodeASTSemanticAnalyzer >> checkImplicitConversionFrom: sourceType to: targ
 				signal
 	].
 
+]
+
+{ #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkNormalMessage: aMessage [
+	self flag: 'TODO: make sure the receiver and the arguments can be converted to object'
 ]
 
 { #category : #'message type checking' }
@@ -220,6 +263,11 @@ OCLowcodeASTSemanticAnalyzer >> checkOptimizedInlineMessage: aMessageNode [
 	aMessageNode propertyAt: #type put: instantiatedMessageType returnType.
 
 	
+]
+
+{ #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkPointerMessage: aMessageNode [
+	self halt.
 ]
 
 { #category : #variables }
@@ -251,6 +299,11 @@ OCLowcodeASTSemanticAnalyzer >> isComparisonMessage: aSelector [
 { #category : #testing }
 OCLowcodeASTSemanticAnalyzer >> isIdentityEqualityMessage: aSelector [
 	^ IdentityEqualityMessages includes: aSelector 
+]
+
+{ #category : #testing }
+OCLowcodeASTSemanticAnalyzer >> isNewObjectMessage: aSelector [
+	^ NewObjectMessages includes: aSelector 
 ]
 
 { #category : #testing }
@@ -366,29 +419,47 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 	aMessageNode propertyAt: #nativeInline put: false.
 	aMessageNode isSuperSend ifTrue: [ ^ self ].
 	(aMessageNode isInlined and: [ self isOptimizedInlineMessage: selector ]) ifTrue: [
-		self checkOptimizedInlineMessage: aMessageNode
+		^ self checkOptimizedInlineMessage: aMessageNode
+	].
+
+	receiverType isClassType ifTrue: [ 
+		(self isNewObjectMessage: selector) ifTrue: [
+			aMessageNode propertyAt: #type put: receiverType instanceType.
+			^ self checkNormalMessage: aMessageNode
+		].
+	].
+
+	receiverType isObjectReference ifTrue: [
+		(receiverType isAccessorMessage: selector) ifTrue: [
+			^ self checkAccessorMessage: aMessageNode
+		]
+	].
+
+	receiverType isPointerType ifTrue: [
+		^ self checkPointerMessage: aMessageNode
 	].
 	
 	(self isSpecialConversionMessage: selector) ifTrue: [
-		self checkConversionMessage: aMessageNode
+		^ self checkConversionMessage: aMessageNode
 	].
 
 	(self isArithmeticMessage: selector) ifTrue: [
-		self checkArithmeticMessage: aMessageNode
+		^ self checkArithmeticMessage: aMessageNode
 	].
 
 	(self isArithmeticUnaryMessage: selector) ifTrue: [ 
-		self checkArithmeticUnaryMessage: aMessageNode
+		^ self checkArithmeticUnaryMessage: aMessageNode
 	].
 
 	(self isComparisonMessage: selector) ifTrue: [ 
-		self checkComparisonMessage: aMessageNode
+		^ self checkComparisonMessage: aMessageNode
 	].
 
 	(self isIdentityEqualityMessage: selector) ifTrue: [
-		self checkIdentityEqualityMessage: aMessageNode
+		^ self checkIdentityEqualityMessage: aMessageNode
 	]. 
 
+	^ self checkNormalMessage: aMessageNode
 ]
 
 { #category : #visitor }

@@ -4,6 +4,9 @@ I am an extended version of the OpalCompier AST translator that uses the Lowcode
 Class {
 	#name : #OCLowcodeASTTranslator,
 	#superclass : #OCASTTranslator,
+	#instVars : [
+		'gensymCount'
+	],
 	#classVars : [
 		'ArithmeticMessages',
 		'ArithmeticUnaryMessages',
@@ -101,6 +104,36 @@ OCLowcodeASTTranslator >> classForEffect [
 { #category : #initialization }
 OCLowcodeASTTranslator >> classForValue [
 	^ OCLowcodeASTTranslatorForValue
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitAccessorMessage: aMessageNode [
+	| fieldType receiverType tempVar fieldOffset |
+	fieldType := aMessageNode propertyAt: #fieldType.
+	aMessageNode isCascaded ifFalse: [
+		valueTranslator visitNode: aMessageNode receiver
+	].
+
+	receiverType := aMessageNode receiver propertyAt: #type.	
+	aMessageNode arguments ifNotEmpty: [
+		tempVar := self generateTempOfType: receiverType.
+		receiverType emitLocalStoreAndPop: methodBuilder name: tempVar.
+	].
+
+	aMessageNode arguments do: [:each | 
+		valueTranslator visitNode: each.
+		self emitConversionFrom: (each propertyAt: #type) to: fieldType
+	].
+	
+	fieldOffset := aMessageNode propertyAt: #fieldOffset.
+	aMessageNode arguments ifNotEmpty: [
+		receiverType emitLocalValue: methodBuilder name: tempVar.
+		receiverType emitFieldStoreAndPop: methodBuilder type: fieldType offset: fieldOffset.
+		receiverType emitLocalValue: methodBuilder name: tempVar.
+	] ifEmpty: [
+		receiverType emitFieldValue: methodBuilder type: fieldType offset: fieldOffset
+	].
+
 ]
 
 { #category : #'native code emition' }
@@ -221,8 +254,11 @@ OCLowcodeASTTranslator >> emitIfNil: aMessageNode boolean: aBoolean [
 
 { #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
-	| selector |
+	| selector messageKind |
 	(aMessageNode propertyAt: #nativeInline) ifTrue: [
+		messageKind := aMessageNode propertyAt: #nativeInlineKind ifAbsent: [ nil ].
+		messageKind ifNotNil: [ ^ self perform: ('emit' , messageKind, 'Message:') asSymbol with: aMessageNode ].
+		
 		selector := aMessageNode selector.
 		(SpecialTypeConversionMessages includes: selector) ifTrue: [
 			aMessageNode isCascaded ifFalse: [
@@ -231,22 +267,6 @@ OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
 		
 			^ self emitConversionFrom: (aMessageNode receiver propertyAt: #type) to: (aMessageNode propertyAt: #type)
 		].
-
-		(ArithmeticUnaryMessages includesKey: selector) ifTrue: [
-			^ self emitArithmeticUnaryMessage: aMessageNode.
-		].
-		
-		(ArithmeticMessages includesKey: selector) ifTrue: [
-			^ self emitArithmeticMessage: aMessageNode.
-		].
-	
-		(ComparisonMessages includesKey: selector) ifTrue: [
-			^ self emitComparisonMessage: aMessageNode.
-		].
-	
-		(IdentityEqualityMessages includes: selector) ifTrue: [
-			^ self emitIdentityEqualityMessage: aMessageNode.
-		]
 	].
 
 	self assert: (aMessageNode propertyAt: #type) isObject.
@@ -263,10 +283,29 @@ OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
 
 ]
 
+{ #category : #temporaries }
+OCLowcodeASTTranslator >> generateSymbol [
+	gensymCount value: gensymCount value + 1.
+	^ ('gensym:' , gensymCount value printString) asSymbol
+]
+
+{ #category : #temporaries }
+OCLowcodeASTTranslator >> generateTempOfType: aType [
+	| tempSymbol |
+	tempSymbol := self generateSymbol.
+	aType isObject ifTrue: [
+		methodBuilder addTemp: tempSymbol.
+	] ifFalse: [
+		methodBuilder addNativeTemp: tempSymbol -> aType size.
+	].
+	^ tempSymbol
+]
+
 { #category : #initialization }
 OCLowcodeASTTranslator >> initialize [
 
 	methodBuilder := IRLowcodeBuilder new.
+	gensymCount := 0 asValueHolder.
 	effectTranslator := self as: self classForEffect.
 	valueTranslator := self as: self classForValue.
 	effectTranslator instVarNamed: #effectTranslator put: effectTranslator.

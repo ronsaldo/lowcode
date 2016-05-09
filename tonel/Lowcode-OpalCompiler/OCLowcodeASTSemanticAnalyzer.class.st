@@ -227,7 +227,7 @@ OCLowcodeASTSemanticAnalyzer >> declareVariableNode: aVariableNode as: anOCTempV
 	^ super declareVariableNode: aVariableNode as: anOCTempVariable
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initialization }
 OCLowcodeASTSemanticAnalyzer >> initialize [
 	super initialize.
 	variableTypeMap := IdentityDictionary new.

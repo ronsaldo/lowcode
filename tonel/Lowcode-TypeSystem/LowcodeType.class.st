@@ -61,7 +61,7 @@ LowcodeType class >> forSymbol: aSymbol atEnvironment: anEnvironment [
 	PrimitiveTypeDictionary at: aSymbol ifPresent: [ :resolvedType | ^ resolvedType ].
 	type := anEnvironment bindingOf: aSymbol.
 	type ifNil: [ self error: 'Failed to resolve type named ', type printString ].
-	^ type asLowcodeTypeAtEnvironment: anEnvironment
+	^ type value asLowcodeTypeAtEnvironment: anEnvironment
 ]
 
 { #category : #'class initialization' }
@@ -169,7 +169,10 @@ LowcodeType >> alignment [
 { #category : #'type coercion' }
 LowcodeType >> arithmeticCoerceWith: otherType [
 	| minimalCoercionSize |
-	(self isObject or: [ otherType isObject ]) ifTrue: [ ^ self class object ].
+	(self isObject or: [ otherType isObject ]) ifTrue: [
+		self withoutAliases = otherType withoutAliases ifTrue: [ ^ self ].
+		^ self class object
+	].
 	
 	(self isNumberType not or: [ otherType isNumberType not ]) ifTrue: [
 		self withoutAliases == otherType withoutAliases ifTrue: [ ^ self ].
@@ -310,6 +313,11 @@ LowcodeType >> isObject [
 ]
 
 { #category : #testing }
+LowcodeType >> isObjectReference [
+	^ false
+]
+
+{ #category : #testing }
 LowcodeType >> isPlaceHolderType [
 	^ false
 ]
@@ -327,6 +335,21 @@ LowcodeType >> name [
 { #category : #accessing }
 LowcodeType >> name: anObject [
 	name := anObject
+]
+
+{ #category : #'type decorators' }
+LowcodeType >> object [
+	^ LowcodeObjectReferenceType referenced: self.
+]
+
+{ #category : #'type decorators' }
+LowcodeType >> pointer [
+	^ LowcodePointerType pointed: self.
+]
+
+{ #category : #'type decorators' }
+LowcodeType >> ref [
+	^ LowcodeReferenceType referenced: self.
 ]
 
 { #category : #accessing }

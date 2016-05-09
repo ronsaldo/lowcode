@@ -7,10 +7,11 @@ Array >> asLowcodeType [
 
 { #category : #'*Lowcode-TypeSystem' }
 Array >> asLowcodeTypeAtEnvironment: anEnvironment [
-	| arguments currentType in |
+	| arguments currentType in hasReturnType |
 	arguments := OrderedCollection new.
 	in := self readStream.
 	currentType := nil.
+	hasReturnType := false.
 	[ in atEnd ] whileFalse: [
 		(in peek ~~ #-> and: [ in peek ~~ #, ]) ifTrue: [
 			currentType := currentType ifNil: [ in next asLowcodeTypeAtEnvironment: anEnvironment ] ifNotNil: [ currentType perform: in next ].
@@ -22,6 +23,7 @@ Array >> asLowcodeTypeAtEnvironment: anEnvironment [
 			currentType := nil. 
 		].
 		in peek == #-> ifTrue: [
+			hasReturnType := true.
 			in next.
 			currentType ifNotNil: [
 				arguments add: currentType.
@@ -30,5 +32,6 @@ Array >> asLowcodeTypeAtEnvironment: anEnvironment [
 		].
 	].
 
+	hasReturnType ifFalse: [ ^ currentType ].
 	^ LowcodeFunctionType arguments: arguments returnType: currentType
 ]

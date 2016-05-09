@@ -8,6 +8,11 @@ Class {
 	#category : #'Lowcode-TypeSystem'
 }
 
+{ #category : #accessing }
+InternalStructure class >> asLowcodeTypeAtEnvironment: anEnvironment [
+	^ LowcodeInternalStructureType new structureClass: self
+]
+
 { #category : #'instance creation' }
 InternalStructure class >> basicNew [
 	^ super basicNew: layout structureSize

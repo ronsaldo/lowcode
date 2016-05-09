@@ -115,21 +115,31 @@ ConfigurationOfLowcode >> baseline01: spec [
 	spec for: #'common' do: [
 		spec blessing: #'baseline'.
 		spec repository: 'http://smalltalkhub.com/mc/ronsaldo/Lowcode/main'.
+		spec project: 'XMLParser' with: [
+				spec
+					className: #ConfigurationOfXMLParser;
+					versionString: #'stable';
+					repository: 'http://smalltalkhub.com/mc/PharoExtras/XMLParser/main/' ].
 		spec 
-			package: 'Lowcode-Test' with: [
-				spec requires: #('Lowcode-Assembler' 'Lowcode-Execution' ). ];
 			package: 'Lowcode-Assembler';
-			package: 'Lowcode-Generator' with: [
-				spec requires: #('Lowcode-Assembler' ). ];
 			package: 'Lowcode-Execution' with: [
 				spec requires: #('Lowcode-Assembler' ). ];
 			package: 'Lowcode-FFI' with: [
 				spec requires: #('Lowcode-Assembler' 'Lowcode-Execution' ). ];
+			package: 'Lowcode-Generator' with: [
+				spec requires: #('XMLParser' ). ];
+			package: #'Lowcode-IRBuilder';
 			package: 'Lowcode-Linux32' with: [
-				spec requires: #('Lowcode-FFI' ). ].
-		spec 
-			group: 'default' with: #(Lowcode-Assembler Lowcode-Execution Lowcode-FFI Lowcode-FFI Lowcode-Linux32);
-			group: 'generator' with: #(Lowcode-Assembler Lowcode-Execution Lowcode-FFI Lowcode-FFI Lowcode-Linux32 Lowcode-Generator). ].
+				spec requires: #('Lowcode-FFI' ). ];
+			package: 'Lowcode-OpalCompiler' with: [
+				spec requires: #(#'Lowcode-IRBuilder' #'Lowcode-TypeSystem' ). ];
+			package: #'Lowcode-OpalTest' with: [
+				spec requires: #('Lowcode-OpalCompiler' ). ];
+			package: 'Lowcode-Test' with: [
+				spec requires: #('Lowcode-Assembler' 'Lowcode-Execution' ). ];
+			package: #'Lowcode-TypeSystem' with: [
+				spec requires: #(#'Lowcode-IRBuilder' ). ].
+		spec group: 'default' with: #('Lowcode-Generator' #'Lowcode-IRBuilder' 'Lowcode-OpalCompiler' #'Lowcode-TypeSystem' #'Lowcode-OpalTest' ). ].
 
 ]
 

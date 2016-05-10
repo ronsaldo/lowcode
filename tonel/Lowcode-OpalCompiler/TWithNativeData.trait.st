@@ -4,6 +4,11 @@ Trait {
 }
 
 { #category : #accessing }
+TWithNativeData classSide >> classSideCompilerClass [
+	^ LowcodeOpalCompiler
+]
+
+{ #category : #accessing }
 TWithNativeData classSide >> compilerClass [
 	^ LowcodeOpalCompiler
 ]

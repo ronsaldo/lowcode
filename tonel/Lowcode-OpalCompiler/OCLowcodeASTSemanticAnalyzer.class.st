@@ -117,7 +117,7 @@ OCLowcodeASTSemanticAnalyzer >> checkAccessorMessage: aMessageNode [
 		"Nothing to check"
 		aMessageNode propertyAt: #type put: fieldType. 
 	] ifNotEmpty: [ 
-		self checkImplicitConversionFrom: argumentTypes first to: fieldType on: aMessageNode.
+		self checkImplicitConversionFrom: argumentTypes first to: fieldType on: aMessageNode arguments first.
 		aMessageNode propertyAt: #type put: receiverType.
 	].
  
@@ -198,6 +198,41 @@ OCLowcodeASTSemanticAnalyzer >> checkComparisonMessage: aMessageNode [
 ]
 
 { #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkConstructorMesage: aMessageNode [
+	| selector receiverType argumentTypes instanceType fields fieldType argumentType |
+	selector := aMessageNode selector.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
+	argumentTypes ifEmpty: [
+		OCLowcodeFieldNotPresentError new
+			node: aMessageNode;
+			compilationContext: compilationContext;
+			messageText: 'Trying to use constructor ' , selector , ' without arguments in of type ' , receiverType printString , '.';
+			signal
+	].
+
+	instanceType := receiverType instanceType.
+	fields := (selector substrings: ':') collectWithIndex: [ :fieldName :index |
+		fieldType := instanceType fieldType: fieldName.
+		fieldType ifNil: [
+			OCLowcodeFieldNotPresentError new
+				node: aMessageNode;
+				compilationContext: compilationContext;
+				messageText: 'Cannot access unexistent field named ' , fieldName , ' in object of type ' , instanceType printString , '.';
+				signal
+		].
+		argumentType := argumentTypes at: index.
+		self checkImplicitConversionFrom: argumentType to: fieldType on: (aMessageNode arguments at: index).
+		fieldType -> (instanceType fieldOffset: fieldName)
+	].
+
+	aMessageNode propertyAt: #type put: instanceType.
+	aMessageNode propertyAt: #fields put: fields.
+	aMessageNode propertyAt: #nativeInline put: true.
+	aMessageNode propertyAt: #nativeInlineKind put: #Constructor.
+]
+
+{ #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkConversionMessage: aMessageNode [
 	| selector receiverType messageType |
 	selector := aMessageNode selector.
@@ -236,8 +271,26 @@ OCLowcodeASTSemanticAnalyzer >> checkImplicitConversionFrom: sourceType to: targ
 ]
 
 { #category : #'message type checking' }
-OCLowcodeASTSemanticAnalyzer >> checkNormalMessage: aMessage [
-	self flag: 'TODO: make sure the receiver and the arguments can be converted to object'
+OCLowcodeASTSemanticAnalyzer >> checkNormalMessage: aMessageNode [
+	| selector receiverType argumentTypes objectType argumenType resultType |
+	selector := aMessageNode selector.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
+	objectType := LowcodeType object.
+	self checkImplicitConversionFrom: receiverType to: objectType on: aMessageNode.
+	aMessageNode arguments do: [ :argument |
+		argumenType := argument propertyAt: #type.
+		self checkImplicitConversionFrom: argumenType to: objectType on: argument.
+	].
+
+	resultType := objectType.
+	((self isNewObjectMessage: selector) and: [ receiverType isClassType ]) ifTrue: [
+		resultType := receiverType instanceType.
+	].
+	selector == #class ifTrue: [
+		resultType := receiverType classType. 
+	].
+	aMessageNode propertyAt: #type put: resultType
 ]
 
 { #category : #'message type checking' }
@@ -318,23 +371,35 @@ OCLowcodeASTSemanticAnalyzer >> isSpecialConversionMessage: aSelector [
 
 { #category : #parsing }
 OCLowcodeASTSemanticAnalyzer >> parseArgumentTypePragma: pragmaArguments scopeNode: aScopeNode [
-	| name type var |
-	name := pragmaArguments first.
+	| type var nameOrNames names |
+	nameOrNames := pragmaArguments first.
+	names := nameOrNames isArray ifTrue: [ nameOrNames ] ifFalse: [ { nameOrNames } ].
 	type := self parseTypeExpression: pragmaArguments second.
-	var := scope lookupVar: name.
-	var isArg ifFalse: [ 
-	].
+	names do: [ :name |
+		var := scope lookupVar: name.
+		var isArg ifFalse: [ 
+		].
 
-	variableTypeMap at: var put: type.
-	(aScopeNode propertyAt: #argumentTypes ifAbsentPut: [ Dictionary new ]) at: name put: type.
-	
+		variableTypeMap at: var put: type.
+		(aScopeNode propertyAt: #argumentTypes ifAbsentPut: [ Dictionary new ]) at: name put: type.
+	]
 ]
 
 { #category : #parsing }
-OCLowcodeASTSemanticAnalyzer >> parseReturnTypePragma: pragmaArguments [
-	| type |
+OCLowcodeASTSemanticAnalyzer >> parseReturnTypePragma: aPragmaNode [
+	| pragmaArguments type |
+	pragmaArguments := aPragmaNode asPragma arguments.
 	type := self parseTypeExpression: pragmaArguments first.
-	self halt.
+	type isObject ifFalse: [ 
+		OCLowcodeCannotCoerceTypeError new
+			node: aPragmaNode;
+			compilationContext: compilationContext;
+			messageText: 'Only object return types are supported by now.';
+			signal
+	].
+
+	scope node methodNode propertyAt: #returnType put: #type.
+	
 ]
 
 { #category : #parsing }
@@ -344,16 +409,30 @@ OCLowcodeASTSemanticAnalyzer >> parseTypeExpression: typeExpression [
 
 { #category : #parsing }
 OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaArguments scopeNode: aScopeNode [
-	| name type var |
-	name := pragmaArguments first.
+	| type var nameOrNames names |
+	nameOrNames := pragmaArguments first.
+	names := nameOrNames isArray ifTrue: [ nameOrNames ] ifFalse: [ { nameOrNames } ].
 	type := self parseTypeExpression: pragmaArguments second.
-	var := scope lookupVar: name.
-	(var ~~nil and: [ var isArg ]) ifTrue: [ 
-	].
+	names do: [ :name |
+		var := scope lookupVar: name.
+		(var ~~nil and: [ var isArg ]) ifTrue: [ 
+		].
 
-	variableTypeMap at: var put: type.
-	(aScopeNode propertyAt: #temporaryTypes ifAbsentPut: [ Dictionary new ]) at: name put: type.
+		variableTypeMap at: var put: type.
+		(aScopeNode propertyAt: #temporaryTypes ifAbsentPut: [ Dictionary new ]) at: name put: type.
+	]
 	
+]
+
+{ #category : #'type inference' }
+OCLowcodeASTSemanticAnalyzer >> selfType [
+	| methodClassOrMetaclass methodClass classType |
+	methodClassOrMetaclass := compilationContext getClass.
+	methodClassOrMetaclass isMeta ifTrue: [
+		^ methodClassOrMetaclass baseClass asLowcodeType classType
+	] ifFalse: [ 
+		^ methodClassOrMetaclass asLowcodeType object
+	].
 ]
 
 { #category : #accessing }
@@ -366,6 +445,12 @@ OCLowcodeASTSemanticAnalyzer >> typeForTemporary: aTemporaryVariable [
 		variableTypeMap at: aTemporaryVariable put: varType.
 		varType
 	]
+]
+
+{ #category : #visitor }
+OCLowcodeASTSemanticAnalyzer >> visitArrayNode: anArrayNode [
+	super visitArrayNode: anArrayNode.
+	anArrayNode propertyAt: #type put: LowcodeType object.
 ]
 
 { #category : #visitor }
@@ -423,10 +508,9 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 	].
 
 	receiverType isClassType ifTrue: [ 
-		(self isNewObjectMessage: selector) ifTrue: [
-			aMessageNode propertyAt: #type put: receiverType instanceType.
-			^ self checkNormalMessage: aMessageNode
-		].
+		(receiverType isConstructorMessage: selector) ifTrue: [
+			^ self checkConstructorMesage: aMessageNode
+		]
 	].
 
 	receiverType isObjectReference ifTrue: [
@@ -470,7 +554,7 @@ OCLowcodeASTSemanticAnalyzer >> visitPragmaNode: aPragmaNode [
 	(aPragmaNode selector = #var:type:)
 		ifTrue: [ self parseVariableTypePragma: aPragmaNode asPragma arguments scopeNode: aPragmaNode parent].
 	(aPragmaNode selector = #returnType:)
-		ifTrue: [ self parseReturnTypePragma: aPragmaNode asPragma arguments ]
+		ifTrue: [ self parseReturnTypePragma: aPragmaNode ]
 ]
 
 { #category : #visitor }

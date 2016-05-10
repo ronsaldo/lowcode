@@ -370,7 +370,7 @@ IRLowcodeInstruction >> initialize [
 
 { #category : #testing }
 IRLowcodeInstruction >> isLowcodeInstruction [
-	^ false
+	^ true
 ]
 
 { #category : #accessing }

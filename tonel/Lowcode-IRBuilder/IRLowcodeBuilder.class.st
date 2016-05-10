@@ -28,6 +28,19 @@ IRLowcodeBuilder >> initialize [
 	localFrameInstruction := currentSequence last.
 ]
 
+{ #category : #'as yet unclassified' }
+IRLowcodeBuilder >> ir [
+	| hasLowcodeInstructions |
+	hasLowcodeInstructions := false.
+	ir allInstructions do: [ :ins |
+		(ins ~~ localFrameInstruction and: [ ins isLowcodeInstruction ]) ifTrue: [ hasLowcodeInstructions := true ].
+	].
+	hasLowcodeInstructions ifFalse: [
+		localFrameInstruction sequence remove: localFrameInstruction
+	].
+	^ super ir
+]
+
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeAdd32 [
 	self add: (IRInstruction lowcodeInstruction: 1007)

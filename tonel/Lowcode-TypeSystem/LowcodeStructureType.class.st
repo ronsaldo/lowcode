@@ -4,7 +4,17 @@ Class {
 	#category : #'Lowcode-TypeSystem'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'type decorators' }
+LowcodeStructureType >> classType [
+	^ LowcodeClassType referenced: self.
+]
+
+{ #category : #testing }
 LowcodeStructureType >> isStructureType [
 	^ true
+]
+
+{ #category : #'type decorators' }
+LowcodeStructureType >> object [
+	^ LowcodeObjectReferenceType referenced: self.
 ]

@@ -12,6 +12,11 @@ LowcodeClassType class >> referenced: aLowcodeType [
 	^ self new referenced: aLowcodeType
 ]
 
+{ #category : #'type decorators' }
+LowcodeClassType >> classType [
+	^ LowcodeType object
+]
+
 { #category : #accessing }
 LowcodeClassType >> instanceType [
 	^ referenced object
@@ -20,6 +25,13 @@ LowcodeClassType >> instanceType [
 { #category : #testing }
 LowcodeClassType >> isClassType [
 	^ true
+]
+
+{ #category : #testing }
+LowcodeClassType >> isConstructorMessage: aSelector [
+	| method |
+	method := referenced structureClass class methodDict at: aSelector ifAbsent: [ ^ false ].
+	^ method hasPragmaNamed: #constructor
 ]
 
 { #category : #printing }

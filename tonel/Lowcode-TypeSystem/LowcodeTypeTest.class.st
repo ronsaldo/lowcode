@@ -48,6 +48,16 @@ LowcodeTypeTest >> testInstantiateTemplate2 [
 ]
 
 { #category : #tests }
+LowcodeTypeTest >> testObjectClassDecorators [
+	self assert: #(TestMatrix3 object classType) asLowcodeType equals: #(TestMatrix3 classType) asLowcodeType. 
+	self assert: #(TestMatrix3 classType instanceType) asLowcodeType equals: #(TestMatrix3 object) asLowcodeType.
+	self assert: #(TestMatrix3 classType classType ) asLowcodeType equals: #object asLowcodeType.
+	self assert: #(object classType) asLowcodeType equals: #object asLowcodeType.
+	self assert: #(float object) asLowcodeType equals: #object asLowcodeType.
+	self assert: #(float classType) asLowcodeType equals: #object asLowcodeType.
+]
+
+{ #category : #tests }
 LowcodeTypeTest >> testPrimitiveTypes [ 
 	self assert: LowcodeType int8 isNumberType.
 	self assert: LowcodeType int8 isIntegerType.

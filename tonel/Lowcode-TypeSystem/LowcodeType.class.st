@@ -191,7 +191,7 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 
 { #category : #'type decorators' }
 LowcodeType >> classType [
-	^ LowcodeClassType referenced: self.
+	^ LowcodeType object
 ]
 
 { #category : #emitting }
@@ -394,7 +394,7 @@ LowcodeType >> name: anObject [
 
 { #category : #'type decorators' }
 LowcodeType >> object [
-	^ LowcodeObjectReferenceType referenced: self.
+	^ LowcodeType object
 ]
 
 { #category : #'type decorators' }

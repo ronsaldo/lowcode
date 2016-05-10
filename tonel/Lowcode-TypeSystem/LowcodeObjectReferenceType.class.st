@@ -12,6 +12,11 @@ LowcodeObjectReferenceType class >> referenced: aLowcodeType [
 	^ self new referenced: aLowcodeType
 ]
 
+{ #category : #'type decorators' }
+LowcodeObjectReferenceType >> classType [
+	^ referenced classType
+]
+
 { #category : #emitting }
 LowcodeObjectReferenceType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 	referenced emitArgumentTypeCheck: aMethodBuilder name: argumentName

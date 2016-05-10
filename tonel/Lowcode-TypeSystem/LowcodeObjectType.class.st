@@ -9,6 +9,11 @@ LowcodeObjectType >> = other [
 	^ self class = other class
 ]
 
+{ #category : #'type decorators' }
+LowcodeObjectType >> classType [
+	^ self
+]
+
 { #category : #emitting }
 LowcodeObjectType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 	"Nothing to do. By default the arguments are objects."
@@ -62,6 +67,11 @@ LowcodeObjectType >> initialize [
 	self name: #object.
 ]
 
+{ #category : #'type decorators' }
+LowcodeObjectType >> instanceType [
+	^ self
+]
+
 { #category : #template }
 LowcodeObjectType >> instantiateTemplate: templateArguments withEnvironment: templateEnvironment [
 	^ self
@@ -70,6 +80,11 @@ LowcodeObjectType >> instantiateTemplate: templateArguments withEnvironment: tem
 { #category : #testing }
 LowcodeObjectType >> isObject [
 	^ true
+]
+
+{ #category : #'type decorators' }
+LowcodeObjectType >> object [
+	^ self
 ]
 
 { #category : #printing }

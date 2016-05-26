@@ -97,6 +97,11 @@ StructureLayout >> instanceSpecification [
 	^ 16
 ]
 
+{ #category : #testing }
+StructureLayout >> isCustomLayout [
+	^ true
+]
+
 { #category : #copying }
 StructureLayout >> postCopy [
 	super postCopy.

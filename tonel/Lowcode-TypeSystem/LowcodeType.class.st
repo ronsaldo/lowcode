@@ -59,6 +59,11 @@ LowcodeType class >> float64 [
 LowcodeType class >> forSymbol: aSymbol atEnvironment: anEnvironment [
 	| type |
 	PrimitiveTypeDictionary at: aSymbol ifPresent: [ :resolvedType | ^ resolvedType ].
+	(aSymbol == #SelfType and: [ anEnvironment isClass ]) ifTrue: [
+		anEnvironment isMeta ifTrue: [ ^ anEnvironment instanceSide  asLowcodeTypeAtEnvironment: anEnvironment ].
+		^ anEnvironment asLowcodeTypeAtEnvironment: anEnvironment
+	].
+	
 	type := anEnvironment bindingOf: aSymbol.
 	type ifNil: [ self error: 'Failed to resolve type named ', type printString ].
 	^ type value asLowcodeTypeAtEnvironment: anEnvironment

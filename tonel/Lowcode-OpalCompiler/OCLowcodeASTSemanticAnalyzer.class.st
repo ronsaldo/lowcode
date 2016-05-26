@@ -182,17 +182,17 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticUnaryMessage: aMessageNode [
 
 { #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkComparisonMessage: aMessageNode [
-	| selector receiverType argumentTypes leftType rightType coercionType |
+	| selector receiverType argumentTypes leftType rightType coercionType resultType |
 	selector := aMessageNode selector.
 	receiverType := aMessageNode receiver propertyAt: #type.
 	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
 	self assert: argumentTypes size == 1.
-	
 	leftType := receiverType.
 	rightType := argumentTypes first.
 	coercionType := self arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode.
+	resultType := coercionType isObject ifTrue: [ LowcodeType object ] ifFalse: [ LowcodeType bool ].
 	aMessageNode propertyAt: #coercionType put: coercionType.
-	aMessageNode propertyAt: #type put: LowcodeType bool.
+	aMessageNode propertyAt: #type put: resultType.
 	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
 	aMessageNode propertyAt: #nativeInlineKind put: #Comparison.
 ]
@@ -404,7 +404,7 @@ OCLowcodeASTSemanticAnalyzer >> parseReturnTypePragma: aPragmaNode [
 
 { #category : #parsing }
 OCLowcodeASTSemanticAnalyzer >> parseTypeExpression: typeExpression [
-	^ typeExpression asLowcodeType
+	^ typeExpression asLowcodeTypeAtEnvironment: compilationContext getClass
 ]
 
 { #category : #parsing }

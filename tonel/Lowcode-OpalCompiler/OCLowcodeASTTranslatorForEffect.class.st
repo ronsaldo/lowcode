@@ -4,27 +4,33 @@ Class {
 	#category : #'Lowcode-OpalCompiler-Translator'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'inline messages' }
 OCLowcodeASTTranslatorForEffect >> emitAnd: aMessageNode [
 	self halt.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'inline messages' }
 OCLowcodeASTTranslatorForEffect >> emitIfFalse: aMessageNode [
 	self halt.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'inline messages' }
 OCLowcodeASTTranslatorForEffect >> emitIfNotNil: aMessageNode [
 	self halt.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'inline messages' }
 OCLowcodeASTTranslatorForEffect >> emitIfTrue: aMessageNode [
-	self halt.
+	| receiverType |
+	valueTranslator visitNode: aMessageNode receiver.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	self emitConversionFrom: receiverType to: LowcodeType object.
+	methodBuilder jumpAheadTo: #else if: false.	
+		self visitInlinedBlockNode: aMessageNode arguments first.
+	methodBuilder jumpAheadTarget: #else.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> emitMessageNode: aMessageNode [
 	| resultType |
 	super emitMessageNode: aMessageNode.
@@ -32,53 +38,53 @@ OCLowcodeASTTranslatorForEffect >> emitMessageNode: aMessageNode [
 	resultType emitPop: methodBuilder
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'inline messages' }
 OCLowcodeASTTranslatorForEffect >> emitOr: aMessageNode [
 	self halt.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> visitArrayNode: anArrayNode [
 	self halt.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> visitAssignmentNode: anAssignmentNode [
 
 	super visitAssignmentNode: anAssignmentNode .
 	self popOfType: (anAssignmentNode propertyAt: #type).
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> visitBlockNode: aBlockNode [ 
 
 	"A block has no side effect, so a block translated for effect just doesn't generate anything" 
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> visitLiteralArrayNode: aLiteralNode [
 	"when visiting a literal array for effect, we could push it and then pop it, but we do nothing"
 	methodBuilder addLiteral: aLiteralNode value
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> visitLiteralNode: aLiteralNode [
 	"when visiting a literal for effect, we could push it and then pop it, but we do nothing"
 	methodBuilder addLiteral: aLiteralNode value
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> visitParseErrorNode: anErrorNode [
 	self halt.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> visitSequenceNode: aSequenceNode [ 
 	aSequenceNode statements do: [:each | self visitNode: each].
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslatorForEffect >> visitVariableNode: aVariableNode [
 	"when visiting a variable for effect, we could push it and then pop it, but we do nothing"
 	| binding |

@@ -114,6 +114,12 @@ OCLowcodeASTSemanticAnalyzer >> checkAccessorMessage: aMessageNode [
 	fieldOffset := receiverType fieldOffset: fieldName.
 	
 	argumentTypes ifEmpty: [
+		aMessageNode propertyAt: #referenceAsked ifAbsentPut: false.
+		(fieldType canBePushedInTheStack not or: [aMessageNode propertyAt: #referenceAsked]) ifTrue: [
+			aMessageNode propertyAt: #referenceAsked put: true.
+			fieldType := receiverType fieldReferenceType: fieldName.
+		].
+	
 		"Nothing to check"
 		aMessageNode propertyAt: #type put: fieldType. 
 	] ifNotEmpty: [ 

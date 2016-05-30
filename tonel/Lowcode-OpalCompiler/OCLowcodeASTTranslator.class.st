@@ -131,7 +131,11 @@ OCLowcodeASTTranslator >> emitAccessorMessage: aMessageNode [
 		receiverType emitFieldStoreAndPop: methodBuilder type: fieldType offset: fieldOffset.
 		receiverType emitLocalValue: methodBuilder name: tempVar.
 	] ifEmpty: [
-		receiverType emitFieldValue: methodBuilder type: fieldType offset: fieldOffset
+		(aMessageNode propertyAt: #referenceAsked) ifTrue: [
+			receiverType emitFieldReference: methodBuilder type: fieldType offset: fieldOffset
+		] ifFalse: [
+			receiverType emitFieldValue: methodBuilder type: fieldType offset: fieldOffset
+		]	
 	].
 
 ]

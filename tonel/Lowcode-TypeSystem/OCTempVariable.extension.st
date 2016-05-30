@@ -1,8 +1,8 @@
 Extension { #name : #OCTempVariable }
 
 { #category : #'*Lowcode-TypeSystem' }
-OCTempVariable >> emitLowcodeStore: aLowcodeMethodBuilder type: variableType [
-	variableType emitLocalStore: aLowcodeMethodBuilder name: name
+OCTempVariable >> emitLowcodeStore: aLowcodeMethodBuilder type: variableType valueType: valueType [
+	variableType emitLocalStore: aLowcodeMethodBuilder valueType: valueType name: name
 ]
 
 { #category : #'*Lowcode-TypeSystem' }

@@ -225,7 +225,7 @@ LowcodeType >> emitFieldPointerFromObject: aMethodBuilder offset: aFieldOffset [
 ]
 
 { #category : #emitting }
-LowcodeType >> emitLocalStore: aMethodBuilder name: localName [
+LowcodeType >> emitLocalStore: aMethodBuilder valueType: valueType name: localName [
 	self subclassResponsibility
 ]
 
@@ -240,7 +240,7 @@ LowcodeType >> emitLocalValue: aMethodBuilder name: localName [
 ]
 
 { #category : #emitting }
-LowcodeType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+LowcodeType >> emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType [
 	self subclassResponsibility
 ]
 
@@ -279,6 +279,11 @@ LowcodeType >> fromStructure: anObject offset: offset [
 	self subclassResponsibility
 ]
 
+{ #category : #emitting }
+LowcodeType >> hasDirectStoreFrom: valueType [
+	^ self = valueType
+]
+
 { #category : #'type coercion' }
 LowcodeType >> hasImplicitConversionTo: otherType [
 	self withoutAliases = otherType withoutAliases ifTrue: [ ^ true ].
@@ -294,6 +299,9 @@ LowcodeType >> hasImplicitConversionTo: otherType [
 		^ otherType size >= self size.
 	].
 
+	"Allow converting boxed structures into unboxed structures."
+	(self isObjectReference and: [ otherType = self referenced ]) ifTrue: [ ^ true ].
+	
 	^ false
 ]
 
@@ -374,6 +382,11 @@ LowcodeType >> isPlaceHolderType [
 
 { #category : #testing }
 LowcodeType >> isPointerType [
+	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isReferenceType [
 	^ false
 ]
 

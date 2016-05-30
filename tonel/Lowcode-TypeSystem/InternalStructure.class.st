@@ -23,6 +23,11 @@ InternalStructure class >> newFrom: aByteArrayOrExternalAddress [
 	^ self basicNew readBytesFrom: aByteArrayOrExternalAddress
 ]
 
+{ #category : #'instance creation' }
+InternalStructure class >> newFrom: aByteArrayOrExternalAddress position: position [
+	^ self basicNew readBytesFrom: aByteArrayOrExternalAddress position: position
+]
+
 { #category : #converting }
 InternalStructure >> asByteArray [
 	| result |
@@ -41,7 +46,7 @@ InternalStructure >> readBytesFrom: aByteArray position: byteArrayPosition [
 	| layoutSize |
 	layoutSize := self size.
 	1 to: layoutSize do: [ :i |
-		self basicAt: i put: (aByteArray at: byteArrayPosition + i)
+		self basicAt: i put: (aByteArray at: byteArrayPosition + i - 1)
 	]
 ]
 

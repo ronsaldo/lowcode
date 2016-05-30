@@ -23,8 +23,8 @@ NativeFieldSlot >> alignment [
 ]
 
 { #category : #emitting }
-NativeFieldSlot >> emitLowcodeStore: aMethodBuilder [
-	type emitLowcodeStore: aMethodBuilder selfOffset: offset
+NativeFieldSlot >> emitLowcodeStore: aMethodBuilder valueType: valueType [
+	type emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType
 ]
 
 { #category : #emitting }

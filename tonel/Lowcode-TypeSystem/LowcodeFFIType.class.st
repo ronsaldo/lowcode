@@ -83,7 +83,7 @@ LowcodeFFIType >> emitLessThan: aMethodBuilder [
 ]
 
 { #category : #emitting }
-LowcodeFFIType >> emitLocalStore: aMethodBuilder name: localName [
+LowcodeFFIType >> emitLocalStore: aMethodBuilder valueType: valueType name: localName [
 	ffiType emitLowcodeLocalStore: aMethodBuilder name: localName
 ]
 
@@ -93,7 +93,8 @@ LowcodeFFIType >> emitLocalValue: aMethodBuilder name: localName [
 ]
 
 { #category : #emitting }
-LowcodeFFIType >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+LowcodeFFIType >> emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType [
+	self assert: valueType withoutAliases = self.
 	ffiType emitLowcodeStore: aMethodBuilder selfOffset: offset
 ]
 

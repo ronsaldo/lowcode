@@ -12,7 +12,12 @@ LowcodeReferenceType class >> referenced: aLowcodeType [
 	^ self new referenced: aLowcodeType
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
+LowcodeReferenceType >> isReferenceType [
+	^ true
+]
+
+{ #category : #printing }
 LowcodeReferenceType >> printOn: aStream [
 	aStream nextPutAll: '#('; print: referenced; nextPutAll: ' ref)'
 ]

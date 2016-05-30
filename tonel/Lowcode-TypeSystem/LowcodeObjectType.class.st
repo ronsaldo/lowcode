@@ -35,7 +35,8 @@ LowcodeObjectType >> emitDuplicate: aMethodBuilder [
 ]
 
 { #category : #emitting }
-LowcodeObjectType >> emitLocalStore: aMethodBuilder name: localName [
+LowcodeObjectType >> emitLocalStore: aMethodBuilder valueType: valueType name: localName [
+	self assert: valueType isObject.
 	aMethodBuilder storeTemp: localName
 ]
 

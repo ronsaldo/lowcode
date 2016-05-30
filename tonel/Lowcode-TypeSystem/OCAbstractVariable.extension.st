@@ -1,7 +1,7 @@
 Extension { #name : #OCAbstractVariable }
 
 { #category : #'*Lowcode-TypeSystem' }
-OCAbstractVariable >> emitLowcodeStore: aLowcodeMethodBuilder type: aType [
+OCAbstractVariable >> emitLowcodeStore: aLowcodeMethodBuilder type: aType valueType: valueType [
 	^ self emitStore: aLowcodeMethodBuilder
 ]
 

@@ -7,6 +7,16 @@ Class {
 	#category : #'Lowcode-TypeSystem'
 }
 
+{ #category : #comparing }
+LowcodeInternalStructureType >> = other [
+	^ self class = other class and: [ structureClass == other structureClass ]
+]
+
+{ #category : #accessing }
+LowcodeInternalStructureType >> alignment [
+	^ structureClass layout structureAlignment
+]
+
 { #category : #emitting }
 LowcodeInternalStructureType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 	aMethodBuilder
@@ -30,6 +40,27 @@ LowcodeInternalStructureType >> emitFieldPointerFromObject: aMethodBuilder offse
 		lowcodePointerAddConstantOffset: anOffset
 ]
 
+{ #category : #emitting }
+LowcodeInternalStructureType >> emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType [
+	| temp |
+	temp := aMethodBuilder generateTempOfType: valueType.
+	valueType emitLocalStore: aMethodBuilder valueType: valueType name: temp.
+	
+	aMethodBuilder
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset.
+		
+	valueType emitLocalValue: aMethodBuilder name: temp.
+	valueType isObjectReference ifTrue: [ 
+		aMethodBuilder lowcodeFirstFieldPointer.
+	] ifFalse: [
+		self assert: valueType isReferenceType.
+	].
+
+	aMethodBuilder lowcodeMemcpyFixed: self size.
+]
+
 { #category : #accessing }
 LowcodeInternalStructureType >> fieldOffset: fieldName [
 	^ (structureClass slotNamed: fieldName) offset
@@ -38,6 +69,16 @@ LowcodeInternalStructureType >> fieldOffset: fieldName [
 { #category : #accessing }
 LowcodeInternalStructureType >> fieldType: fieldName [
 	^ structureClass slotNamed: fieldName ifFound: [ :slot | slot lowcodeType ] ifNone: [ nil ].
+]
+
+{ #category : #'read write' }
+LowcodeInternalStructureType >> fromStructure: anObject offset: offset [
+	^ structureClass newFrom: anObject position: offset + 1
+]
+
+{ #category : #comparing }
+LowcodeInternalStructureType >> hash [
+	^ self class hash bitXor: structureClass hash
 ]
 
 { #category : #testing }
@@ -53,6 +94,11 @@ LowcodeInternalStructureType >> printOn: aStream [
 ]
 
 { #category : #accessing }
+LowcodeInternalStructureType >> size [
+	^ structureClass layout structureSize
+]
+
+{ #category : #accessing }
 LowcodeInternalStructureType >> structureClass [
 	^ structureClass
 ]
@@ -60,4 +106,9 @@ LowcodeInternalStructureType >> structureClass [
 { #category : #accessing }
 LowcodeInternalStructureType >> structureClass: anObject [
 	structureClass := anObject
+]
+
+{ #category : #'read write' }
+LowcodeInternalStructureType >> write: aValue toStructure: anObject offset: offset [
+	aValue storeBytesIn: anObject position: offset + 1
 ]

@@ -1,7 +1,7 @@
 Extension { #name : #Slot }
 
 { #category : #'*Lowcode-TypeSystem' }
-Slot >> emitLowcodeStore: aLowcodeMethodBuilder [
+Slot >> emitLowcodeStore: aLowcodeMethodBuilder valueType: valueType [
 	^ self emitStore: aLowcodeMethodBuilder
 ]
 

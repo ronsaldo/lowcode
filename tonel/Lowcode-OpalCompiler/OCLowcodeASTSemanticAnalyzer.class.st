@@ -424,6 +424,11 @@ OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaArguments scopeNo
 	
 ]
 
+{ #category : #accessing }
+OCLowcodeASTSemanticAnalyzer >> referenceTypeForTemporary: aTemporaryVariable [
+	self halt.
+]
+
 { #category : #'type inference' }
 OCLowcodeASTSemanticAnalyzer >> selfType [
 	| methodClassOrMetaclass methodClass classType |
@@ -583,8 +588,15 @@ OCLowcodeASTSemanticAnalyzer >> visitSequenceNode: aSequenceNode [
 
 { #category : #visitor }
 OCLowcodeASTSemanticAnalyzer >> visitVariableNode: aVariableNode [
-	| binding |
+	| binding variableType |
 	super visitVariableNode: aVariableNode.
 	binding := aVariableNode propertyAt: #binding.
-	aVariableNode propertyAt: #type put: (binding lowcodeTypeFor: self).
+	variableType := binding lowcodeTypeFor: self.
+	aVariableNode propertyAt: #referenceAsked ifAbsentPut: false.
+	(variableType canBePushedInTheStack not or: [aVariableNode propertyAt: #referenceAsked]) ifTrue: [
+		aVariableNode propertyAt: #referenceAsked put: true.
+		variableType := binding lowcodeReferenceTypeFor: self
+	].
+
+	aVariableNode propertyAt: #type put: variableType.
 ]

@@ -424,5 +424,10 @@ OCLowcodeASTTranslator >> visitReturnNode: aReturnNode [
 OCLowcodeASTTranslator >> visitVariableNode: aVariableNode [
 	| type |
 	type := aVariableNode propertyAt: #type.
-	aVariableNode binding emitLowcodeValue: methodBuilder type: type.
+	type isReferenceType ifTrue: [ 
+		aVariableNode binding emitLowcodeReference: methodBuilder type: type.
+	] ifFalse: [
+		aVariableNode binding emitLowcodeValue: methodBuilder type: type.
+	]
+	
 ]

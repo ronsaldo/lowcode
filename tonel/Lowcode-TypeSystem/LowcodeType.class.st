@@ -282,6 +282,11 @@ LowcodeType >> fieldOffset: aFieldName [
 ]
 
 { #category : #accessing }
+LowcodeType >> fieldReferenceType: fieldName [
+	^ nil
+]
+
+{ #category : #accessing }
 LowcodeType >> fieldType: fieldName [
 	^ nil
 ]

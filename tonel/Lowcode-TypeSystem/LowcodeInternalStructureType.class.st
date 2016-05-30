@@ -82,6 +82,13 @@ LowcodeInternalStructureType >> fieldOffset: fieldName [
 ]
 
 { #category : #accessing }
+LowcodeInternalStructureType >> fieldReferenceType: fieldName [
+	| fieldType |
+	fieldType := self fieldType: fieldName.
+	^ fieldType ifNotNil: [LowcodeReferenceType referenced: fieldType ]
+]
+
+{ #category : #accessing }
 LowcodeInternalStructureType >> fieldType: fieldName [
 	^ structureClass slotNamed: fieldName ifFound: [ :slot | slot lowcodeType ] ifNone: [ nil ].
 ]

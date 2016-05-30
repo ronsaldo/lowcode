@@ -118,8 +118,13 @@ LowcodeTypeAlias >> fieldOffset: fieldName [
 ]
 
 { #category : #accessing }
+LowcodeTypeAlias >> fieldReferenceType: fieldName [
+	^ aliasedType fieldReferenceType: fieldName
+]
+
+{ #category : #accessing }
 LowcodeTypeAlias >> fieldType: fieldName [
-	^ aliasedType fieldName
+	^ aliasedType fieldType: fieldName
 ]
 
 { #category : #'read write' }

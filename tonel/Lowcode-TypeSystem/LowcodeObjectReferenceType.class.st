@@ -24,6 +24,14 @@ LowcodeObjectReferenceType >> emitArgumentTypeCheck: aMethodBuilder name: argume
 ]
 
 { #category : #emitting }
+LowcodeObjectReferenceType >> emitFieldReference: aMethodBuilder type: referenceType offset: fieldOffset [
+	self assert: referenced isStructureType.
+	referenceType isBoxedStructureReferenceType ifFalse: [
+		referenced emitFieldPointerFromObject: aMethodBuilder offset: fieldOffset.
+	]
+]
+
+{ #category : #emitting }
 LowcodeObjectReferenceType >> emitFieldStoreAndPop: aMethodBuilder type: fieldType offset: fieldOffset [
 	self assert: referenced isStructureType.
 	referenced emitFieldPointerFromObject: aMethodBuilder offset: fieldOffset.
@@ -42,6 +50,13 @@ LowcodeObjectReferenceType >> emitFieldValue: aMethodBuilder type: fieldType off
 { #category : #accessing }
 LowcodeObjectReferenceType >> fieldOffset: fieldName [
 	^ referenced fieldOffset: fieldName
+]
+
+{ #category : #accessing }
+LowcodeObjectReferenceType >> fieldReferenceType: fieldName [
+	| fieldType |
+	fieldType := self fieldType: fieldName.
+	^ fieldType ifNotNil: [ LowcodeBoxedStructureFieldReferenceType referenced: fieldType offset: (self fieldOffset: fieldName)]
 ]
 
 { #category : #accessing }

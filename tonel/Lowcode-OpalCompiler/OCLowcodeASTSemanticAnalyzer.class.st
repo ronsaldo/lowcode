@@ -460,9 +460,14 @@ OCLowcodeASTSemanticAnalyzer >> visitAssignmentNode: anAssignmentNode [
 	binding := anAssignmentNode variable propertyAt: #binding.
 	type := binding lowcodeTypeFor: self.
 	anAssignmentNode variable propertyAt: #type put: type.
-	anAssignmentNode propertyAt: #type put: type.
 	valueType := anAssignmentNode value propertyAt: #type.
 	self checkImplicitConversionFrom: valueType to: type on: anAssignmentNode.
+	(type hasDirectStoreFrom: valueType) ifTrue: [
+		anAssignmentNode propertyAt: #type put: valueType.
+	] ifFalse: [
+		anAssignmentNode propertyAt: #type put: type.
+	]
+	
 ]
 
 { #category : #visitor }

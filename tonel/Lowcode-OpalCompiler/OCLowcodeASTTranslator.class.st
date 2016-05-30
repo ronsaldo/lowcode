@@ -116,7 +116,7 @@ OCLowcodeASTTranslator >> emitAccessorMessage: aMessageNode [
 
 	receiverType := aMessageNode receiver propertyAt: #type.	
 	aMessageNode arguments ifNotEmpty: [
-		tempVar := self generateTempOfType: receiverType.
+		tempVar := methodBuilder generateTempOfType: receiverType.
 		receiverType emitLocalStoreAndPop: methodBuilder name: tempVar.
 	].
 
@@ -153,8 +153,7 @@ OCLowcodeASTTranslator >> emitArgumentLoads: names types: typeDictionary [
 			objectArgTempName := ('__object_' , name ) asSymbol.
 			methodBuilder pushTemp: objectArgTempName.
 			type emitArgumentTypeCheck: methodBuilder name: name.
-			self emitConversionFrom: LowcodeType object to: type. 
-			type emitLocalStore: methodBuilder name: name. 
+			self emitLocalStore: type valueType: LowcodeType object name: name.
 		]
 	].
 
@@ -219,8 +218,8 @@ OCLowcodeASTTranslator >> emitConstructorMessage: aMessageNode [
 
 	methodBuilder send: #new.
 	resultType := aMessageNode propertyAt: #type.
-	resultTemp := self generateTempOfType: resultType.
-	resultType emitLocalStore: methodBuilder name: resultTemp.
+	resultTemp := methodBuilder generateTempOfType: resultType.
+	self emitLocalStore: resultType valueType: resultType name: resultTemp.
 	fields := aMessageNode propertyAt: #fields.
 	
 	aMessageNode arguments doWithIndex: [ :arg :index |
@@ -280,6 +279,16 @@ OCLowcodeASTTranslator >> emitIfNil: aMessageNode boolean: aBoolean [
 	self emitCondition: args boolean: aBoolean
 ]
 
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitLocalStore: variableType valueType: valueType name: localName [
+	(variableType hasDirectStoreFrom: valueType) ifTrue: [
+		variableType emitLocalStore: methodBuilder valueType: valueType name: localName
+	] ifFalse: [
+		self emitConversionFrom: valueType to: variableType.
+		variableType emitLocalStore: methodBuilder valueType: variableType name: localName
+	]
+]
+
 { #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
 	| selector messageKind |
@@ -311,29 +320,10 @@ OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
 
 ]
 
-{ #category : #temporaries }
-OCLowcodeASTTranslator >> generateSymbol [
-	gensymCount value: gensymCount value + 1.
-	^ ('gensym:' , gensymCount value printString) asSymbol
-]
-
-{ #category : #temporaries }
-OCLowcodeASTTranslator >> generateTempOfType: aType [
-	| tempSymbol |
-	tempSymbol := self generateSymbol.
-	aType isObject ifTrue: [
-		methodBuilder addTemp: tempSymbol.
-	] ifFalse: [
-		methodBuilder addNativeTemp: tempSymbol -> aType size.
-	].
-	^ tempSymbol
-]
-
 { #category : #initialization }
 OCLowcodeASTTranslator >> initialize [
 
 	methodBuilder := IRLowcodeBuilder new.
-	gensymCount := 0 asValueHolder.
 	effectTranslator := self as: self classForEffect.
 	valueTranslator := self as: self classForValue.
 	effectTranslator instVarNamed: #effectTranslator put: effectTranslator.
@@ -360,8 +350,13 @@ OCLowcodeASTTranslator >> visitAssignmentNode: anAssignmentNode [
 	valueTranslator visitNode: anAssignmentNode value.
 	valueType := anAssignmentNode value propertyAt: #type.
 	variableType := anAssignmentNode propertyAt: #type.
-	self emitConversionFrom: valueType to: variableType.
-	anAssignmentNode variable binding emitLowcodeStore: methodBuilder type: variableType
+	(variableType hasDirectStoreFrom: valueType) ifTrue: [ 
+		anAssignmentNode variable binding emitLowcodeStore: methodBuilder type: variableType valueType: valueType.
+	] ifFalse: [ 
+		self emitConversionFrom: valueType to: variableType.
+		anAssignmentNode variable binding emitLowcodeStore: methodBuilder type: variableType valueType: variableType.
+	]
+	
 ]
 
 { #category : #'visitor-double dispatching' }

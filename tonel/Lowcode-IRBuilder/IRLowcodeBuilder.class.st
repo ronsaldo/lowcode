@@ -5,7 +5,8 @@ Class {
 	#name : #IRLowcodeBuilder,
 	#superclass : #IRBuilder,
 	#instVars : [
-		'localFrameInstruction'
+		'localFrameInstruction',
+		'gensymCount'
 	],
 	#category : #'Lowcode-IRBuilder'
 }
@@ -21,14 +22,21 @@ IRLowcodeBuilder >> addNativeTemps: aNativeTempNamesWithSizes [
 	localFrameInstruction extendA: (localFrameInstruction extendA max: self currentScope totalLocalFrameSize).
 ]
 
+{ #category : #temporaries }
+IRLowcodeBuilder >> generateSymbol [
+	gensymCount := gensymCount + 1.
+	^ ('gensym:' , gensymCount printString) asSymbol
+]
+
 { #category : #initialization }
 IRLowcodeBuilder >> initialize [
 	super initialize.
 	self lowcodeLocalFrameSize: 0.
 	localFrameInstruction := currentSequence last.
+	gensymCount := 0.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 IRLowcodeBuilder >> ir [
 	| hasLowcodeInstructions |
 	hasLowcodeInstructions := false.

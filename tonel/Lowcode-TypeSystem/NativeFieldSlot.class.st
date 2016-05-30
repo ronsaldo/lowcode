@@ -23,6 +23,17 @@ NativeFieldSlot >> alignment [
 ]
 
 { #category : #emitting }
+NativeFieldSlot >> emitLowcodeReference: aMethodBuilder type: referenceType [
+	aMethodBuilder pushReceiver.
+	referenceType isBoxedStructureReferenceType ifFalse: [
+		aMethodBuilder
+			lowcodeFirstFieldPointer;
+			lowcodePointerAddConstantOffset: offset.
+	].
+
+]
+
+{ #category : #emitting }
 NativeFieldSlot >> emitLowcodeStore: aMethodBuilder valueType: valueType [
 	type emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType
 ]
@@ -50,6 +61,11 @@ NativeFieldSlot >> index [
 { #category : #accessing }
 NativeFieldSlot >> isVirtual [
 	^ true
+]
+
+{ #category : #accessing }
+NativeFieldSlot >> lowcodeReferenceType [
+	^ LowcodeBoxedStructureFieldReferenceType referenced: type offset: offset
 ]
 
 { #category : #accessing }

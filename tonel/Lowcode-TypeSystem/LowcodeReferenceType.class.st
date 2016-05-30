@@ -12,6 +12,16 @@ LowcodeReferenceType class >> referenced: aLowcodeType [
 	^ self new referenced: aLowcodeType
 ]
 
+{ #category : #comparing }
+LowcodeReferenceType >> = other [
+	^ self class = other class and: [ referenced = other referenced ]
+]
+
+{ #category : #comparing }
+LowcodeReferenceType >> hash [
+	^ self class hash bitXor: referenced hash
+]
+
 { #category : #testing }
 LowcodeReferenceType >> isReferenceType [
 	^ true

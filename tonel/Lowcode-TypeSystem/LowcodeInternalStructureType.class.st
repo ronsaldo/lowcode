@@ -41,6 +41,21 @@ LowcodeInternalStructureType >> emitFieldPointerFromObject: aMethodBuilder offse
 ]
 
 { #category : #emitting }
+LowcodeInternalStructureType >> emitLowcodeMemoryValueAsObject: methodBuilder [
+	| temp pointerType |
+	pointerType := self pointer.
+	temp := methodBuilder generateTempOfType: pointerType.
+	methodBuilder
+		lowcodeStoreLocalPointer: temp;
+		pushLiteral: structureClass;
+		send: #basicNew;
+		pushDup;
+		lowcodeFirstFieldPointer;
+		lowcodeLoadLocalPointer: temp;
+		lowcodeMemcpyFixed: self size.
+]
+
+{ #category : #emitting }
 LowcodeInternalStructureType >> emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType [
 	| temp |
 	temp := aMethodBuilder generateTempOfType: valueType.
@@ -78,7 +93,7 @@ LowcodeInternalStructureType >> fromStructure: anObject offset: offset [
 
 { #category : #comparing }
 LowcodeInternalStructureType >> hash [
-	^ self class hash bitXor: structureClass hash
+	^ self class hash bitXor: structureClass identityHash
 ]
 
 { #category : #testing }

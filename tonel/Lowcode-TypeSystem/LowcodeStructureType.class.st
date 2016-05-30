@@ -4,6 +4,11 @@ Class {
 	#category : #'Lowcode-TypeSystem'
 }
 
+{ #category : #testing }
+LowcodeStructureType >> canBePushedInTheStack [
+	^ false
+]
+
 { #category : #'type decorators' }
 LowcodeStructureType >> classType [
 	^ LowcodeClassType referenced: self.

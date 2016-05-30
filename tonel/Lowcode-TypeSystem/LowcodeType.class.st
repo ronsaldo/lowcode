@@ -194,6 +194,11 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 	^ minimalCoercionSize <= 4 ifTrue: [ self class int32 ] ifFalse: [ self class int64 ].
 ]
 
+{ #category : #testing }
+LowcodeType >> canBePushedInTheStack [
+	^ true
+]
+
 { #category : #'type decorators' }
 LowcodeType >> classType [
 	^ LowcodeType object
@@ -237,6 +242,13 @@ LowcodeType >> emitLocalStoreAndPop: aMethodBuilder name: localName [
 { #category : #emitting }
 LowcodeType >> emitLocalValue: aMethodBuilder name: localName [
 	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitLowcodeMemoryValueAsObject: aMethodBuilder [
+	self
+		emitMemoryValue: aMethodBuilder;
+		emitConversionToObject: aMethodBuilder
 ]
 
 { #category : #emitting }
@@ -332,6 +344,11 @@ LowcodeType >> isAny [
 
 { #category : #testing }
 LowcodeType >> isBooleanType [
+	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isBoxedStructureReferenceType [
 	^ false
 ]
 

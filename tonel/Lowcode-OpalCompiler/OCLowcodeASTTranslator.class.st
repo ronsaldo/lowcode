@@ -394,7 +394,7 @@ OCLowcodeASTTranslator >> visitMethodNode: aMethodNode [
 	temporaryVariables := allTempNames allButFirst: aMethodNode arguments size.
 	
 	self addTemps: argumentTemporaries types: argumentTypes isArgs: true.
-	methodBuilder addTemps: #(__lowcodePreviousNativeStackPointer__ __lowcodeNativeFramePointer__ __lowcodeNativeStackPointer__ __lowcodeCalloutState__).
+	methodBuilder addTemps: #(__lowcodeContextMark__ __lowcodePreviousNativeStackPointer__ __lowcodeNativeFramePointer__ __lowcodeNativeStackPointer__ __lowcodeCalloutState__).
 	self addTemps: temporaryVariables types: temporaryTypes isArgs: false. 
 		
 	methodBuilder properties: aMethodNode properties.

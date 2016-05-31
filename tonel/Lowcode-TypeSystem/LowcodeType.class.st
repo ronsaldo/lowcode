@@ -220,6 +220,14 @@ LowcodeType >> emitConversionToObject: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeType >> emitConversionToObject: aMethodBuilder boxedStructureFieldType: boxedStructureFieldType [
+	aMethodBuilder
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: boxedStructureFieldType offset.
+	self emitLowcodeMemoryValueAsObject: aMethodBuilder.
+]
+
+{ #category : #emitting }
 LowcodeType >> emitDuplicate: aMethodBuilder [
 	self subclassResponsibility
 ]

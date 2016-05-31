@@ -34,6 +34,23 @@ LowcodeInternalStructureType >> emitArgumentTypeCheck: aMethodBuilder name: argu
 ]
 
 { #category : #emitting }
+LowcodeInternalStructureType >> emitConversionToObject: methodBuilder boxedStructureFieldType: boxedStructureFieldType [
+	| temp pointerType |
+	temp := methodBuilder generateTempOfType: LowcodeType object.
+	methodBuilder
+		storeTemp: temp;
+		popTop;
+		pushLiteral: structureClass;
+		send: #basicNew;
+		pushDup;
+		lowcodeFirstFieldPointer;
+		pushTemp: temp;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: boxedStructureFieldType offset;
+		lowcodeMemcpyFixed: self size.
+]
+
+{ #category : #emitting }
 LowcodeInternalStructureType >> emitFieldPointerFromObject: aMethodBuilder offset: anOffset [
 	aMethodBuilder
 		lowcodeFirstFieldPointer;

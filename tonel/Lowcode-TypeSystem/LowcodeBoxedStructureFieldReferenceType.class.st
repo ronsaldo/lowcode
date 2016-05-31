@@ -19,10 +19,7 @@ LowcodeBoxedStructureFieldReferenceType >> = other [
 
 { #category : #emitting }
 LowcodeBoxedStructureFieldReferenceType >> emitConversionToObject: methodBuilder [
-	methodBuilder
-		lowcodeFirstFieldPointer;
-		lowcodePointerAddConstantOffset: offset.
-	referenced emitLowcodeMemoryValueAsObject: methodBuilder
+	referenced emitConversionToObject: methodBuilder boxedStructureFieldType: self
 ]
 
 { #category : #comparing }

@@ -28,12 +28,32 @@ InternalStructure class >> newFrom: aByteArrayOrExternalAddress position: positi
 	^ self basicNew readBytesFrom: aByteArrayOrExternalAddress position: position
 ]
 
+{ #category : #accessing }
+InternalStructure class >> structureAlignment [
+	^ layout structureAlignment
+]
+
+{ #category : #accessing }
+InternalStructure class >> structureSize [
+	^ layout structureSize
+]
+
 { #category : #converting }
 InternalStructure >> asByteArray [
 	| result |
 	result := ByteArray new: self size.
 	self storeBytesIn: result position: 1.
 	^ result
+]
+
+{ #category : #accessing }
+InternalStructure >> byteAt: position [
+	^ self basicAt: position
+]
+
+{ #category : #accessing }
+InternalStructure >> byteAt: position put: value [
+	^ self basicAt: position put: value
 ]
 
 { #category : #'memory access' }
@@ -46,7 +66,7 @@ InternalStructure >> readBytesFrom: aByteArray position: byteArrayPosition [
 	| layoutSize |
 	layoutSize := self size.
 	1 to: layoutSize do: [ :i |
-		self basicAt: i put: (aByteArray at: byteArrayPosition + i - 1)
+		self basicAt: i put: (aByteArray byteAt: byteArrayPosition + i - 1)
 	]
 ]
 
@@ -60,6 +80,6 @@ InternalStructure >> storeBytesIn: aByteArray position: byteArrayPosition [
 	| layoutSize |
 	layoutSize := self size.
 	1 to: layoutSize do: [ :i |
-		aByteArray at: byteArrayPosition + i - 1 put: (self basicAt: i)
+		aByteArray byteAt: byteArrayPosition + i - 1 put: (self basicAt: i)
 	]
 ]

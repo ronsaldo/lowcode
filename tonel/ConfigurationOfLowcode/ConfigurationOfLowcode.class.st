@@ -135,11 +135,12 @@ ConfigurationOfLowcode >> baseline01: spec [
 				spec requires: #(#'Lowcode-IRBuilder' #'Lowcode-TypeSystem' ). ];
 			package: #'Lowcode-OpalTest' with: [
 				spec requires: #('Lowcode-OpalCompiler' ). ];
+			package: #'Lowcode-Runtime';
 			package: 'Lowcode-Test' with: [
 				spec requires: #('Lowcode-Assembler' 'Lowcode-Execution' ). ];
 			package: #'Lowcode-TypeSystem' with: [
 				spec requires: #(#'Lowcode-IRBuilder' ). ].
-		spec group: 'default' with: #('Lowcode-Generator' #'Lowcode-IRBuilder' 'Lowcode-OpalCompiler' #'Lowcode-TypeSystem' #'Lowcode-OpalTest' ). ].
+		spec group: 'default' with: #('Lowcode-Generator' #'Lowcode-IRBuilder' 'Lowcode-OpalCompiler' #'Lowcode-TypeSystem' #'Lowcode-OpalTest' #'Lowcode-Runtime' ). ].
 
 ]
 

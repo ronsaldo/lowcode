@@ -239,17 +239,6 @@ OCLowcodeASTSemanticAnalyzer >> checkConstructorMesage: aMessageNode [
 ]
 
 { #category : #'message type checking' }
-OCLowcodeASTSemanticAnalyzer >> checkConversionMessage: aMessageNode [
-	| selector receiverType messageType |
-	selector := aMessageNode selector.
-	receiverType := aMessageNode receiver propertyAt: #type.
-	self assert: aMessageNode arguments size == 0.
-	messageType := SpecialTypeConversionMessages at: selector.
-	aMessageNode propertyAt: #type put: messageType returnType.
-	aMessageNode propertyAt: #nativeInline put: true.
-]
-
-{ #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkIdentityEqualityMessage: aMessageNode [
 	| selector receiverType argumentTypes leftType rightType |
 	selector := aMessageNode.
@@ -296,6 +285,12 @@ OCLowcodeASTSemanticAnalyzer >> checkNormalMessage: aMessageNode [
 	selector == #class ifTrue: [
 		resultType := receiverType classType. 
 	].
+
+	(self isConversionMessage: selector) ifTrue: [ 
+		resultType := (selector allButFirst: 2) asSymbol asLowcodeTypeAtEnvironment: (compilationContext getClass).
+		resultType := resultType object.
+	].
+
 	aMessageNode propertyAt: #type put: resultType
 ]
 
@@ -329,6 +324,17 @@ OCLowcodeASTSemanticAnalyzer >> checkPointerMessage: aMessageNode [
 	self halt.
 ]
 
+{ #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkSpecialConversionMessage: aMessageNode [
+	| selector receiverType messageType |
+	selector := aMessageNode selector.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	self assert: aMessageNode arguments size == 0.
+	messageType := SpecialTypeConversionMessages at: selector.
+	aMessageNode propertyAt: #type put: messageType returnType.
+	aMessageNode propertyAt: #nativeInline put: true.
+]
+
 { #category : #variables }
 OCLowcodeASTSemanticAnalyzer >> declareVariableNode: aVariableNode as: anOCTempVariable [
 	^ super declareVariableNode: aVariableNode as: anOCTempVariable
@@ -353,6 +359,19 @@ OCLowcodeASTSemanticAnalyzer >> isArithmeticUnaryMessage: aSelector [
 { #category : #testing }
 OCLowcodeASTSemanticAnalyzer >> isComparisonMessage: aSelector [
 	^ ComparisonMessages includes: aSelector 
+]
+
+{ #category : #testing }
+OCLowcodeASTSemanticAnalyzer >> isConversionMessage: aSelector [
+	| conversionClassName conversionClassBinding conversionType |
+	aSelector size < 3 ifTrue: [ ^ false ].
+	(aSelector beginsWith: #as) ifFalse: [ ^ false ]. 
+	aSelector third isUppercase ifFalse: [ ^ false ].
+	conversionClassName := aSelector allButFirst: 2.
+	conversionClassBinding := compilationContext getClass bindingOf: conversionClassName.
+	conversionClassBinding ifNil: [ ^ false ].
+	conversionType := conversionClassBinding value asLowcodeType. 
+	^ conversionType ~= LowcodeType object
 ]
 
 { #category : #testing }
@@ -540,7 +559,7 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 	].
 	
 	(self isSpecialConversionMessage: selector) ifTrue: [
-		^ self checkConversionMessage: aMessageNode
+		^ self checkSpecialConversionMessage: aMessageNode
 	].
 
 	(self isArithmeticMessage: selector) ifTrue: [

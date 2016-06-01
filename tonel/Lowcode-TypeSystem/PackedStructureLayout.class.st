@@ -1,7 +1,7 @@
 Class {
 	#name : #PackedStructureLayout,
 	#superclass : #StructureLayout,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-InternalStructure'
 }
 
 { #category : #'structure layout' }

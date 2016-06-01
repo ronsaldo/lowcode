@@ -9,7 +9,7 @@ Class {
 		'offset',
 		'type'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-InternalStructure'
 }
 
 { #category : #comparing }

@@ -5,7 +5,7 @@ Class {
 		'structureAlignment',
 		'structureSize'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-InternalStructure'
 }
 
 { #category : #'instance creation' }

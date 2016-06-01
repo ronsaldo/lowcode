@@ -1,7 +1,7 @@
 Class {
 	#name : #UnionLayout,
 	#superclass : #StructureLayout,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-InternalStructure'
 }
 
 { #category : #'structure layout' }

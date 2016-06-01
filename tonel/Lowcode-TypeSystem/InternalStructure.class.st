@@ -5,7 +5,7 @@ I am the base class of an internal structure. This is like a C structure that ca
 Class {
 	#name : #InternalStructure,
 	#superclass : #Object,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-InternalStructure'
 }
 
 { #category : #accessing }

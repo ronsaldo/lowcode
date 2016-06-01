@@ -194,6 +194,11 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 	^ minimalCoercionSize <= 4 ifTrue: [ self class int32 ] ifFalse: [ self class int64 ].
 ]
 
+{ #category : #converting }
+LowcodeType >> asLowcodeType [
+	^ self
+]
+
 { #category : #testing }
 LowcodeType >> canBePushedInTheStack [
 	^ true

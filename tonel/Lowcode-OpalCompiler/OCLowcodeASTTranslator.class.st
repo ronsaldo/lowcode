@@ -253,6 +253,11 @@ OCLowcodeASTTranslator >> emitConversionFrom: sourceType to: targetType [
 	targetType isObject ifTrue: [ ^ sourceType emitConversionToObject: methodBuilder ].
 	sourceType isObject ifTrue: [ ^ targetType emitConversionFromObject: methodBuilder ].
 	
+	(sourceType isReferenceType and: [ targetType isReferenceType not ]) ifTrue: [
+		sourceType emitDeReference: methodBuilder.
+		^ self emitConversionFrom: sourceType referenced to: targetType
+	].
+
 	Transcript show: 'Convert from ' , sourceType printString , ' -> ' , targetType printString.
 	self halt.
 ]

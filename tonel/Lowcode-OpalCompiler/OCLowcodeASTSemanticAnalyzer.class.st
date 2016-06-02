@@ -84,6 +84,7 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 OCLowcodeASTSemanticAnalyzer >> arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode [
 	| coercionType |
 	coercionType := leftType arithmeticCoerceWith: rightType.
+	
 	coercionType ifNil: [
 		OCLowcodeCannotCoerceTypeError new
 				node: aMessageNode;

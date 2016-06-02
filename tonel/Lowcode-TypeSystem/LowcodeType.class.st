@@ -334,7 +334,10 @@ LowcodeType >> hasImplicitConversionTo: otherType [
 	self withoutAliases = otherType withoutAliases ifTrue: [ ^ true ].
 	otherType isObject ifTrue: [ ^ true ].
 	otherType isAny ifTrue: [ ^ true ].
-	
+
+	"Allow de referencing."
+	(self isReferenceType and: [ otherType isReferenceType not ]) ifTrue: [ ^ self referenced hasImplicitConversionTo: otherType ].
+		
 	self isNumberType ~= otherType isNumberType ifTrue: [ ^ false ].
 	self isNumberType ifTrue: [
 		otherType isFloatingPointType ifTrue: [
@@ -345,7 +348,7 @@ LowcodeType >> hasImplicitConversionTo: otherType [
 	].
 
 	"Allow converting boxed structures into unboxed structures."
-	(self isObjectReference and: [ otherType = self referenced ]) ifTrue: [ ^ true ].
+	(self isObjectReference and: [ otherType withoutAliases = self referenced withoutAliases ]) ifTrue: [ ^ true ].
 	
 	^ false
 ]

@@ -115,7 +115,7 @@ OCLowcodeASTSemanticAnalyzer >> checkAccessorMessage: aMessageNode [
 	
 	argumentTypes ifEmpty: [
 		aMessageNode propertyAt: #referenceAsked ifAbsentPut: false.
-		(fieldType canBePushedInTheStack not or: [aMessageNode propertyAt: #referenceAsked]) ifTrue: [
+		(receiverType isReferenceType or: [ fieldType canBePushedInTheStack not or: [aMessageNode propertyAt: #referenceAsked] ] ) ifTrue: [
 			aMessageNode propertyAt: #referenceAsked put: true.
 			fieldType := receiverType fieldReferenceType: fieldName.
 		].
@@ -552,7 +552,7 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 		]
 	].
 
-	receiverType isObjectReference ifTrue: [
+	(receiverType isObjectReference or: [ receiverType isReferenceType ]) ifTrue: [
 		(receiverType isAccessorMessage: selector) ifTrue: [
 			^ self checkAccessorMessage: aMessageNode
 		]

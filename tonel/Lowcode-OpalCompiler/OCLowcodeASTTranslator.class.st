@@ -108,7 +108,7 @@ OCLowcodeASTTranslator >> classForValue [
 
 { #category : #'native code emition' }
 OCLowcodeASTTranslator >> emitAccessorMessage: aMessageNode [
-	| fieldType receiverType tempVar fieldOffset |
+	| fieldType receiverType tempVar fieldOffset argumentType |
 	fieldType := aMessageNode propertyAt: #fieldType.
 	aMessageNode isCascaded ifFalse: [
 		valueTranslator visitNode: aMessageNode receiver
@@ -122,13 +122,15 @@ OCLowcodeASTTranslator >> emitAccessorMessage: aMessageNode [
 
 	aMessageNode arguments do: [:each | 
 		valueTranslator visitNode: each.
-		self emitConversionFrom: (each propertyAt: #type) to: fieldType
+		argumentType := (each propertyAt: #type).
+		(fieldType hasDirectStoreFrom: argumentType) ifFalse: [ 
+			self emitConversionFrom: argumentType to: fieldType
+		]	
 	].
 	
 	fieldOffset := aMessageNode propertyAt: #fieldOffset.
 	aMessageNode arguments ifNotEmpty: [
-		receiverType emitLocalValue: methodBuilder name: tempVar.
-		receiverType emitFieldStoreAndPop: methodBuilder type: fieldType offset: fieldOffset.
+		receiverType emitFieldStoreAndPop: methodBuilder type: fieldType offset: fieldOffset valueType: argumentType receiverTemp: tempVar.
 		receiverType emitLocalValue: methodBuilder name: tempVar.
 	] ifEmpty: [
 		(aMessageNode propertyAt: #referenceAsked) ifTrue: [

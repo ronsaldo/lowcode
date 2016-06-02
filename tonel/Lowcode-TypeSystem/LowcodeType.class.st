@@ -174,6 +174,10 @@ LowcodeType >> alignment [
 { #category : #'type coercion' }
 LowcodeType >> arithmeticCoerceWith: otherType [
 	| minimalCoercionSize |
+	(self isReferenceType or: [ otherType isReferenceType ]) ifTrue: [ 
+		^ self withoutReference arithmeticCoerceWith: otherType withoutReference
+	].
+
 	(self isObject or: [ otherType isObject ]) ifTrue: [
 		self withoutAliases = otherType withoutAliases ifTrue: [ ^ self ].
 		^ self class object
@@ -483,6 +487,11 @@ LowcodeType >> size [
 
 { #category : #accessing }
 LowcodeType >> withoutAliases [
+	^ self
+]
+
+{ #category : #'type decorators' }
+LowcodeType >> withoutReference [
 	^ self
 ]
 

@@ -23,6 +23,14 @@ LowcodeBoxedStructureFieldReferenceType >> emitConversionToObject: methodBuilder
 ]
 
 { #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitDeReference: methodBuilder [
+	methodBuilder
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset.
+	referenced emitMemoryValue: methodBuilder
+]
+
+{ #category : #emitting }
 LowcodeBoxedStructureFieldReferenceType >> emitFieldReference: aMethodBuilder type: referenceType offset: fieldOffset [
 	referenceType isBoxedStructureReferenceType ifFalse: [
 		aMethodBuilder
@@ -73,7 +81,7 @@ LowcodeBoxedStructureFieldReferenceType >> emitPop: aMethodBuilder [
 	aMethodBuilder popTop
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 LowcodeBoxedStructureFieldReferenceType >> fieldReferenceType: fieldName [
 	| fieldType |
 	fieldType := self fieldType: fieldName.

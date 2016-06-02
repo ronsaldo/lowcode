@@ -17,12 +17,12 @@ LowcodeReferenceType >> = other [
 	^ self class = other class and: [ referenced = other referenced ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 LowcodeReferenceType >> fieldOffset: fieldName [
 	^ referenced fieldOffset: fieldName
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 LowcodeReferenceType >> fieldType: aFieldName [
 	^ referenced fieldType: aFieldName
 ]
@@ -32,7 +32,7 @@ LowcodeReferenceType >> hash [
 	^ self class hash bitXor: referenced hash
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #testing }
 LowcodeReferenceType >> isAccessorMessage: selector [
 	^ referenced isAccessorMessage: selector
 ]
@@ -53,6 +53,12 @@ LowcodeReferenceType >> referenced [
 ]
 
 { #category : #accessing }
-LowcodeReferenceType >> referenced: anObject [
-	referenced := anObject
+LowcodeReferenceType >> referenced: aLowcodeType [
+	self assert: aLowcodeType isReferenceType not.
+	referenced := aLowcodeType
+]
+
+{ #category : #'type decorators' }
+LowcodeReferenceType >> withoutReference [
+	^ referenced
 ]

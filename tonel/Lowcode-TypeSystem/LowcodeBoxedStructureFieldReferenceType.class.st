@@ -22,6 +22,64 @@ LowcodeBoxedStructureFieldReferenceType >> emitConversionToObject: methodBuilder
 	referenced emitConversionToObject: methodBuilder boxedStructureFieldType: self
 ]
 
+{ #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitFieldReference: aMethodBuilder type: referenceType offset: fieldOffset [
+	referenceType isBoxedStructureReferenceType ifFalse: [
+		aMethodBuilder
+			lowcodeFirstFieldPointer;
+			lowcodePointerAddConstantOffset: fieldOffset
+	]
+]
+
+{ #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitFieldStoreAndPop: aMethodBuilder type: fieldType offset: fieldOffset valueType: valueType receiverTemp: tempVar [
+	| valueTemp |
+	(fieldType isStructureType and: [ fieldType hasDirectStoreFrom: valueType ]) ifTrue: [
+		valueTemp := aMethodBuilder generateTempOfType: valueType.
+		valueType emitLocalStoreAndPop: aMethodBuilder name: valueTemp.
+		
+		aMethodBuilder
+			pushTemp: tempVar;
+			lowcodeFirstFieldPointer;
+			lowcodePointerAddConstantOffset: fieldOffset + offset.
+			 
+		valueType emitLocalValue: aMethodBuilder name: valueTemp.
+		fieldType emitMemoryStoreAndPopPointerFirst: aMethodBuilder valueType: valueType.
+		
+	] ifFalse: [
+		aMethodBuilder
+			pushTemp: tempVar;
+			lowcodeFirstFieldPointer;
+			lowcodePointerAddConstantOffset: fieldOffset + offset.
+		fieldType emitMemoryStoreAndPop: aMethodBuilder
+	].
+
+]
+
+{ #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitLocalStoreAndPop: aMethodBuilder name: localName [
+	aMethodBuilder
+		storeTemp: localName;
+		popTop
+]
+
+{ #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitLocalValue: aMethodBuilder name: localName [
+	aMethodBuilder pushTemp: localName
+]
+
+{ #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitPop: aMethodBuilder [ 
+	aMethodBuilder popTop
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeBoxedStructureFieldReferenceType >> fieldReferenceType: fieldName [
+	| fieldType |
+	fieldType := self fieldType: fieldName.
+	^ fieldType ifNotNil: [ LowcodeBoxedStructureFieldReferenceType referenced: fieldType offset: (self fieldOffset: fieldName) + offset]
+]
+
 { #category : #comparing }
 LowcodeBoxedStructureFieldReferenceType >> hash [
 	^ super hash bitXor: offset

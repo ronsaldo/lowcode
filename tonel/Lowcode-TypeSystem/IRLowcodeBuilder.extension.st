@@ -4,7 +4,7 @@ Extension { #name : #IRLowcodeBuilder }
 IRLowcodeBuilder >> generateTempOfType: aType [
 	| tempSymbol |
 	tempSymbol := self generateSymbol.
-	aType isObject ifTrue: [
+	(aType isObject or: [ aType isBoxedStructureReferenceType ]) ifTrue: [
 		self addTemp: tempSymbol.
 	] ifFalse: [
 		self addNativeTemp: tempSymbol -> aType size.

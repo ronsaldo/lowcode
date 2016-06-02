@@ -302,7 +302,7 @@ LowcodeType >> fieldOffset: aFieldName [
 
 { #category : #accessing }
 LowcodeType >> fieldReferenceType: fieldName [
-	^ nil
+	^ self subclassResponsibility
 ]
 
 { #category : #accessing }

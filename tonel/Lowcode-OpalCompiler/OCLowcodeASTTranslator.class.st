@@ -124,7 +124,8 @@ OCLowcodeASTTranslator >> emitAccessorMessage: aMessageNode [
 		valueTranslator visitNode: each.
 		argumentType := (each propertyAt: #type).
 		(fieldType hasDirectStoreFrom: argumentType) ifFalse: [ 
-			self emitConversionFrom: argumentType to: fieldType
+			self emitConversionFrom: argumentType to: fieldType.
+			argumentType := fieldType.
 		]	
 	].
 	
@@ -217,7 +218,7 @@ OCLowcodeASTTranslator >> emitCondition: args boolean: aBoolean [
 
 { #category : #'native code emition' }
 OCLowcodeASTTranslator >> emitConstructorMessage: aMessageNode [
-	| resultType fields resultTemp fieldTypeAndOffset fieldType fieldOffset |
+	| resultType fields resultTemp fieldTypeAndOffset fieldType fieldOffset valueType |
 	aMessageNode isCascaded ifFalse: [
 		valueTranslator visitNode: aMessageNode receiver
 	].
@@ -231,14 +232,17 @@ OCLowcodeASTTranslator >> emitConstructorMessage: aMessageNode [
 	aMessageNode arguments doWithIndex: [ :arg :index |
 		"Convert the value"
 		valueTranslator visitNode: arg.
+		valueType := arg propertyAt: #type.
 		fieldTypeAndOffset := fields at: index.
 		fieldType := fieldTypeAndOffset key.
 		fieldOffset := fieldTypeAndOffset value. 
-		self emitConversionFrom: (arg propertyAt: #type) to: fieldType.
-
+		(fieldType hasDirectStoreFrom: valueType ) ifFalse: [
+			self emitConversionFrom: valueType to: fieldType.
+			valueType := fieldType
+		].
+		
 		"Store the value in the field."
-		resultType emitLocalValue: methodBuilder name: resultTemp.
-		resultType emitFieldStoreAndPop: methodBuilder type: fieldType offset: fieldOffset.
+		resultType emitFieldStoreAndPop: methodBuilder type: fieldType offset: fieldOffset valueType: valueType receiverTemp: resultTemp.
 	].
 
 ]

@@ -291,6 +291,10 @@ OCLowcodeASTSemanticAnalyzer >> checkNormalMessage: aMessageNode [
 		resultType := resultType object.
 	].
 
+	(resultType isAnyObject and: [ receiverType isAnyObject not ]) ifTrue: [ 
+		resultType := receiverType getReturnTypeForSelector: aMessageNode selector
+	].
+ 
 	aMessageNode propertyAt: #type put: resultType
 ]
 
@@ -423,7 +427,7 @@ OCLowcodeASTSemanticAnalyzer >> parseReturnTypePragma: aPragmaNode [
 			signal
 	].
 
-	scope node methodNode propertyAt: #returnType put: #type.
+	scope node methodNode propertyAt: #returnType put: type.
 	
 ]
 
@@ -594,8 +598,12 @@ OCLowcodeASTSemanticAnalyzer >> visitPragmaNode: aPragmaNode [
 
 { #category : #visitor }
 OCLowcodeASTSemanticAnalyzer >> visitReturnNode: aReturnNode [
+	| valueType returnType |
 	super visitReturnNode: aReturnNode.
-	aReturnNode propertyAt: #type put: LowcodeType object.
+	valueType := aReturnNode value propertyAt: #type.
+	returnType := scope node propertyAt: #returnType ifAbsent: [ LowcodeType object ].
+	self checkImplicitConversionFrom: valueType to: returnType on: aReturnNode.
+	aReturnNode propertyAt: #type put: returnType
 ]
 
 { #category : #visitor }

@@ -17,9 +17,23 @@ LowcodeClassType >> classType [
 	^ LowcodeType object
 ]
 
+{ #category : #'type inference' }
+LowcodeClassType >> getReturnTypeForSelector: aSelector [
+	| method|
+	referenced isStructureType ifFalse: [ ^ LowcodeType object ].
+	method := referenced structureClass class lookupSelector: aSelector.
+	^ method ifNotNil: [ method lowcodeReturnType ] ifNil: [ ^ LowcodeType object ]
+
+]
+
 { #category : #accessing }
 LowcodeClassType >> instanceType [
 	^ referenced object
+]
+
+{ #category : #testing }
+LowcodeClassType >> isAnyObject [
+	^ false
 ]
 
 { #category : #testing }
@@ -30,8 +44,8 @@ LowcodeClassType >> isClassType [
 { #category : #testing }
 LowcodeClassType >> isConstructorMessage: aSelector [
 	| method |
-	method := referenced structureClass class methodDict at: aSelector ifAbsent: [ ^ false ].
-	^ method hasPragmaNamed: #constructor
+	method := referenced structureClass class lookupSelector: aSelector.
+	^ method isNotNil and: [ method hasPragmaNamed: #constructor ]
 ]
 
 { #category : #printing }

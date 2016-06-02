@@ -94,6 +94,11 @@ LowcodeObjectReferenceType >> isAccessorMessage: aSelector [
 ]
 
 { #category : #testing }
+LowcodeObjectReferenceType >> isAnyObject [
+	^ false
+]
+
+{ #category : #testing }
 LowcodeObjectReferenceType >> isObjectReference [
 	^ true
 ]

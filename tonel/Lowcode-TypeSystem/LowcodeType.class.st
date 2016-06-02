@@ -315,6 +315,11 @@ LowcodeType >> fromStructure: anObject offset: offset [
 	self subclassResponsibility
 ]
 
+{ #category : #'type inference' }
+LowcodeType >> getReturnTypeForSelector: aSelector [
+	^ self class object
+]
+
 { #category : #emitting }
 LowcodeType >> hasDirectStoreFrom: valueType [
 	^ self = valueType
@@ -363,6 +368,11 @@ LowcodeType >> isAccessorMessage: aSelector [
 
 { #category : #testing }
 LowcodeType >> isAny [
+	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isAnyObject [
 	^ false
 ]
 

@@ -79,6 +79,11 @@ LowcodeObjectType >> instantiateTemplate: templateArguments withEnvironment: tem
 ]
 
 { #category : #testing }
+LowcodeObjectType >> isAnyObject [
+	^ true
+]
+
+{ #category : #testing }
 LowcodeObjectType >> isObject [
 	^ true
 ]

@@ -93,7 +93,7 @@ LowcodeInternalStructureType >> emitLowcodeStore: aMethodBuilder selfOffset: off
 	aMethodBuilder lowcodeMemcpyFixed: self size.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #emitting }
 LowcodeInternalStructureType >> emitMemoryStoreAndPopPointerFirst: aMethodBuilder valueType: valueType [
 	valueType isObjectReference ifTrue: [
 		
@@ -132,6 +132,14 @@ LowcodeInternalStructureType >> fromStructure: anObject offset: offset [
 	^ structureClass newFrom: anObject position: offset + 1
 ]
 
+{ #category : #'type inference' }
+LowcodeInternalStructureType >> getReturnTypeForSelector: aSelector [
+	| method|
+	method := structureClass lookupSelector: aSelector.
+	^ method ifNotNil: [ method lowcodeReturnType ] ifNil: [ ^ LowcodeType object ]
+
+]
+
 { #category : #comparing }
 LowcodeInternalStructureType >> hash [
 	^ self class hash bitXor: structureClass identityHash
@@ -140,8 +148,8 @@ LowcodeInternalStructureType >> hash [
 { #category : #testing }
 LowcodeInternalStructureType >> isAccessorMessage: aSelector [
 	| method |
-	method := structureClass methodDict at: aSelector ifAbsent: [ ^ false ].
-	^ method hasPragmaNamed: #accessor
+	method := structureClass lookupSelector: aSelector.
+	^ method isNotNil and:[ method hasPragmaNamed: #accessor ]
 ]
 
 { #category : #printing }

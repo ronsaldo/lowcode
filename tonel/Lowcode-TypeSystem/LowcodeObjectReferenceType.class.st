@@ -40,6 +40,30 @@ LowcodeObjectReferenceType >> emitFieldStoreAndPop: aMethodBuilder type: fieldTy
 ]
 
 { #category : #emitting }
+LowcodeObjectReferenceType >> emitFieldStoreAndPop: aMethodBuilder type: fieldType offset: fieldOffset valueType: valueType receiverTemp: tempVar [
+	| valueTemp |
+	self assert: referenced isStructureType.
+	(fieldType isStructureType and: [ fieldType hasDirectStoreFrom: valueType ]) ifTrue: [
+		valueTemp := aMethodBuilder generateTempOfType: valueType.
+		valueType emitLocalStoreAndPop: aMethodBuilder name: valueTemp.
+		
+		aMethodBuilder
+			pushTemp: tempVar;
+			lowcodeFirstFieldPointer;
+			lowcodePointerAddConstantOffset: fieldOffset.
+			 
+		valueType emitLocalValue: aMethodBuilder name: valueTemp.
+		fieldType emitMemoryStoreAndPopPointerFirst: aMethodBuilder valueType: valueType.
+		
+	] ifFalse: [
+		self
+			emitLocalValue: aMethodBuilder name: tempVar;
+			emitFieldStoreAndPop: aMethodBuilder type: fieldType offset: fieldOffset
+	].
+
+]
+
+{ #category : #emitting }
 LowcodeObjectReferenceType >> emitFieldValue: aMethodBuilder type: fieldType offset: fieldOffset [
 	self assert: referenced isStructureType.
 	referenced emitFieldPointerFromObject: aMethodBuilder offset: fieldOffset.

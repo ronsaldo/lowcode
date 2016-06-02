@@ -93,6 +93,23 @@ LowcodeInternalStructureType >> emitLowcodeStore: aMethodBuilder selfOffset: off
 	aMethodBuilder lowcodeMemcpyFixed: self size.
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeInternalStructureType >> emitMemoryStoreAndPopPointerFirst: aMethodBuilder valueType: valueType [
+	valueType isObjectReference ifTrue: [
+		
+		aMethodBuilder
+			lowcodeFirstFieldPointer;
+			lowcodeMemcpyFixed: self size.
+		^ self
+	].
+	valueType isPointerType ifTrue: [ 
+		aMethodBuilder lowcodeMemcpyFixed: self size.
+		^ self
+	].
+
+	self error: 'Unsupported value type.'
+]
+
 { #category : #accessing }
 LowcodeInternalStructureType >> fieldOffset: fieldName [
 	^ (structureClass slotNamed: fieldName) offset

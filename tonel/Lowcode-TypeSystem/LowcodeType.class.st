@@ -280,6 +280,12 @@ LowcodeType >> emitMemoryStoreAndPop: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeType >> emitMemoryStoreAndPop: aMethodBuilder valueType: valueType [
+	valueType ~= self ifTrue: [ self error: 'cannot store value.' ].
+	^ self emitMemoryStoreAndPop: aMethodBuilder
+]
+
+{ #category : #emitting }
 LowcodeType >> emitMemoryValue: aMethodBuilder [
 	self subclassResponsibility
 ]

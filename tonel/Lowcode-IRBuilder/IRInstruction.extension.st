@@ -1,6 +1,11 @@
 Extension { #name : #IRInstruction }
 
 { #category : #'*Lowcode-IRBuilder' }
+IRInstruction >> isJustPushing [
+	^ false
+]
+
+{ #category : #'*Lowcode-IRBuilder' }
 IRInstruction >> isLowcodeInstruction [
 	^ false
 ]

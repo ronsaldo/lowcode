@@ -1414,6 +1414,18 @@ IRLowcodeBuilder >> nativeLocalOffsetOf: nativeTempName [
 	^ self currentScope nativeLocalOffsetOf: nativeTempName
 ]
 
+{ #category : #'as yet unclassified' }
+IRLowcodeBuilder >> popTop [
+	currentSequence ifNotEmpty: [ 
+		currentSequence last isJustPushing ifTrue: [
+			currentSequence removeLast.
+			^ self.
+		]
+	].
+
+	super popTop
+]
+
 { #category : #scopes }
 IRLowcodeBuilder >> pushScope: aScope [
 	| nativeScope |

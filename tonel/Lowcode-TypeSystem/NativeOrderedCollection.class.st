@@ -124,6 +124,16 @@ NativeOrderedCollection >> rawData [
 ]
 
 { #category : #accessing }
+NativeOrderedCollection >> rawDataSize [
+	^ self elementSize * size
+]
+
+{ #category : #'as yet unclassified' }
+NativeOrderedCollection >> removeAll [
+	size := 0.
+]
+
+{ #category : #accessing }
 NativeOrderedCollection >> size [
 	^ size
 ]

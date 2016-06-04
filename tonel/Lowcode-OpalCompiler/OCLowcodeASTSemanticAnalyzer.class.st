@@ -400,14 +400,27 @@ OCLowcodeASTSemanticAnalyzer >> isSpecialConversionMessage: aSelector [
 ]
 
 { #category : #parsing }
-OCLowcodeASTSemanticAnalyzer >> parseArgumentTypePragma: pragmaArguments scopeNode: aScopeNode [
-	| type var nameOrNames names |
+OCLowcodeASTSemanticAnalyzer >> parseArgumentTypePragma: pragmaNode scopeNode: aScopeNode [
+	| type var nameOrNames names pragmaArguments |
+	pragmaArguments := pragmaNode asPragma arguments.
 	nameOrNames := pragmaArguments first.
 	names := nameOrNames isArray ifTrue: [ nameOrNames ] ifFalse: [ { nameOrNames } ].
 	type := self parseTypeExpression: pragmaArguments second.
 	names do: [ :name |
 		var := scope lookupVar: name.
-		var isArg ifFalse: [ 
+		var ifNil: [
+			OCLowcodeVariableNotPresentError new
+				node: pragmaNode;
+				compilationContext: compilationContext;
+				messageText: 'Non existent argument ', name printString;
+				signal
+		].
+		var isArg ifFalse: [
+			OCLowcodeVariableNotPresentError new
+				node: pragmaNode;
+				compilationContext: compilationContext;
+				messageText: 'Variable ', name printString , ' is not an argument.';
+				signal
 		].
 
 		variableTypeMap at: var put: type.
@@ -438,14 +451,20 @@ OCLowcodeASTSemanticAnalyzer >> parseTypeExpression: typeExpression [
 ]
 
 { #category : #parsing }
-OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaArguments scopeNode: aScopeNode [
-	| type var nameOrNames names |
+OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaNode scopeNode: aScopeNode [
+	| type var nameOrNames names pragmaArguments |
+	pragmaArguments := pragmaNode asPragma arguments.
 	nameOrNames := pragmaArguments first.
 	names := nameOrNames isArray ifTrue: [ nameOrNames ] ifFalse: [ { nameOrNames } ].
 	type := self parseTypeExpression: pragmaArguments second.
 	names do: [ :name |
 		var := scope lookupVar: name.
 		(var ~~nil and: [ var isArg ]) ifTrue: [ 
+			OCLowcodeVariableNotPresentError new
+				node: pragmaNode;
+				compilationContext: compilationContext;
+				messageText: 'Variable ', name printString , ' is an argument.';
+				signal
 		].
 
 		variableTypeMap at: var put: type.
@@ -590,9 +609,9 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 OCLowcodeASTSemanticAnalyzer >> visitPragmaNode: aPragmaNode [
 	super visitPragmaNode: aPragmaNode.
 	(aPragmaNode selector = #argument:type:)
-		ifTrue: [ self parseArgumentTypePragma: aPragmaNode asPragma arguments scopeNode: aPragmaNode parent].
+		ifTrue: [ self parseArgumentTypePragma: aPragmaNode scopeNode: aPragmaNode parent].
 	(aPragmaNode selector = #var:type:)
-		ifTrue: [ self parseVariableTypePragma: aPragmaNode asPragma arguments scopeNode: aPragmaNode parent].
+		ifTrue: [ self parseVariableTypePragma: aPragmaNode scopeNode: aPragmaNode parent].
 	(aPragmaNode selector = #returnType:)
 		ifTrue: [ self parseReturnTypePragma: aPragmaNode ]
 ]

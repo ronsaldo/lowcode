@@ -41,7 +41,7 @@ InternalStructure class >> structureSize [
 { #category : #converting }
 InternalStructure >> asByteArray [
 	| result |
-	result := ByteArray new: self size.
+	result := ByteArray new: self class structureSize.
 	self storeBytesIn: result position: 1.
 	^ result
 ]
@@ -64,7 +64,7 @@ InternalStructure >> readBytesFrom: aByteArray [
 { #category : #'memory access' }
 InternalStructure >> readBytesFrom: aByteArray position: byteArrayPosition [
 	| layoutSize |
-	layoutSize := self size.
+	layoutSize := self class structureSize.
 	1 to: layoutSize do: [ :i |
 		self basicAt: i put: (aByteArray byteAt: byteArrayPosition + i - 1)
 	]
@@ -78,7 +78,7 @@ InternalStructure >> storeBytesIn: aByteArray [
 { #category : #'memory access' }
 InternalStructure >> storeBytesIn: aByteArray position: byteArrayPosition [
 	| layoutSize |
-	layoutSize := self size.
+	layoutSize := self class structureSize.
 	1 to: layoutSize do: [ :i |
 		aByteArray byteAt: byteArrayPosition + i - 1 put: (self basicAt: i)
 	]

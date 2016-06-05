@@ -163,3 +163,9 @@ NativeOrderedCollection >> uncheckedAt: index put: anElement [
 	type write: anElement toStructure: data offset: (self computeElementOffset: index).
 	^ anElement
 ]
+
+{ #category : #'as yet unclassified' }
+NativeOrderedCollection >> useDataFromByteArray: aByteArray [
+	data := aByteArray.
+	capacity := size := aByteArray size // self elementSize.
+]

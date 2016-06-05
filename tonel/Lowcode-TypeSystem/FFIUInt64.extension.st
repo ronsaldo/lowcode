@@ -21,6 +21,25 @@ FFIUInt64 >> emitLowcodePop: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+	aMethodBuilder
+		lowcodeDuplicateInt64;
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset;
+		lowcodeStoreInt64ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
+	aMethodBuilder
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset;
+		lowcodeLoadUInt64FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt64 >> readFromInternalStructure: anObject at: offset [
 	^ (((((((anObject byteAt: offset + 1)
 		bitOr: ((anObject byteAt: offset + 2) bitShift: 8))

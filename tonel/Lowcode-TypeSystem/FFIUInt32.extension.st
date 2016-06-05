@@ -13,6 +13,25 @@ FFIUInt32 >> emitLowcodeConvertToObject: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+	aMethodBuilder
+		lowcodeDuplicateInt32;
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset;
+		lowcodeStoreInt32ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
+	aMethodBuilder
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset;
+		lowcodeLoadUInt32FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt32 >> readFromInternalStructure: anObject at: offset [
 	^ (((anObject byteAt: offset + 1)
 		bitOr: ((anObject byteAt: offset + 2) bitShift: 8))

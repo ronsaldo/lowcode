@@ -14,7 +14,7 @@ LowcodeFFIType class >> named: aName on: anFFIType [
 
 { #category : #comparing }
 LowcodeFFIType >> = other [
-	^ self class == other class and: [ self ffiType = other ffiType ]
+	^ self class == other class and: [ self ffiType class = other ffiType class ]
 ]
 
 { #category : #accessing }
@@ -170,7 +170,7 @@ LowcodeFFIType >> fromStructure: anObject offset: offset [
 
 { #category : #comparing }
 LowcodeFFIType >> hash [
-	^ self class hash bitXor: ffiType hash
+	^ self class hash bitXor: ffiType class hash
 ]
 
 { #category : #template }

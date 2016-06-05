@@ -86,10 +86,10 @@ LowcodeType class >> initialize [
 	Int32Type := LowcodeFFIType named: #int32 on: FFIInt32 new.
 	Int64Type := LowcodeFFIType named: #int64 on: FFIInt64 new.
 
-	UInt8Type := LowcodeFFIType named: #uint8 on: FFIInt8 new.
-	UInt16Type := LowcodeFFIType named: #uint16 on: FFIInt16 new.
-	UInt32Type := LowcodeFFIType named: #uint32 on: FFIInt32 new.
-	UInt64Type := LowcodeFFIType named: #uint64 on: FFIInt64 new.
+	UInt8Type := LowcodeFFIType named: #uint8 on: FFIUInt8 new.
+	UInt16Type := LowcodeFFIType named: #uint16 on: FFIUInt16 new.
+	UInt32Type := LowcodeFFIType named: #uint32 on: FFIUInt32 new.
+	UInt64Type := LowcodeFFIType named: #uint64 on: FFIUInt64 new.
 
 	SizeType := LowcodeFFIType named: #size on: FFISizeT new.
 

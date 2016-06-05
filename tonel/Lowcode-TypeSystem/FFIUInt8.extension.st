@@ -1,6 +1,25 @@
 Extension { #name : #FFIUInt8 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt8 >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
+	aMethodBuilder
+		lowcodeDuplicateInt32;
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset;
+		lowcodeStoreInt8ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt8 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
+	aMethodBuilder
+		pushReceiver;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset;
+		lowcodeLoadUInt8FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt8 >> readFromInternalStructure: anObject at: offset [
 	^ anObject byteAt: offset + 1
 ]

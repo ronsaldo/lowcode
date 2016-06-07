@@ -36,6 +36,15 @@ NativeOrderedCollection >> addLast: newElement [
 	^ newElement
 ]
 
+{ #category : #converting }
+NativeOrderedCollection >> asByteArray [
+	| result |
+	size = 0 ifTrue: [ ^ ByteArray new ].
+	result := ByteArray new: size * self elementSize.
+	LibC memCopy: data to: result size: result size.
+	^ result
+]
+
 { #category : #accessing }
 NativeOrderedCollection >> at: index [
 	(index < 1 or: [ index > size ]) ifTrue: [ self errorSubscriptBounds: index ].
@@ -128,7 +137,7 @@ NativeOrderedCollection >> rawDataSize [
 	^ self elementSize * size
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #removing }
 NativeOrderedCollection >> removeAll [
 	size := 0.
 ]

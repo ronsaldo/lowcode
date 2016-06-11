@@ -218,6 +218,11 @@ LowcodeType >> classType [
 	^ LowcodeType object
 ]
 
+{ #category : #accessing }
+LowcodeType >> dependencyClass [
+	^ nil
+]
+
 { #category : #emitting }
 LowcodeType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 	self subclassResponsibility
@@ -251,7 +256,7 @@ LowcodeType >> emitFieldPointerFromObject: aMethodBuilder offset: aFieldOffset [
 	self subclassResponsibility
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #emitting }
 LowcodeType >> emitLocalReference: aMethodBuilder name: localName [
 	self subclassResponsibility
 ]
@@ -327,6 +332,11 @@ LowcodeType >> fieldType: fieldName [
 { #category : #'read write' }
 LowcodeType >> fromStructure: anObject offset: offset [
 	self subclassResponsibility
+]
+
+{ #category : #accessing }
+LowcodeType >> getCompiledMethodForSelector: selector [
+	^ nil.
 ]
 
 { #category : #'type inference' }

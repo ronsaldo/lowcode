@@ -17,6 +17,11 @@ LowcodeInternalStructureType >> alignment [
 	^ structureClass structureAlignment
 ]
 
+{ #category : #accessing }
+LowcodeInternalStructureType >> dependencyClass [
+	^ structureClass
+]
+
 { #category : #emitting }
 LowcodeInternalStructureType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 	aMethodBuilder
@@ -152,6 +157,11 @@ LowcodeInternalStructureType >> fieldType: fieldName [
 { #category : #'read write' }
 LowcodeInternalStructureType >> fromStructure: anObject offset: offset [
 	^ structureClass newFrom: anObject position: offset + 1
+]
+
+{ #category : #accessing }
+LowcodeInternalStructureType >> getCompiledMethodForSelector: aSelector [
+	^ structureClass lookupSelector: aSelector
 ]
 
 { #category : #'type inference' }

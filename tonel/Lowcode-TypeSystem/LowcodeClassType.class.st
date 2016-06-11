@@ -17,6 +17,11 @@ LowcodeClassType >> classType [
 	^ LowcodeType object
 ]
 
+{ #category : #accessing }
+LowcodeClassType >> getCompiledMethodForSelector: aSelector [
+	^ referenced structureClass class lookupSelector: aSelector
+]
+
 { #category : #'type inference' }
 LowcodeClassType >> getReturnTypeForSelector: aSelector [
 	| method|

@@ -3,7 +3,8 @@ Class {
 	#superclass : #PointerLayout,
 	#instVars : [
 		'structureAlignment',
-		'structureSize'
+		'structureSize',
+		'classDependencies'
 	],
 	#category : #'Lowcode-TypeSystem-InternalStructure'
 }
@@ -15,10 +16,28 @@ StructureLayout class >> extending: superLayout scope: aScope host: aClass [
 		yourself
 ]
 
+{ #category : #accessing }
+StructureLayout >> classDependencies [
+	classDependencies ifNil: [ self computeClassDependencies ].
+	^ classDependencies
+]
+
+{ #category : #private }
+StructureLayout >> computeClassDependencies [
+	| deps depClass |
+	deps := Set new.
+	self allSlotsDo: [ :slot |
+		depClass := slot type dependencyClass.
+		depClass ifNotNil: [ deps add: slot type dependencyClass ].
+	].
+	classDependencies := deps asArray.
+]
+
 { #category : #'structure layout' }
 StructureLayout >> computeStructureLayout [
 	structureAlignment := 1.
 	structureSize := 0.
+	classDependencies := nil.
 	
 	self allSlotsDo: [:slot |
 		slot offset: (structureSize alignedTo: slot alignment).

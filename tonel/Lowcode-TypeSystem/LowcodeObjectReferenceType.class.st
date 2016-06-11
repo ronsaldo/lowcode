@@ -88,6 +88,11 @@ LowcodeObjectReferenceType >> fieldType: aFieldName [
 	^ referenced fieldType: aFieldName
 ]
 
+{ #category : #accessing }
+LowcodeObjectReferenceType >> getCompiledMethodForSelector: aSelector [
+	^ referenced getCompiledMethodForSelector: aSelector
+]
+
 { #category : #testing }
 LowcodeObjectReferenceType >> isAccessorMessage: aSelector [
 	^ referenced isAccessorMessage: aSelector

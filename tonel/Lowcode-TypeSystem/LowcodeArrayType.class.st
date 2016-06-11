@@ -29,6 +29,11 @@ LowcodeArrayType >> canBePushedInTheStack [
 ]
 
 { #category : #accessing }
+LowcodeArrayType >> dependencyClass [
+	^ element dependencyClass
+]
+
+{ #category : #accessing }
 LowcodeArrayType >> element [
 	^ element
 ]

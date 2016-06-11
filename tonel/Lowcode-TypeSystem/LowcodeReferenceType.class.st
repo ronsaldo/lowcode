@@ -17,6 +17,11 @@ LowcodeReferenceType >> = other [
 	^ self class = other class and: [ referenced = other referenced ]
 ]
 
+{ #category : #accessing }
+LowcodeReferenceType >> dependencyClass [
+	^ referenced dependencyClass
+]
+
 { #category : #'as yet unclassified' }
 LowcodeReferenceType >> emitLocalReference: aMethodBuilder name: localName [
 	self shouldNotImplement
@@ -47,6 +52,11 @@ LowcodeReferenceType >> fieldOffset: fieldName [
 { #category : #accessing }
 LowcodeReferenceType >> fieldType: aFieldName [
 	^ referenced fieldType: aFieldName
+]
+
+{ #category : #accessing }
+LowcodeReferenceType >> getCompiledMethodForSelector: aSelector [
+	^ referenced getCompiledMethodForSelector: aSelector
 ]
 
 { #category : #comparing }

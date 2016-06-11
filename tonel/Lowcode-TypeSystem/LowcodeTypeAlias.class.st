@@ -32,6 +32,11 @@ LowcodeTypeAlias >> alignment [
 	^ aliasedType alignment
 ]
 
+{ #category : #accessing }
+LowcodeTypeAlias >> dependencyClass [
+	^ aliasedType dependencyClass
+]
+
 { #category : #'reflective operations' }
 LowcodeTypeAlias >> doesNotUnderstand: aMessage [
 	(aMessage selector beginsWith: #emit) ifTrue: [ 
@@ -135,6 +140,11 @@ LowcodeTypeAlias >> fieldType: fieldName [
 { #category : #'read write' }
 LowcodeTypeAlias >> fromStructure: anObject offset: offset [
 	^ aliasedType fromStructure: anObject offset: offset
+]
+
+{ #category : #accessing }
+LowcodeTypeAlias >> getCompiledMethodForSelector: aSelector [
+	^ aliasedType getCompiledMethodForSelector: aSelector
 ]
 
 { #category : #comparing }

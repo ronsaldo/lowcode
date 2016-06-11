@@ -84,7 +84,6 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 OCLowcodeASTSemanticAnalyzer >> addMethodDependency: aCompiledMethod [
 	| dependencies |
 	dependencies := self methodDependencies.
-	aCompiledMethod propertyValueAt: #eagerInstallationRequired put: true.
 	dependencies add: { aCompiledMethod classBinding . aCompiledMethod selector }.
 ]
 
@@ -355,7 +354,7 @@ OCLowcodeASTSemanticAnalyzer >> checkSpecialConversionMessage: aMessageNode [
 
 { #category : #'as yet unclassified' }
 OCLowcodeASTSemanticAnalyzer >> compiledMethodProperties [
-	scope node methodNode properties ifNil: [ scope node methodNode properties: AdditionalMethodState new ].
+	scope node methodNode properties ifNil: [ scope node methodNode properties: (AdditionalMethodState new copyWith: #eagerInstallationRequired -> true)].
 	^ scope node methodNode properties
 ]
 
@@ -638,6 +637,19 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 	]. 
 
 	^ self checkNormalMessage: aMessageNode
+]
+
+{ #category : #visitor }
+OCLowcodeASTSemanticAnalyzer >> visitMethodNode: aMethodNode [
+
+	scope := compilationContext scope newMethodScope. 
+	aMethodNode scope: scope.  scope node: aMethodNode.
+	aMethodNode arguments do: [:node | self declareArgumentNode: node ].
+	aMethodNode pragmas do: [:each | self visitNode: each].
+	self compiledMethodProperties.
+	self visitNode: aMethodNode body.
+	scope := scope outerScope.
+
 ]
 
 { #category : #visitor }

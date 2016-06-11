@@ -361,12 +361,15 @@ OCLowcodeASTTranslator >> pushDupOfType: aType [
 { #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslator >> visitAssignmentNode: anAssignmentNode [
 
-	| valueType variableType |
+	| valueType variableType resultType |
 	valueTranslator visitNode: anAssignmentNode value.
 	valueType := anAssignmentNode value propertyAt: #type.
-	variableType := anAssignmentNode propertyAt: #type.
-	(variableType hasDirectStoreFrom: valueType) ifTrue: [ 
-		anAssignmentNode variable binding emitLowcodeStore: methodBuilder type: variableType valueType: valueType.
+	variableType := anAssignmentNode propertyAt: #variableType.
+	resultType := anAssignmentNode propertyAt: #type.
+	(resultType ~= variableType and: [ variableType hasDirectStoreFrom: valueType ]) ifTrue: [ 
+		anAssignmentNode variable binding
+			emitLowcodeStoreAndPop: methodBuilder type: variableType valueType: valueType;
+			emitLowcodeReference: methodBuilder type: resultType
 	] ifFalse: [ 
 		self emitConversionFrom: valueType to: variableType.
 		anAssignmentNode variable binding emitLowcodeStore: methodBuilder type: variableType valueType: variableType.

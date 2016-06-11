@@ -475,7 +475,7 @@ OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaNode scopeNode: a
 
 { #category : #accessing }
 OCLowcodeASTSemanticAnalyzer >> referenceTypeForTemporary: aTemporaryVariable [
-	self halt.
+	^ (self typeForTemporary: aTemporaryVariable) ref
 ]
 
 { #category : #'type inference' }
@@ -502,7 +502,7 @@ OCLowcodeASTSemanticAnalyzer >> typeForTemporary: aTemporaryVariable [
 ]
 
 { #category : #visitor }
-OCLowcodeASTSemanticAnalyzer >> visitArrayNode: anArrayNode [
+OCLowcodeASTSemanticAnalyzer >> visitArrayNode: anArrayNode [ 
 	super visitArrayNode: anArrayNode.
 	anArrayNode propertyAt: #type put: LowcodeType object.
 ]
@@ -516,12 +516,12 @@ OCLowcodeASTSemanticAnalyzer >> visitAssignmentNode: anAssignmentNode [
 	anAssignmentNode variable propertyAt: #type put: type.
 	valueType := anAssignmentNode value propertyAt: #type.
 	self checkImplicitConversionFrom: valueType to: type on: anAssignmentNode.
-	(type hasDirectStoreFrom: valueType) ifTrue: [
-		anAssignmentNode propertyAt: #type put: valueType.
-	] ifFalse: [
+	anAssignmentNode propertyAt: #variableType put: type.
+	(type ~= valueType and: [ type hasDirectStoreFrom: valueType ]) ifTrue: [ 
+		anAssignmentNode propertyAt: #type put: (binding lowcodeReferenceTypeFor: self).
+	] ifFalse: [ 
 		anAssignmentNode propertyAt: #type put: type.
 	]
-	
 ]
 
 { #category : #visitor }
@@ -545,6 +545,12 @@ OCLowcodeASTSemanticAnalyzer >> visitInlinedBlockNode: aBlockNode [
 	returnType := aBlockNode statements last propertyAt: #type.
 	blockType := LowcodeFunctionType arguments: argumentTypes asArray returnType: returnType.
 	aBlockNode propertyAt: #type put: blockType
+]
+
+{ #category : #visitor }
+OCLowcodeASTSemanticAnalyzer >> visitLiteralArrayNode: aLiteralArrayNode [ 
+	super visitLiteralArrayNode: aLiteralArrayNode.
+	aLiteralArrayNode propertyAt: #type put: LowcodeType object.
 ]
 
 { #category : #visitor }
@@ -641,15 +647,16 @@ OCLowcodeASTSemanticAnalyzer >> visitSequenceNode: aSequenceNode [
 
 { #category : #visitor }
 OCLowcodeASTSemanticAnalyzer >> visitVariableNode: aVariableNode [
-	| binding variableType |
+	| binding variableType valueType |
 	super visitVariableNode: aVariableNode.
 	binding := aVariableNode propertyAt: #binding.
-	variableType := binding lowcodeTypeFor: self.
+	valueType := variableType := binding lowcodeTypeFor: self.
 	aVariableNode propertyAt: #referenceAsked ifAbsentPut: false.
 	(variableType canBePushedInTheStack not or: [aVariableNode propertyAt: #referenceAsked]) ifTrue: [
 		aVariableNode propertyAt: #referenceAsked put: true.
-		variableType := binding lowcodeReferenceTypeFor: self
+		valueType := binding lowcodeReferenceTypeFor: self
 	].
 
-	aVariableNode propertyAt: #type put: variableType.
+	aVariableNode propertyAt: #variableType put: variableType.
+	aVariableNode propertyAt: #type put: valueType.
 ]

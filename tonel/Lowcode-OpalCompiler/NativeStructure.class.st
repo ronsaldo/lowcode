@@ -6,7 +6,7 @@ Class {
 	#classInstVars : [
 		'nativeMethodDict'
 	],
-	#category : 'Lowcode-OpalCompiler-Using'
+	#category : #'Lowcode-OpalCompiler-Using'
 }
 
 { #category : #accessing }

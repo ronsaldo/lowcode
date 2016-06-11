@@ -4,7 +4,7 @@ I am extended version of the OpalCompiler that adds native types, type checking 
 Class {
 	#name : #LowcodeOpalCompiler,
 	#superclass : #OpalCompiler,
-	#category : 'Lowcode-OpalCompiler-FrontEnd'
+	#category : #'Lowcode-OpalCompiler-FrontEnd'
 }
 
 { #category : #accessing }

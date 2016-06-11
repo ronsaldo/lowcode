@@ -1,7 +1,7 @@
 Class {
 	#name : #OCLowcodeASTTranslatorForEffect,
 	#superclass : #OCLowcodeASTTranslator,
-	#category : 'Lowcode-OpalCompiler-Translator'
+	#category : #'Lowcode-OpalCompiler-Translator'
 }
 
 { #category : #'inline messages' }

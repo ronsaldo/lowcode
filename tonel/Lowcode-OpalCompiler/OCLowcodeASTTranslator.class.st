@@ -14,7 +14,7 @@ Class {
 		'IdentityEqualityMessages',
 		'SpecialTypeConversionMessages'
 	],
-	#category : 'Lowcode-OpalCompiler-Translator'
+	#category : #'Lowcode-OpalCompiler-Translator'
 }
 
 { #category : #initialize }

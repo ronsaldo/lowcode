@@ -16,7 +16,7 @@ Class {
 		'OptimizedInlineMessages',
 		'SpecialTypeConversionMessages'
 	],
-	#category : 'Lowcode-OpalCompiler-Semantic'
+	#category : #'Lowcode-OpalCompiler-Semantic'
 }
 
 { #category : #'class initialization' }

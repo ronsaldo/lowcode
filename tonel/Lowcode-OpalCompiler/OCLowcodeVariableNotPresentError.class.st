@@ -4,5 +4,5 @@ This is error is produced when trying to set the type of a non-existent variable
 Class {
 	#name : #OCLowcodeVariableNotPresentError,
 	#superclass : #OCSemanticError,
-	#category : 'Lowcode-OpalCompiler-Semantic'
+	#category : #'Lowcode-OpalCompiler-Semantic'
 }

@@ -4,7 +4,7 @@ I am an extension of the CompilationContext that uses the the classes of the Opa
 Class {
 	#name : #LowcodeCompilationContext,
 	#superclass : #CompilationContext,
-	#category : #'Lowcode-OpalCompiler-FrontEnd'
+	#category : 'Lowcode-OpalCompiler-FrontEnd'
 }
 
 { #category : #accessing }

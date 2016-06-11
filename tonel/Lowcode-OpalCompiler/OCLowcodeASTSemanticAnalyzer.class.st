@@ -16,7 +16,7 @@ Class {
 		'OptimizedInlineMessages',
 		'SpecialTypeConversionMessages'
 	],
-	#category : #'Lowcode-OpalCompiler-Semantic'
+	#category : 'Lowcode-OpalCompiler-Semantic'
 }
 
 { #category : #'class initialization' }
@@ -80,6 +80,13 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 
 ]
 
+{ #category : #'as yet unclassified' }
+OCLowcodeASTSemanticAnalyzer >> addMethodDependency: aCompiledMethod [
+	| dependencies |
+	dependencies := self methodDependencies.
+	dependencies add: { aCompiledMethod classBinding . aCompiledMethod selector }.
+]
+
 { #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode [
 	| coercionType |
@@ -113,6 +120,8 @@ OCLowcodeASTSemanticAnalyzer >> checkAccessorMessage: aMessageNode [
 			signal
 	].
 	fieldOffset := receiverType fieldOffset: fieldName.
+	
+	self addMethodDependency: (receiverType getCompiledMethodForSelector: selector).
 	
 	argumentTypes ifEmpty: [
 		aMessageNode propertyAt: #referenceAsked ifAbsentPut: false.
@@ -218,6 +227,8 @@ OCLowcodeASTSemanticAnalyzer >> checkConstructorMesage: aMessageNode [
 			signal
 	].
 
+	self addMethodDependency: (receiverType getCompiledMethodForSelector: selector).
+	
 	instanceType := receiverType instanceType.
 	fields := (selector substrings: ':') collectWithIndex: [ :fieldName :index |
 		fieldType := instanceType fieldType: fieldName.
@@ -293,7 +304,8 @@ OCLowcodeASTSemanticAnalyzer >> checkNormalMessage: aMessageNode [
 	].
 
 	(resultType isAnyObject and: [ receiverType isAnyObject not ]) ifTrue: [ 
-		resultType := receiverType getReturnTypeForSelector: aMessageNode selector
+		resultType := receiverType getReturnTypeForSelector: aMessageNode selector.
+		resultType isAnyObject not ifTrue: [ self addMethodDependency: (receiverType getCompiledMethodForSelector: aMessageNode selector )]
 	].
  
 	aMessageNode propertyAt: #type put: resultType
@@ -338,6 +350,12 @@ OCLowcodeASTSemanticAnalyzer >> checkSpecialConversionMessage: aMessageNode [
 	messageType := SpecialTypeConversionMessages at: selector.
 	aMessageNode propertyAt: #type put: messageType returnType.
 	aMessageNode propertyAt: #nativeInline put: true.
+]
+
+{ #category : #'as yet unclassified' }
+OCLowcodeASTSemanticAnalyzer >> compiledMethodProperties [
+	scope node methodNode properties ifNil: [ scope node methodNode properties: AdditionalMethodState new ].
+	^ scope node methodNode properties
 ]
 
 { #category : #variables }
@@ -397,6 +415,16 @@ OCLowcodeASTSemanticAnalyzer >> isOptimizedInlineMessage: aSelector [
 { #category : #testing }
 OCLowcodeASTSemanticAnalyzer >> isSpecialConversionMessage: aSelector [
 	^ SpecialTypeConversionMessages includesKey: aSelector 
+]
+
+{ #category : #'as yet unclassified' }
+OCLowcodeASTSemanticAnalyzer >> methodDependencies [
+	| result |
+	^ self compiledMethodProperties propertyValueAt: #dependencies ifAbsent: [
+		result := Set new.
+		scope node methodNode properties: (scope node methodNode properties copyWith: #dependencies -> result).
+		^ result
+		]
 ]
 
 { #category : #parsing }

@@ -4,5 +4,5 @@ This is error is produced when trying to set the type of a non-argument variable
 Class {
 	#name : #OCLowcodeVariableIsNotArgumentError,
 	#superclass : #OCSemanticError,
-	#category : #'Lowcode-OpalCompiler-Semantic'
+	#category : 'Lowcode-OpalCompiler-Semantic'
 }

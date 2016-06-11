@@ -14,7 +14,7 @@ Class {
 		'IdentityEqualityMessages',
 		'SpecialTypeConversionMessages'
 	],
-	#category : #'Lowcode-OpalCompiler-Translator'
+	#category : 'Lowcode-OpalCompiler-Translator'
 }
 
 { #category : #initialize }
@@ -423,7 +423,7 @@ OCLowcodeASTTranslator >> visitMethodNode: aMethodNode [
 	].
 	self emitArgumentLoads: argumentTemporaries types: argumentTypes.
 	effectTranslator visitNode: aMethodNode body.
-	aMethodNode body lastIsReturn ifFalse:  [methodBuilder pushReceiver; returnTop]
+	aMethodNode body lastIsReturn ifFalse: [ methodBuilder pushReceiver; returnTop ]
 ]
 
 { #category : #'visitor-double dispatching' }

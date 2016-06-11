@@ -84,6 +84,7 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 OCLowcodeASTSemanticAnalyzer >> addMethodDependency: aCompiledMethod [
 	| dependencies |
 	dependencies := self methodDependencies.
+	aCompiledMethod propertyValueAt: #eagerInstallationRequired put: true.
 	dependencies add: { aCompiledMethod classBinding . aCompiledMethod selector }.
 ]
 

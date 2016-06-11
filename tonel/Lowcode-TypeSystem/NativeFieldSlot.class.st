@@ -39,6 +39,12 @@ NativeFieldSlot >> emitLowcodeStore: aMethodBuilder valueType: valueType [
 ]
 
 { #category : #emitting }
+NativeFieldSlot >> emitLowcodeStoreAndPop: aMethodBuilder valueType: valueType [
+	type emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType.
+	valueType emitPop: aMethodBuilder
+]
+
+{ #category : #emitting }
 NativeFieldSlot >> emitLowcodeValue: aMethodBuilder [
 	type emitLowcodeValue: aMethodBuilder selfOffset: offset
 ]

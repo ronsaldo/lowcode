@@ -83,6 +83,11 @@ LowcodeFFIType >> emitLessThan: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeFFIType >> emitLocalReference: aMethodBuilder name: localName [
+	aMethodBuilder lowcodeLoadLocalAddress: localName
+]
+
+{ #category : #emitting }
 LowcodeFFIType >> emitLocalStore: aMethodBuilder valueType: valueType name: localName [
 	ffiType emitLowcodeLocalStore: aMethodBuilder name: localName
 ]

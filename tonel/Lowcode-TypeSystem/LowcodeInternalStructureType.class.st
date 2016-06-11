@@ -14,7 +14,7 @@ LowcodeInternalStructureType >> = other [
 
 { #category : #accessing }
 LowcodeInternalStructureType >> alignment [
-	^ structureClass layout structureAlignment
+	^ structureClass structureAlignment
 ]
 
 { #category : #emitting }
@@ -55,6 +55,28 @@ LowcodeInternalStructureType >> emitFieldPointerFromObject: aMethodBuilder offse
 	aMethodBuilder
 		lowcodeFirstFieldPointer;
 		lowcodePointerAddConstantOffset: anOffset
+]
+
+{ #category : #emitting }
+LowcodeInternalStructureType >> emitLocalReference: aMethodBuilder name: localName [
+	aMethodBuilder lowcodeLoadLocalAddress: localName
+]
+
+{ #category : #emitting }
+LowcodeInternalStructureType >> emitLocalStoreAndPop: methodBuilder valueType: valueType name: localName [
+	| srcLocal |
+	srcLocal := methodBuilder generateTempOfType: valueType.
+	valueType emitLocalStoreAndPop: methodBuilder name: srcLocal.
+	
+	methodBuilder lowcodeLoadLocalAddress: localName.
+	valueType emitLocalValue: methodBuilder name: srcLocal.
+	valueType isObjectReference ifTrue: [ 
+		methodBuilder lowcodeFirstFieldPointer.
+	] ifFalse: [
+		self assert: valueType isReferenceType.
+	].
+
+	methodBuilder lowcodeMemcpyFixed: self size.
 ]
 
 { #category : #emitting }
@@ -102,7 +124,7 @@ LowcodeInternalStructureType >> emitMemoryStoreAndPopPointerFirst: aMethodBuilde
 			lowcodeMemcpyFixed: self size.
 		^ self
 	].
-	valueType isPointerType ifTrue: [ 
+	(valueType isPointerType or: [ valueType isReferenceType ]) ifTrue: [ 
 		aMethodBuilder lowcodeMemcpyFixed: self size.
 		^ self
 	].
@@ -159,7 +181,7 @@ LowcodeInternalStructureType >> printOn: aStream [
 
 { #category : #accessing }
 LowcodeInternalStructureType >> size [
-	^ structureClass layout structureSize
+	^ structureClass structureSize
 ]
 
 { #category : #accessing }

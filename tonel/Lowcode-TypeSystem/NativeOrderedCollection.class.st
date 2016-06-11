@@ -5,12 +5,12 @@ Class {
 	#name : #NativeOrderedCollection,
 	#superclass : #SequenceableCollection,
 	#instVars : [
-		'data',
+		'type',
 		'size',
-		'capacity',
-		'type'
+		'data',
+		'capacity'
 	],
-	#category : #'Lowcode-TypeSystem-InternalStructure'
+	#category : #'Lowcode-TypeSystem-Collections'
 }
 
 { #category : #'instance creation' }
@@ -125,6 +125,13 @@ NativeOrderedCollection >> increaseCapacity [
 NativeOrderedCollection >> initialize [
 	size := 0.
 	capacity := 0.
+]
+
+{ #category : #'type checking' }
+NativeOrderedCollection >> lowcodeCheckArrayArgument: expectedElementType elements: expectedNumberOfElements [
+	(expectedElementType withoutAliases ~= type withoutAliases or: [ self size < expectedNumberOfElements ]) ifTrue: [
+		super lowcodeCheckArrayArgument: expectedElementType elements: expectedNumberOfElements
+ ]
 ]
 
 { #category : #accessing }

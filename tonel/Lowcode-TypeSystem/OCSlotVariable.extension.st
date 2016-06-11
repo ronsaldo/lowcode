@@ -11,6 +11,11 @@ OCSlotVariable >> emitLowcodeStore: aLowcodeMethodBuilder type: aType valueType:
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+OCSlotVariable >> emitLowcodeStoreAndPop: aLowcodeMethodBuilder type: aType valueType: valueType [
+	^ slot emitLowcodeStoreAndPop: aLowcodeMethodBuilder valueType: valueType
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 OCSlotVariable >> emitLowcodeValue: aLowcodeMethodBuilder type: variableType [
 	^ slot emitLowcodeValue: aLowcodeMethodBuilder
 ]

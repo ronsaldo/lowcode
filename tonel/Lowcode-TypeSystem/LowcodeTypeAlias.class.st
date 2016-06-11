@@ -69,6 +69,11 @@ LowcodeTypeAlias >> emitFieldPointerFromObject: aMethodBuilder offset: aFieldOff
 ]
 
 { #category : #emitting }
+LowcodeTypeAlias >> emitLocalReference: aMethodBuilder name: localName [
+	^ aliasedType emitLocalReference: aMethodBuilder name: localName
+]
+
+{ #category : #emitting }
 LowcodeTypeAlias >> emitLocalStore: aMethodBuilder valueType: valueType  name: localName [
 	aliasedType emitLocalStore: aMethodBuilder valueType: valueType  name: localName
 

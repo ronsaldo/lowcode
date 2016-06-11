@@ -13,6 +13,30 @@ FFIUInt32 >> emitLowcodeConvertToObject: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> emitLowcodeLocalStore: aMethodBuilder name: localName [
+	aMethodBuilder
+		lowcodeDuplicateInt32;
+		lowcodeStoreLocalInt32: localName
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> emitLowcodeLocalValue: aMethodBuilder name: localName [
+	aMethodBuilder lowcodeLoadLocalUInt32: localName
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> emitLowcodeMemoryStoreAndPop: aMethodBuilder [
+	aMethodBuilder
+		lowcodeStoreInt32ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> emitLowcodeMemoryValue: aMethodBuilder [
+	aMethodBuilder
+		lowcodeLoadUInt32FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt32 >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 	aMethodBuilder
 		lowcodeDuplicateInt32;

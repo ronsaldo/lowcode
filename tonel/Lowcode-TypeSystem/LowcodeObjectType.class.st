@@ -10,6 +10,11 @@ LowcodeObjectType >> = other [
 ]
 
 { #category : #'type decorators' }
+LowcodeObjectType >> array: numberOfElements [
+	^ LowcodeType object
+]
+
+{ #category : #'type decorators' }
 LowcodeObjectType >> classType [
 	^ self
 ]

@@ -14,7 +14,15 @@ Array >> asLowcodeTypeAtEnvironment: anEnvironment [
 	hasReturnType := false.
 	[ in atEnd ] whileFalse: [
 		(in peek ~~ #-> and: [ in peek ~~ #, ]) ifTrue: [
-			currentType := currentType ifNil: [ in next asLowcodeTypeAtEnvironment: anEnvironment ] ifNotNil: [ currentType perform: in next ].
+			currentType ifNil: [
+				currentType := in next asLowcodeTypeAtEnvironment: anEnvironment
+			] ifNotNil: [
+				(in peek isSymbol and: [ in peek endsWith: #':' ]) ifTrue: [
+					currentType := currentType perform: in next with: in next.
+				] ifFalse: [
+					currentType := currentType perform: in next. 
+				]
+			].
 		].
 		in peek == #, ifTrue: [
 			in next.

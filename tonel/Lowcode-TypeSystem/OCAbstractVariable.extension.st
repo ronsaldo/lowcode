@@ -11,6 +11,12 @@ OCAbstractVariable >> emitLowcodeStore: aLowcodeMethodBuilder type: aType valueT
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+OCAbstractVariable >> emitLowcodeStoreAndPop: aLowcodeMethodBuilder type: aType valueType: valueType [
+	self emitStore: aLowcodeMethodBuilder.
+	aLowcodeMethodBuilder popTop
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 OCAbstractVariable >> emitLowcodeValue: aLowcodeMethodBuilder type: aType [
 	^ self emitValue: aLowcodeMethodBuilder
 ]

@@ -1,6 +1,30 @@
 Extension { #name : #FFIUInt16 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt16 >> emitLowcodeLocalStore: aMethodBuilder name: localName [
+	aMethodBuilder
+		lowcodeDuplicateInt32;
+		lowcodeStoreLocalInt32: localName
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt16 >> emitLowcodeLocalValue: aMethodBuilder name: localName [
+	aMethodBuilder lowcodeLoadLocalUInt16: localName
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt16 >> emitLowcodeMemoryStoreAndPop: aMethodBuilder [
+	aMethodBuilder
+		lowcodeStoreInt16ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt16 >> emitLowcodeMemoryValue: aMethodBuilder [
+	aMethodBuilder
+		lowcodeLoadUInt16FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt16 >> emitLowcodeStore: aMethodBuilder selfOffset: offset [
 	aMethodBuilder
 		lowcodeDuplicateInt32;

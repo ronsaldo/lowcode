@@ -11,6 +11,23 @@ FFIUInt64 >> emitLowcodeDuplicate: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeLocalValue: aMethodBuilder name: localName [
+	aMethodBuilder lowcodeLoadLocalUInt64: localName
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeMemoryStoreAndPop: aMethodBuilder [
+	aMethodBuilder
+		lowcodeStoreInt64ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeMemoryValue: aMethodBuilder [
+	aMethodBuilder
+		lowcodeLoadInt64FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt64 >> emitLowcodeNegated: aMethodBuilder [
 	aMethodBuilder lowcodeNeg64
 ]

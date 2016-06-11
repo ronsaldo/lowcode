@@ -112,3 +112,8 @@ LowcodeBoxedStructureFieldReferenceType >> offset: anObject [
 LowcodeBoxedStructureFieldReferenceType >> printOn: aStream [
 	aStream nextPutAll: '#('; print: referenced; nextPutAll: ' objectRefAt: '; print: offset; nextPutAll: ')'
 ]
+
+{ #category : #accessing }
+LowcodeBoxedStructureFieldReferenceType >> size [
+	self shouldNotImplement
+]

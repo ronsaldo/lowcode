@@ -17,6 +17,28 @@ LowcodeReferenceType >> = other [
 	^ self class = other class and: [ referenced = other referenced ]
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeReferenceType >> emitLocalReference: aMethodBuilder name: localName [
+	self shouldNotImplement
+]
+
+{ #category : #emitting }
+LowcodeReferenceType >> emitLocalStoreAndPop: aMethodBuilder name: localName [
+	aMethodBuilder
+		lowcodeStoreLocalPointer: localName
+]
+
+{ #category : #emitting }
+LowcodeReferenceType >> emitLocalValue: aMethodBuilder name: localName [
+	aMethodBuilder lowcodeLoadLocalPointer: localName.
+
+]
+
+{ #category : #emitting }
+LowcodeReferenceType >> emitPop: aMethodBuilder [ 
+	aMethodBuilder lowcodePopPointer
+]
+
 { #category : #accessing }
 LowcodeReferenceType >> fieldOffset: fieldName [
 	^ referenced fieldOffset: fieldName
@@ -56,6 +78,11 @@ LowcodeReferenceType >> referenced [
 LowcodeReferenceType >> referenced: aLowcodeType [
 	self assert: aLowcodeType isReferenceType not.
 	referenced := aLowcodeType
+]
+
+{ #category : #accessing }
+LowcodeReferenceType >> size [
+	^ FFIExternalType pointerSize
 ]
 
 { #category : #'type decorators' }

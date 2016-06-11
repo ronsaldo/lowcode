@@ -198,6 +198,11 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 	^ minimalCoercionSize <= 4 ifTrue: [ self class int32 ] ifFalse: [ self class int64 ].
 ]
 
+{ #category : #'type decorators' }
+LowcodeType >> array: numberOfElements [
+	^ LowcodeArrayType element: self numberOfElements: numberOfElements
+]
+
 { #category : #converting }
 LowcodeType >> asLowcodeType [
 	^ self
@@ -243,6 +248,11 @@ LowcodeType >> emitDuplicate: aMethodBuilder [
 
 { #category : #emitting }
 LowcodeType >> emitFieldPointerFromObject: aMethodBuilder offset: aFieldOffset [
+	self subclassResponsibility
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeType >> emitLocalReference: aMethodBuilder name: localName [
 	self subclassResponsibility
 ]
 

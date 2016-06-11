@@ -27,7 +27,7 @@ LowcodeStructureType >> emitConversionToObject: aMethodBuilder [
 { #category : #emitting }
 LowcodeStructureType >> hasDirectStoreFrom: valueType [
 	valueType = self ifTrue: [ ^ true ].
-	(valueType isReferenceType and: [ valueType baseType = self ]) ifTrue: [ ^ true ].
+	(valueType isReferenceType and: [ valueType referenced = self ]) ifTrue: [ ^ true ].
 	(valueType isObjectReference and: [ valueType referenced = self]) ifTrue: [ ^ true ].
 	^ false
 ]

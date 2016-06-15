@@ -154,9 +154,11 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticMessage: aMessageNode [
 	leftType := receiverType.
 	rightType := argumentTypes first.
 	coercionType := self arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode.
+	coercionType isObject ifTrue: [ ^ self checkNormalMessage: aMessageNode ].
+	
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: coercionType.
-	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
+	aMessageNode propertyAt: #nativeInline put: true.
 	aMessageNode propertyAt: #nativeInlineKind put: #Arithmetic.
 ]
 
@@ -190,9 +192,11 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticUnaryMessage: aMessageNode [
 		].
 	].
 
+	coercionType isObject ifTrue: [ ^ self checkNormalMessage: aMessageNode ].
+	
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: coercionType.
-	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
+	aMessageNode propertyAt: #nativeInline put: true.
 	aMessageNode propertyAt: #nativeInlineKind put: #ArithmeticUnary.
 ]
 
@@ -206,10 +210,12 @@ OCLowcodeASTSemanticAnalyzer >> checkComparisonMessage: aMessageNode [
 	leftType := receiverType.
 	rightType := argumentTypes first.
 	coercionType := self arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode.
-	resultType := coercionType isObject ifTrue: [ LowcodeType object ] ifFalse: [ LowcodeType bool ].
+	coercionType isObject ifTrue: [ ^ self checkNormalMessage: aMessageNode ].
+	
+	resultType := LowcodeType bool.
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: resultType.
-	aMessageNode propertyAt: #nativeInline put: coercionType isObject not.
+	aMessageNode propertyAt: #nativeInline put: true.
 	aMessageNode propertyAt: #nativeInlineKind put: #Comparison.
 ]
 
@@ -303,7 +309,7 @@ OCLowcodeASTSemanticAnalyzer >> checkNormalMessage: aMessageNode [
 		resultType := resultType object.
 	].
 
-	(resultType isAnyObject and: [ receiverType isAnyObject not ]) ifTrue: [ 
+	(resultType isAnyObject and: [ receiverType isAnyObject not or: [ receiverType isReferenceType ]]) ifTrue: [
 		resultType := receiverType getReturnTypeForSelector: aMessageNode selector.
 		resultType isAnyObject not ifTrue: [ self addMethodDependency: (receiverType getCompiledMethodForSelector: aMessageNode selector )]
 	].

@@ -115,6 +115,7 @@ LowcodeInternalStructureType >> emitLowcodeStore: aMethodBuilder selfOffset: off
 		aMethodBuilder lowcodeFirstFieldPointer.
 	] ifFalse: [
 		self assert: valueType isReferenceType.
+		valueType emitReferenceToPointer: aMethodBuilder
 	].
 
 	aMethodBuilder lowcodeMemcpyFixed: self size.

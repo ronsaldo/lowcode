@@ -93,6 +93,11 @@ LowcodeObjectReferenceType >> getCompiledMethodForSelector: aSelector [
 	^ referenced getCompiledMethodForSelector: aSelector
 ]
 
+{ #category : #'type inference' }
+LowcodeObjectReferenceType >> getReturnTypeForSelector: selector [
+	^ referenced getReturnTypeForSelector: selector
+]
+
 { #category : #testing }
 LowcodeObjectReferenceType >> isAccessorMessage: aSelector [
 	^ referenced isAccessorMessage: aSelector

@@ -22,7 +22,7 @@ LowcodeReferenceType >> dependencyClass [
 	^ referenced dependencyClass
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #emitting }
 LowcodeReferenceType >> emitLocalReference: aMethodBuilder name: localName [
 	self shouldNotImplement
 ]
@@ -44,6 +44,11 @@ LowcodeReferenceType >> emitPop: aMethodBuilder [
 	aMethodBuilder lowcodePopPointer
 ]
 
+{ #category : #emitting }
+LowcodeReferenceType >> emitReferenceToPointer: aMethodBuilder [
+	"Nothing to do in this case."
+]
+
 { #category : #accessing }
 LowcodeReferenceType >> fieldOffset: fieldName [
 	^ referenced fieldOffset: fieldName
@@ -57,6 +62,11 @@ LowcodeReferenceType >> fieldType: aFieldName [
 { #category : #accessing }
 LowcodeReferenceType >> getCompiledMethodForSelector: aSelector [
 	^ referenced getCompiledMethodForSelector: aSelector
+]
+
+{ #category : #'type inference' }
+LowcodeReferenceType >> getReturnTypeForSelector: selector [
+	^ referenced getReturnTypeForSelector: selector
 ]
 
 { #category : #comparing }

@@ -65,6 +65,13 @@ LowcodeBoxedStructureFieldReferenceType >> emitFieldStoreAndPop: aMethodBuilder 
 ]
 
 { #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitLocalStore: aMethodBuilder valueType: valueType name: localName [
+	self assert: self = valueType.
+	aMethodBuilder
+		storeTemp: localName
+]
+
+{ #category : #emitting }
 LowcodeBoxedStructureFieldReferenceType >> emitLocalStoreAndPop: aMethodBuilder name: localName [
 	aMethodBuilder
 		storeTemp: localName;
@@ -79,6 +86,13 @@ LowcodeBoxedStructureFieldReferenceType >> emitLocalValue: aMethodBuilder name: 
 { #category : #emitting }
 LowcodeBoxedStructureFieldReferenceType >> emitPop: aMethodBuilder [ 
 	aMethodBuilder popTop
+]
+
+{ #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitReferenceToPointer: methodBuilder [
+	methodBuilder
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: offset
 ]
 
 { #category : #accessing }

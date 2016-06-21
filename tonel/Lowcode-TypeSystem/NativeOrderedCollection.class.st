@@ -53,7 +53,7 @@ NativeOrderedCollection >> at: index [
 
 { #category : #accessing }
 NativeOrderedCollection >> at: index put: anElement [
-	(index < 1 or: [ index >= size ]) ifTrue: [ self errorSubscriptBounds: index ].
+	(index < 1 or: [ index > size ]) ifTrue: [ self errorSubscriptBounds: index ].
 	^ self uncheckedAt: index put: anElement
 ]
 

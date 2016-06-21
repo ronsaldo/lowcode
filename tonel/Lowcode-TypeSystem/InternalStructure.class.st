@@ -70,6 +70,20 @@ InternalStructure >> readBytesFrom: aByteArray position: byteArrayPosition [
 	]
 ]
 
+{ #category : #'as yet unclassified' }
+InternalStructure >> replaceFrom: start to: stop with: replacement startingAt: repStart [ 
+	"This destructively replaces elements from start to stop in the receiver 
+	starting at index, repStart, in the sequenceable collection, 
+	replacementCollection. Answer the receiver. No range checks are 
+	performed."
+
+	| index repOff |
+	repOff := repStart - start.
+	index := start - 1.
+	[(index := index + 1) <= stop]
+		whileTrue: [self byteAt: index put: (replacement at: repOff + index)]
+]
+
 { #category : #'memory access' }
 InternalStructure >> storeBytesIn: aByteArray [
 	self storeBytesIn: aByteArray position: 1

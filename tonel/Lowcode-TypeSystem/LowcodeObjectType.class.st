@@ -32,6 +32,7 @@ LowcodeObjectType >> emitConversionFromObject: aMethodBuilder [
 { #category : #emitting }
 LowcodeObjectType >> emitConversionToObject: aMethodBuilder [
 	"Nothing to do"
+
 ]
 
 { #category : #emitting }

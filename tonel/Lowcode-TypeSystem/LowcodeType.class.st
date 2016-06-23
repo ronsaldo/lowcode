@@ -185,7 +185,7 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 	
 	(self isNumberType not or: [ otherType isNumberType not ]) ifTrue: [
 		self withoutAliases == otherType withoutAliases ifTrue: [ ^ self ].
-		^ nil
+		^ LowcodeType object
 	].
 
 	"Do we have a floating point argument?"

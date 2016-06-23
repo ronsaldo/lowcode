@@ -143,6 +143,25 @@ OCLowcodeASTTranslator >> emitAccessorMessage: aMessageNode [
 
 ]
 
+{ #category : #'inline messages factored' }
+OCLowcodeASTTranslator >> emitAnd: aMessageNode [
+
+	| receiverType argumentType |
+	valueTranslator visitNode: aMessageNode receiver.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	self emitConversionFrom: receiverType to: LowcodeType object.
+	methodBuilder jumpAheadTo: #else if: false.
+	
+	valueTranslator visitInlinedBlockNode: aMessageNode arguments first.
+	argumentType := aMessageNode arguments first propertyAt: #type.
+	self emitConversionFrom: argumentType returnType to: LowcodeType object.
+	
+	methodBuilder jumpAheadTo: #end.
+	methodBuilder jumpAheadTarget: #else.
+	methodBuilder pushLiteral: false. 
+	methodBuilder jumpAheadTarget: #end.
+]
+
 { #category : #'native code emition' }
 OCLowcodeASTTranslator >> emitArgumentLoads: names types: typeDictionary [
 	| objectTemps nativeTemps type objectArgTempName |

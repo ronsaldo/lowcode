@@ -6,7 +6,8 @@ Class {
 
 { #category : #'inline messages' }
 OCLowcodeASTTranslatorForEffect >> emitAnd: aMessageNode [
-	self halt.
+	super emitAnd: aMessageNode.
+	methodBuilder popTop.
 ]
 
 { #category : #'inline messages' }
@@ -40,7 +41,8 @@ OCLowcodeASTTranslatorForEffect >> emitMessageNode: aMessageNode [
 
 { #category : #'inline messages' }
 OCLowcodeASTTranslatorForEffect >> emitOr: aMessageNode [
-	self halt.
+	super emitOr: aMessageNode.
+	methodBuilder popTop.
 ]
 
 { #category : #'visitor-double dispatching' }

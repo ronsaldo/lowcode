@@ -81,6 +81,21 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 ]
 
 { #category : #'as yet unclassified' }
+OCLowcodeASTSemanticAnalyzer >> addClassDependencies: aClassCollection [
+	| dependencies |
+	aClassCollection ifEmpty: [ ^ self ].
+	dependencies := self methodDependencies.
+	dependencies addAll: (aClassCollection collect: #binding).
+]
+
+{ #category : #'as yet unclassified' }
+OCLowcodeASTSemanticAnalyzer >> addClassDependency: aClass [
+	| dependencies |
+	dependencies := self methodDependencies.
+	dependencies add: aClass binding.
+]
+
+{ #category : #'as yet unclassified' }
 OCLowcodeASTSemanticAnalyzer >> addMethodDependency: aCompiledMethod [
 	| dependencies |
 	dependencies := self methodDependencies.
@@ -440,6 +455,7 @@ OCLowcodeASTSemanticAnalyzer >> parseArgumentTypePragma: pragmaNode scopeNode: a
 	nameOrNames := pragmaArguments first.
 	names := nameOrNames isArray ifTrue: [ nameOrNames ] ifFalse: [ { nameOrNames } ].
 	type := self parseTypeExpression: pragmaArguments second.
+	self addClassDependencies: type extraClassDependencies.
 	names do: [ :name |
 		var := scope lookupVar: name.
 		var ifNil: [
@@ -467,6 +483,7 @@ OCLowcodeASTSemanticAnalyzer >> parseReturnTypePragma: aPragmaNode [
 	| pragmaArguments type |
 	pragmaArguments := aPragmaNode asPragma arguments.
 	type := self parseTypeExpression: pragmaArguments first.
+	self addClassDependencies: type extraClassDependencies.
 	type isObject ifFalse: [ 
 		OCLowcodeCannotCoerceTypeError new
 			node: aPragmaNode;
@@ -491,6 +508,7 @@ OCLowcodeASTSemanticAnalyzer >> parseVariableTypePragma: pragmaNode scopeNode: a
 	nameOrNames := pragmaArguments first.
 	names := nameOrNames isArray ifTrue: [ nameOrNames ] ifFalse: [ { nameOrNames } ].
 	type := self parseTypeExpression: pragmaArguments second.
+	self addClassDependencies: type extraClassDependencies.
 	names do: [ :name |
 		var := scope lookupVar: name.
 		(var ~~nil and: [ var isArg ]) ifTrue: [ 

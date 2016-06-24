@@ -17,6 +17,11 @@ LowcodeClassType >> classType [
 	^ LowcodeType object
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeClassType >> extraClassDependencies [
+	^ referenced extraClassDependencies
+]
+
 { #category : #accessing }
 LowcodeClassType >> getCompiledMethodForSelector: aSelector [
 	^ referenced structureClass class lookupSelector: aSelector

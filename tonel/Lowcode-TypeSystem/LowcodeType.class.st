@@ -218,11 +218,6 @@ LowcodeType >> classType [
 	^ LowcodeType object
 ]
 
-{ #category : #accessing }
-LowcodeType >> dependencyClass [
-	^ nil
-]
-
 { #category : #emitting }
 LowcodeType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 	self subclassResponsibility
@@ -312,6 +307,12 @@ LowcodeType >> emitMemoryValue: aMethodBuilder [
 { #category : #emitting }
 LowcodeType >> emitPop: aMethodBuilder [
 	self subclassResponsibility
+]
+
+{ #category : #accessing }
+LowcodeType >> extraClassDependencies [
+	"This should return a list of classes with dependencies."
+	^ #()
 ]
 
 { #category : #accessing }

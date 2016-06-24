@@ -32,11 +32,6 @@ LowcodeTypeAlias >> alignment [
 	^ aliasedType alignment
 ]
 
-{ #category : #accessing }
-LowcodeTypeAlias >> dependencyClass [
-	^ aliasedType dependencyClass
-]
-
 { #category : #'reflective operations' }
 LowcodeTypeAlias >> doesNotUnderstand: aMessage [
 	(aMessage selector beginsWith: #emit) ifTrue: [ 
@@ -120,6 +115,11 @@ LowcodeTypeAlias >> emitMemoryValue: aMethodBuilder [
 { #category : #emitting }
 LowcodeTypeAlias >> emitPop: aMethodBuilder [
 	aliasedType emitPop: aMethodBuilder
+]
+
+{ #category : #accessing }
+LowcodeTypeAlias >> extraClassDependencies [
+	^ aliasedType extraClassDependencies
 ]
 
 { #category : #accessing }

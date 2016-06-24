@@ -29,11 +29,6 @@ LowcodeArrayType >> canBePushedInTheStack [
 ]
 
 { #category : #accessing }
-LowcodeArrayType >> dependencyClass [
-	^ element dependencyClass
-]
-
-{ #category : #accessing }
 LowcodeArrayType >> element [
 	^ element
 ]
@@ -94,6 +89,12 @@ LowcodeArrayType >> emitLowcodeStore: aMethodBuilder selfOffset: offset valueTyp
 
 	aMethodBuilder lowcodeMemcpyFixed: self size.
 
+]
+
+{ #category : #accessing }
+LowcodeArrayType >> extraClassDependencies [
+	"This should return a list of classes with dependencies."
+	^ element extraClassDependencies
 ]
 
 { #category : #'read write' }

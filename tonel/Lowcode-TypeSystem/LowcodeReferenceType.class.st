@@ -17,11 +17,6 @@ LowcodeReferenceType >> = other [
 	^ self class = other class and: [ referenced = other referenced ]
 ]
 
-{ #category : #accessing }
-LowcodeReferenceType >> dependencyClass [
-	^ referenced dependencyClass
-]
-
 { #category : #emitting }
 LowcodeReferenceType >> emitLocalReference: aMethodBuilder name: localName [
 	self shouldNotImplement
@@ -47,6 +42,11 @@ LowcodeReferenceType >> emitPop: aMethodBuilder [
 { #category : #emitting }
 LowcodeReferenceType >> emitReferenceToPointer: aMethodBuilder [
 	"Nothing to do in this case."
+]
+
+{ #category : #accessing }
+LowcodeReferenceType >> extraClassDependencies [
+	^ referenced extraClassDependencies
 ]
 
 { #category : #accessing }

@@ -138,6 +138,11 @@ LowcodeInternalStructureType >> emitMemoryStoreAndPopPointerFirst: aMethodBuilde
 	self error: 'Unsupported value type.'
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeInternalStructureType >> extraClassDependencies [
+	^ { structureClass }
+]
+
 { #category : #accessing }
 LowcodeInternalStructureType >> fieldOffset: fieldName [
 	^ (structureClass slotNamed: fieldName) offset

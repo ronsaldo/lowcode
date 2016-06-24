@@ -72,6 +72,11 @@ LowcodeObjectReferenceType >> emitFieldValue: aMethodBuilder type: fieldType off
 ]
 
 { #category : #accessing }
+LowcodeObjectReferenceType >> extraClassDependencies [
+	^ referenced extraClassDependencies
+]
+
+{ #category : #accessing }
 LowcodeObjectReferenceType >> fieldOffset: fieldName [
 	^ referenced fieldOffset: fieldName
 ]

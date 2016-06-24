@@ -27,8 +27,7 @@ StructureLayout >> computeClassDependencies [
 	| deps depClass |
 	deps := Set new.
 	self allSlotsDo: [ :slot |
-		depClass := slot type dependencyClass.
-		depClass ifNotNil: [ deps add: slot type dependencyClass ].
+		deps addAll: slot type extraClassDependencies.
 	].
 	classDependencies := deps asArray.
 ]

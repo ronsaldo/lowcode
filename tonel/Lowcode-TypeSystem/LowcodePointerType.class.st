@@ -17,6 +17,11 @@ LowcodePointerType >> alignment [
 	^ FFIExternalType pointerAlignment
 ]
 
+{ #category : #accessing }
+LowcodePointerType >> extraClassDependencies [
+	^ pointed extraClassDependencies
+]
+
 { #category : #testing }
 LowcodePointerType >> isPointerType [
 	^ true

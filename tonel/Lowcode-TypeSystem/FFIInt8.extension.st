@@ -1,6 +1,12 @@
 Extension { #name : #FFIInt8 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIInt8 >> emitLowcodeConvertToObject: aMethodBuilder [
+	aMethodBuilder
+		lowcodeInt32ToOop
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIInt8 >> emitLowcodeLocalValue: aMethodBuilder name: localName [
 	aMethodBuilder lowcodeLoadLocalInt8: localName
 ]

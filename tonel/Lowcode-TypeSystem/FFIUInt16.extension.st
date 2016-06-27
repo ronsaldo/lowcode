@@ -1,6 +1,18 @@
 Extension { #name : #FFIUInt16 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt16 >> emitLowcodeConvertFromObject: aMethodBuilder [
+	aMethodBuilder
+		lowcodeOopSmallIntegerToInt32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt16 >> emitLowcodeConvertToObject: aMethodBuilder [
+	aMethodBuilder
+		lowcodeUint32ToOop
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt16 >> emitLowcodeLocalStore: aMethodBuilder name: localName [
 	aMethodBuilder
 		lowcodeDuplicateInt32;

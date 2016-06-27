@@ -113,6 +113,11 @@ NativeOrderedCollection >> elementSize [
 	^ type size
 ]
 
+{ #category : #accessing }
+NativeOrderedCollection >> elementType [
+	^ type
+]
+
 { #category : #private }
 NativeOrderedCollection >> increaseCapacity [
 	| newCapacity |

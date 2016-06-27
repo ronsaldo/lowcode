@@ -6,6 +6,12 @@ FFIUInt64 >> emitLowcodeBitInvert: aMethodBuilder [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcodeConvertToObject: aMethodBuilder [
+	aMethodBuilder
+		lowcodeUint64ToOop
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt64 >> emitLowcodeDuplicate: aMethodBuilder [
 	aMethodBuilder lowcodeDuplicateInt64
 ]

@@ -54,6 +54,11 @@ NativeArray >> elementSize [
 	^ type size
 ]
 
+{ #category : #accessing }
+NativeArray >> elementType [
+	^ type
+]
+
 { #category : #private }
 NativeArray >> initFor: newType size: newSize [
 	type := newType asLowcodeType.

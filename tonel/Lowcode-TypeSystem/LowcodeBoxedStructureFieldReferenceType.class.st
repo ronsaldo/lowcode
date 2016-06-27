@@ -31,6 +31,12 @@ LowcodeBoxedStructureFieldReferenceType >> emitDeReference: methodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeBoxedStructureFieldReferenceType >> emitDuplicate: methodBuilder [
+	methodBuilder
+		pushDup
+]
+
+{ #category : #emitting }
 LowcodeBoxedStructureFieldReferenceType >> emitFieldReference: aMethodBuilder type: referenceType offset: fieldOffset [
 	referenceType isBoxedStructureReferenceType ifFalse: [
 		aMethodBuilder

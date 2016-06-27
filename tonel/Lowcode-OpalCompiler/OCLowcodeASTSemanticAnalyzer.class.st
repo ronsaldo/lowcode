@@ -169,7 +169,7 @@ OCLowcodeASTSemanticAnalyzer >> checkArithmeticMessage: aMessageNode [
 	leftType := receiverType.
 	rightType := argumentTypes first.
 	coercionType := self arithmeticCoerceImplicitly: leftType with: rightType on: aMessageNode.
-	coercionType isObject ifTrue: [ ^ self checkNormalMessage: aMessageNode ].
+	(coercionType isObject or: [ coercionType isStructureType ]) ifTrue: [ ^ self checkNormalMessage: aMessageNode ].
 	
 	aMessageNode propertyAt: #coercionType put: coercionType.
 	aMessageNode propertyAt: #type put: coercionType.

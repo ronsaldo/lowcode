@@ -354,6 +354,25 @@ OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
 
 ]
 
+{ #category : #'inline messages factored' }
+OCLowcodeASTTranslator >> emitOr: aMessageNode [
+
+	| receiverType argumentType |
+	valueTranslator visitNode: aMessageNode receiver.
+	receiverType := aMessageNode receiver propertyAt: #type.
+	self emitConversionFrom: receiverType to: LowcodeType object.
+	methodBuilder jumpAheadTo: #else if: false.
+	methodBuilder pushLiteral: true.
+
+	methodBuilder jumpAheadTo: #end.
+	methodBuilder jumpAheadTarget: #else.	
+	valueTranslator visitInlinedBlockNode: aMessageNode arguments first.
+	argumentType := aMessageNode arguments first propertyAt: #type.
+	self emitConversionFrom: argumentType returnType to: LowcodeType object.
+		
+	methodBuilder jumpAheadTarget: #end.
+]
+
 { #category : #initialization }
 OCLowcodeASTTranslator >> initialize [
 

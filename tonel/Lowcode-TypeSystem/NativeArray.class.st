@@ -73,6 +73,11 @@ NativeArray >> lowcodeCheckArrayArgument: expectedElementType elements: expected
  ]
 ]
 
+{ #category : #'as yet unclassified' }
+NativeArray >> postCopy [
+	data := data copy.
+]
+
 { #category : #accessing }
 NativeArray >> rawData [
 	^ data

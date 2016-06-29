@@ -139,6 +139,11 @@ NativeOrderedCollection >> lowcodeCheckArrayArgument: expectedElementType elemen
  ]
 ]
 
+{ #category : #copying }
+NativeOrderedCollection >> postCopy [
+	data := data copy.
+]
+
 { #category : #accessing }
 NativeOrderedCollection >> rawData [
 	^ data

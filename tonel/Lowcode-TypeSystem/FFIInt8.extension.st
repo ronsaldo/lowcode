@@ -25,3 +25,10 @@ FFIInt8 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 		lowcodePointerAddConstantOffset: offset;
 		lowcodeLoadInt8FromMemory
 ]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIInt8 >> readFromInternalStructure: anObject at: offset [
+	| result |
+	result := (anObject byteAt: offset + 1).
+	^ (result bitAnd: 16r7F) - (result bitAnd: 16r80)
+]

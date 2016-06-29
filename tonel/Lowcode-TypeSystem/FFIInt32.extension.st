@@ -31,3 +31,13 @@ FFIInt32 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 		lowcodePointerAddConstantOffset: offset;
 		lowcodeLoadInt32FromMemory
 ]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIInt32 >> readFromInternalStructure: anObject at: offset [
+	| result |
+	result := (((anObject byteAt: offset + 1) 
+		bitOr: ((anObject byteAt: offset + 2) bitShift: 8))
+		bitOr: ((anObject byteAt: offset + 3) bitShift: 16))
+		bitOr: ((anObject byteAt: offset + 4) bitShift: 24).
+	^ (result bitAnd: 16r7FFFFFFF) - (result bitAnd: 16r80000000)
+]

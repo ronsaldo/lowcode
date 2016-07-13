@@ -580,7 +580,7 @@ OCLowcodeASTSemanticAnalyzer >> visitAssignmentNode: anAssignmentNode [
 OCLowcodeASTSemanticAnalyzer >> visitBlockNode: aBlockNode [
 	super visitBlockNode: aBlockNode.
 	aBlockNode isInlined ifTrue: [^ self visitInlinedBlockNode: aBlockNode ].
-	self halt.
+	aBlockNode propertyAt: #type put: LowcodeType object
 ]
 
 { #category : #visitor }
@@ -593,7 +593,7 @@ OCLowcodeASTSemanticAnalyzer >> visitCascadeNode: aCascadeNode [
 OCLowcodeASTSemanticAnalyzer >> visitInlinedBlockNode: aBlockNode [
 	| argumentTypes returnType blockType |
 	super visitInlinedBlockNode: aBlockNode.
-	argumentTypes := aBlockNode arguments collect: [ :arg | self halt. ].
+	argumentTypes := aBlockNode arguments collect: [ :arg | LowcodeType object. ].
 	returnType := aBlockNode statements last propertyAt: #type.
 	blockType := LowcodeFunctionType arguments: argumentTypes asArray returnType: returnType.
 	aBlockNode propertyAt: #type put: blockType

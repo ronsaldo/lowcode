@@ -277,6 +277,7 @@ OCLowcodeASTTranslator >> emitConversionFrom: sourceType to: targetType [
 		^ self emitConversionFrom: sourceType referenced to: targetType
 	].
 
+	targetType isFloatingPointType ifTrue: [ ^ sourceType emitConversion: methodBuilder toFloatSize: targetType size ]. 
 	Transcript show: 'Convert from ' , sourceType printString , ' -> ' , targetType printString.
 	self halt.
 ]

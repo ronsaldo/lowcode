@@ -1430,6 +1430,6 @@ IRLowcodeBuilder >> popTop [
 IRLowcodeBuilder >> pushScope: aScope [
 	| nativeScope |
 	nativeScope := (IRLowcodeScope on: aScope builder: self).
-	currentScope ifNotEmpty: [ nativeScope parentScope: self currentScope ].
+	currentScope ifNotEmpty: [ nativeScope parentLowcodeScope: self currentScope ].
 	^ super pushScope: nativeScope.
 ]

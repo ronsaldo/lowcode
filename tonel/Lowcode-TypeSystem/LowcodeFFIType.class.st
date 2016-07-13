@@ -38,6 +38,21 @@ LowcodeFFIType >> emitBitInvert: aMethodBuilder [
 ]
 
 { #category : #emitting }
+LowcodeFFIType >> emitConversion: methodBuilder toFloatSize: floatSize [
+	ffiType emitLowcode: methodBuilder toFloatSize: floatSize
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitConversion: methodBuilder toIntSize: floatSize [
+	ffiType emitLowcode: methodBuilder toIntSize: floatSize
+]
+
+{ #category : #emitting }
+LowcodeFFIType >> emitConversion: methodBuilder toUIntSize: floatSize [
+	ffiType emitLowcode: methodBuilder toUIntSize: floatSize
+]
+
+{ #category : #emitting }
 LowcodeFFIType >> emitConversionFromObject: aMethodBuilder [
 	ffiType emitLowcodeConvertFromObject: aMethodBuilder
 ]

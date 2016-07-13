@@ -1,6 +1,33 @@
 Extension { #name : #FFIFloat32 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcode: methodBuilder toFloatSize: floatSize [
+	floatSize = 8 ifTrue: [ methodBuilder lowcodeFloat32ToFloat64 ]
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcode: methodBuilder toIntSize: intSize [
+	intSize = 8 ifTrue: [
+		methodBuilder lowcodeFloat32ToInt64
+	] ifFalse: [
+		methodBuilder lowcodeFloat32ToInt32.
+		intSize = 2 ifTrue: [ methodBuilder lowcodeTruncate32To16 ].
+		intSize = 1 ifTrue: [ methodBuilder lowcodeTruncate32To8 ].
+	].
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcode: methodBuilder toUIntSize: intSize [
+	intSize = 8 ifTrue: [
+		methodBuilder lowcodeFloat32ToUInt64
+	] ifFalse: [
+		methodBuilder lowcodeFloat32ToUInt32.
+		intSize = 2 ifTrue: [ methodBuilder lowcodeTruncate32To16 ].
+		intSize = 1 ifTrue: [ methodBuilder lowcodeTruncate32To8 ].
+	].
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcodeAdd: aMethodBuilder [
 	aMethodBuilder lowcodeFloat32Add
 ]

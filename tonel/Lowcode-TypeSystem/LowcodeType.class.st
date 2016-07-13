@@ -199,6 +199,11 @@ LowcodeType >> arithmeticCoerceWith: otherType [
 ]
 
 { #category : #'type decorators' }
+LowcodeType >> array [
+	^ self array: 0
+]
+
+{ #category : #'type decorators' }
 LowcodeType >> array: numberOfElements [
 	^ LowcodeArrayType element: self numberOfElements: numberOfElements
 ]
@@ -220,6 +225,21 @@ LowcodeType >> classType [
 
 { #category : #emitting }
 LowcodeType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitConversion: methodBuilder toFloatSize: floatSize [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitConversion: methodBuilder toIntSize: floatSize [
+	self subclassResponsibility
+]
+
+{ #category : #emitting }
+LowcodeType >> emitConversion: methodBuilder toUIntSize: floatSize [
 	self subclassResponsibility
 ]
 

@@ -136,6 +136,7 @@ LowcodeArrayType >> object [
 
 { #category : #printing }
 LowcodeArrayType >> printOn: aStream [
+	numberOfElements = 0 ifTrue: [ ^ aStream print: element; nextPutAll: ' array'].
 	aStream nextPutAll: '#('; print: element; nextPutAll: ' array: '; print: numberOfElements; nextPut: $)
 ]
 

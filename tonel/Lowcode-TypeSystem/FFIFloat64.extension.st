@@ -1,6 +1,33 @@
 Extension { #name : #FFIFloat64 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat64 >> emitLowcode: methodBuilder toFloatSize: floatSize [
+	floatSize = 4 ifTrue: [ methodBuilder lowcodeFloat64ToFloat32 ]
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat64 >> emitLowcode: methodBuilder toIntSize: intSize [
+	intSize = 8 ifTrue: [
+		methodBuilder lowcodeFloat64ToInt64
+	] ifFalse: [
+		methodBuilder lowcodeFloat64ToInt32.
+		intSize = 2 ifTrue: [ methodBuilder lowcodeTruncate32To16 ].
+		intSize = 1 ifTrue: [ methodBuilder lowcodeTruncate32To8 ].
+	].
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat64 >> emitLowcode: methodBuilder toUIntSize: intSize [
+	intSize = 8 ifTrue: [
+		methodBuilder lowcodeFloat64ToUInt64
+	] ifFalse: [
+		methodBuilder lowcodeFloat64ToUInt32.
+		intSize = 2 ifTrue: [ methodBuilder lowcodeTruncate32To16 ].
+		intSize = 1 ifTrue: [ methodBuilder lowcodeTruncate32To8 ].
+	].
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat64 >> emitLowcodeAdd: aMethodBuilder [
 	aMethodBuilder lowcodeFloat64Add
 ]
@@ -65,6 +92,18 @@ FFIFloat64 >> emitLowcodeLocalValue: aMethodBuilder name: localName [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat64 >> emitLowcodeMemoryStoreAndPop: aMethodBuilder [
+	aMethodBuilder
+		lowcodeStoreFloat64ToMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat64 >> emitLowcodeMemoryValue: aMethodBuilder [
+	aMethodBuilder
+		lowcodeLoadFloat64FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat64 >> emitLowcodeMultiply: aMethodBuilder [
 	aMethodBuilder lowcodeFloat64Mul
 ]
@@ -111,4 +150,16 @@ FFIFloat64 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 		lowcodeFirstFieldPointer;
 		lowcodePointerAddConstantOffset: offset;
 		lowcodeLoadFloat64FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIFloat64 >> readFromInternalStructure: anObject at: offset [
+	^ Float fromIEEE64Bit: ((((((((anObject byteAt: offset + 1)
+		bitOr: ((anObject byteAt: offset + 2) bitShift: 8))
+		bitOr: ((anObject byteAt: offset + 3) bitShift: 16))
+		bitOr: ((anObject byteAt: offset + 4) bitShift: 24))
+		bitOr: ((anObject byteAt: offset + 5) bitShift: 32))
+		bitOr: ((anObject byteAt: offset + 6) bitShift: 40))
+		bitOr: ((anObject byteAt: offset + 7) bitShift: 48))
+		bitOr: ((anObject byteAt: offset + 4) bitShift: 56))
 ]

@@ -47,6 +47,21 @@ LowcodeTypeAlias >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 ]
 
 { #category : #emitting }
+LowcodeTypeAlias >> emitConversion: methodBuilder toFloatSize: floatSize [
+	aliasedType emitConversion: methodBuilder toFloatSize: floatSize
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitConversion: methodBuilder toIntSize: floatSize [
+	aliasedType emitConversion: methodBuilder toIntSize: floatSize
+]
+
+{ #category : #emitting }
+LowcodeTypeAlias >> emitConversion: methodBuilder toUIntSize: floatSize [
+	aliasedType emitConversion: methodBuilder toUIntSize: floatSize
+]
+
+{ #category : #emitting }
 LowcodeTypeAlias >> emitConversionFromObject: aMethodBuilder [
 	aliasedType emitConversionFromObject: aMethodBuilder
 

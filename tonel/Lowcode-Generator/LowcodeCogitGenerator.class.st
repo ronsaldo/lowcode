@@ -232,6 +232,7 @@ LowcodeCogitGenerator >> beginInstructionMethod: selector [
 	
 	out nextPutAll: '!StackToRegisterMappingCogit methodsFor: ''inline primitive generators generated code'' !'; cr; cr.
 	out nextPutAll: selector; cr.
+	out tab; nextPutAll: '<option: #LowcodeVM>'.
 	out nextPutAll:
 '	"Lowcode instruction generator"
 '.
@@ -245,6 +246,7 @@ LowcodeCogitGenerator >> beginInterpreterInstructionMethod: selector [
 	
 	out nextPutAll: '!StackInterpreter methodsFor: ''inline primitive generated code'' !'; cr; cr.
 	out nextPutAll: selector; cr.
+	out tab; nextPutAll: '<option: #LowcodeVM>'.
 	out nextPutAll:
 '	"Lowcode instruction generator"
 '.
@@ -611,6 +613,7 @@ LowcodeCogitGenerator >> generateInstructionMethods [
 LowcodeCogitGenerator >> generateInstructionsDispatch: dispatchSelector args: argCount fallback: fallbackSelector instructions: instructions offset: offset [
 	out nextPutAll: '!StackToRegisterMappingCogit methodsFor: ''inline primitive generators dispatch generated code'' !'; cr; cr.
 	out nextPutAll: dispatchSelector, ' prim'; cr.
+	out tab; nextPutAll: '<option: #LowcodeVM>'.
 	out nextPutAll:
 '	"Lowcode instruction generator dispatch"
 	prim
@@ -658,6 +661,7 @@ LowcodeCogitGenerator >> generateInstructionsDispatch: dispatchSelector args: ar
 LowcodeCogitGenerator >> generateInstructionsInterpreterDispatch: dispatchSelector args: argCount fallback: fallbackSelector instructions: instructions offset: offset [
 	out nextPutAll: '!StackInterpreter methodsFor: ''inline primitive dispatch generated code'' !'; cr; cr.
 	out nextPutAll: dispatchSelector, ' prim'; cr.
+	out tab; nextPutAll: '<option: #LowcodeVM>'.
 	out nextPutAll:
 '	"Lowcode instruction interpreter dispatch"
 	prim

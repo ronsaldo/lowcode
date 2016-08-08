@@ -5,7 +5,7 @@ OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction [
 	instruction extendA ifNotNil: [ self genUnsignedMultipleExtendA: instruction extendA. ].
 	instruction extendB ifNotNil: [ self genLowcodeSignedMultipleExtendB: instruction extendB ].
 	
-	self genCallInlinePrimitive: instruction opcode.
+	self genCallInlinePrimitive: instruction opcode + (1*8192).
 ]
 
 { #category : #'*Lowcode-IRBuilder' }
@@ -13,7 +13,7 @@ OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction literal: literalInde
 	self genUnsignedMultipleExtendA: literalIndex.
 	instruction extendB ifNotNil: [ self genLowcodeSignedMultipleExtendB: instruction extendB ].
 	
-	self genCallInlinePrimitive: instruction opcode.
+	self genCallInlinePrimitive: instruction opcode + (1*8192).
 ]
 
 { #category : #'*Lowcode-IRBuilder' }

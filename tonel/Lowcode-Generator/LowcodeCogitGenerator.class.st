@@ -554,18 +554,18 @@ LowcodeCogitGenerator >> generateHeader [
 
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionDispatchMethods [
-	self generateInstructionsDispatch: #genLowcodeNullaryInlinePrimitive args: 0 fallback: #genLowcodeOptimizedNullaryInlinePrimitive: offset: 0;
-		generateInstructionsDispatch: #genLowcodeUnaryInlinePrimitive args: 1 fallback: #genLowcodeOptimizedUnaryInlinePrimitive: offset: -1000;
-		generateInstructionsDispatch: #genLowcodeBinaryInlinePrimitive args: 2 fallback: #genLowcodeOptimizedBinaryInlinePrimitive: offset: -2000;
-		generateInstructionsDispatch: #genLowcodeTrinaryInlinePrimitive args: 3 fallback: #genLowcodeOptimizedTrinaryInlinePrimitive: offset: -3000
+	self generateInstructionsDispatch: #genLowcodeNullaryInlinePrimitive args: 0 fallback: nil offset: 0;
+		generateInstructionsDispatch: #genLowcodeUnaryInlinePrimitive args: 1 fallback: nil offset: -1000;
+		generateInstructionsDispatch: #genLowcodeBinaryInlinePrimitive args: 2 fallback: nil offset: -2000;
+		generateInstructionsDispatch: #genLowcodeTrinaryInlinePrimitive args: 3 fallback: nil offset: -3000
 ]
 
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionInterpreterDispatchMethods [
-	self generateInstructionsInterpreterDispatch: #lowcodeNullaryInlinePrimitive args: 0 fallback: #lowcodeOptimizedNullaryInlinePrimitive: offset: 0;
-		generateInstructionsInterpreterDispatch: #lowcodeUnaryInlinePrimitive args: 1 fallback: #lowcodeOptimizedUnaryInlinePrimitive: offset: -1000;
-		generateInstructionsInterpreterDispatch: #lowcodeBinaryInlinePrimitive args: 2 fallback: #lowcodeOptimizedBinaryInlinePrimitive: offset: -2000;
-		generateInstructionsInterpreterDispatch: #lowcodeTrinaryInlinePrimitive args: 3 fallback: #lowcodeOptimizedTrinaryInlinePrimitive: offset: -3000
+	self generateInstructionsInterpreterDispatch: #lowcodeNullaryInlinePrimitive args: 0 fallback: nil offset: 0;
+		generateInstructionsInterpreterDispatch: #lowcodeUnaryInlinePrimitive args: 1 fallback: nil offset: -1000;
+		generateInstructionsInterpreterDispatch: #lowcodeBinaryInlinePrimitive args: 2 fallback: nil offset: -2000;
+		generateInstructionsInterpreterDispatch: #lowcodeTrinaryInlinePrimitive args: 3 fallback: nil offset: -3000
 ]
 
 { #category : #generation }
@@ -626,8 +626,12 @@ LowcodeCogitGenerator >> generateInstructionsDispatch: dispatchSelector args: ar
 		]
 	].
 
-	out tab; tab; nextPutAll: '}'; cr;
-		tab; tab; nextPutAll: 'otherwise: [ ^ self ' , fallbackSelector , ' prim ].'; cr. 
+	out tab; tab; nextPutAll: '}'; cr.
+	fallbackSelector ifNil: [ 
+		out tab; tab; nextPutAll: 'otherwise: [ ^ EncounteredUnknownBytecode ].'; cr. 
+	] ifNotNil: [ 
+		out tab; tab; nextPutAll: 'otherwise: [ ^ self ' , fallbackSelector , ' prim ].'; cr. 
+	].
 	out tab; nextPutAll: '^ 0'; cr.
 	out cr; nextPutAll: '! !'; cr; cr.
 ]
@@ -674,8 +678,15 @@ LowcodeCogitGenerator >> generateInstructionsInterpreterDispatch: dispatchSelect
 		]
 	].
 
-	out tab; tab; nextPutAll: '}'; cr;
-		tab; tab; nextPutAll: 'otherwise: [ ^ self ' , fallbackSelector , ' prim ].'; cr. 
+	out tab; tab; nextPutAll: '}'; cr.
+	fallbackSelector ifNil: [ 
+		out tab; tab; nextPutAll: 'otherwise: [
+			localIP := localIP - 3.
+			^self respondToUnknownBytecode
+		].'; cr. 
+	] ifNotNil: [ 
+		out tab; tab; nextPutAll: 'otherwise: [ ^ self ' , fallbackSelector , ' prim ].'; cr. 
+	].
 	out tab; nextPutAll: ''; cr.
 	out cr; nextPutAll: '! !'; cr; cr.
 ]

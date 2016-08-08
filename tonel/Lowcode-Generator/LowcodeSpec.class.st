@@ -58,9 +58,7 @@ sortedInstructions do: [:ins |
 	ins opcode: (arity *1000) + arityCount.
 ].
 
-(FileSystem workingDirectory / 'lowcode-new.xml') writeStreamDo: [ :out |
-	spec makeXML prettyPrintOn: out
-]
+	spec makeXML prettyPrintToFileNamed: 'lowcode-new.xml'
 ]
 
 { #category : #scripts }

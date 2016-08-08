@@ -25,6 +25,7 @@ LowcodeSpec class >> generateClassComments [
 
 { #category : #scripts }
 LowcodeSpec class >> generateOpcodes [
+	<script>
 	"
 	self generateOpcodes
 	"
@@ -40,7 +41,7 @@ sortedInstructions := spec instructions sort: [ :a :b |
 
 currentArity := -2.
 arityCount := 0.
-arityStart := #(1 7 70 5).
+arityStart := #(0 0 0 0).
 arityDiffs := OrderedCollection new.
 sortedInstructions do: [:ins |
 	arity := ins oopStackDifference.
@@ -74,6 +75,7 @@ LowcodeSpec class >> implementedList [
 
 { #category : #scripts }
 LowcodeSpec class >> todoList [
+	<script>
 	"
 	self todoList
 	"
@@ -84,6 +86,7 @@ LowcodeSpec class >> todoList [
 
 { #category : #scripts }
 LowcodeSpec class >> todoListInterpreter [
+	<script>
 	"
 	self todoListInterpreter
 	"

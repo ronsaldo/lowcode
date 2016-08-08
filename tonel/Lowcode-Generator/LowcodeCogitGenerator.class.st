@@ -486,15 +486,16 @@ LowcodeCogitGenerator >> fetchInterpreterExtendedArguments: instruction [
 
 { #category : #generation }
 LowcodeCogitGenerator >> generate [
-	out := destName asFileReference delete; writeStream.
-	[
+	destName asFileReference writeStreamDo: [:outFile |
+		outFile truncate.
+		out := outFile.
+	
 		self generateHeader;
 			generateInstructionMethods;
 			generateInstructionDispatchMethods;
 			generateInstructionInterpreterMethods;
 			generateInstructionInterpreterDispatchMethods.
-	] ensure: [ out close ]
-
+	]
 ]
 
 { #category : #generation }
@@ -551,18 +552,18 @@ LowcodeCogitGenerator >> generateHeader [
 
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionDispatchMethods [
-	self generateInstructionsDispatch: #genNullaryInlinePrimitive args: 0 fallback: #genOptimizedNullaryInlinePrimitive: offset: 0;
-		generateInstructionsDispatch: #genUnaryInlinePrimitive args: 1 fallback: #genOptimizedUnaryInlinePrimitive: offset: -1000;
-		generateInstructionsDispatch: #genBinaryInlinePrimitive args: 2 fallback: #genOptimizedBinaryInlinePrimitive: offset: -2000;
-		generateInstructionsDispatch: #genTrinaryInlinePrimitive args: 3 fallback: #genOptimizedTrinaryInlinePrimitive: offset: -3000
+	self generateInstructionsDispatch: #genLowcodeNullaryInlinePrimitive args: 0 fallback: #genLowcodeOptimizedNullaryInlinePrimitive: offset: 0;
+		generateInstructionsDispatch: #genLowcodeUnaryInlinePrimitive args: 1 fallback: #genLowcodeOptimizedUnaryInlinePrimitive: offset: -1000;
+		generateInstructionsDispatch: #genLowcodeBinaryInlinePrimitive args: 2 fallback: #genLowcodeOptimizedBinaryInlinePrimitive: offset: -2000;
+		generateInstructionsDispatch: #genLowcodeTrinaryInlinePrimitive args: 3 fallback: #genLowcodeOptimizedTrinaryInlinePrimitive: offset: -3000
 ]
 
 { #category : #generation }
 LowcodeCogitGenerator >> generateInstructionInterpreterDispatchMethods [
-	self generateInstructionsInterpreterDispatch: #nullaryInlinePrimitive args: 0 fallback: #optimizedNullaryInlinePrimitive: offset: 0;
-		generateInstructionsInterpreterDispatch: #unaryInlinePrimitive args: 1 fallback: #optimizedUnaryInlinePrimitive: offset: -1000;
-		generateInstructionsInterpreterDispatch: #binaryInlinePrimitive args: 2 fallback: #optimizedBinaryInlinePrimitive: offset: -2000;
-		generateInstructionsInterpreterDispatch: #trinaryInlinePrimitive args: 3 fallback: #optimizedTrinaryInlinePrimitive: offset: -3000
+	self generateInstructionsInterpreterDispatch: #lowcodeNullaryInlinePrimitive args: 0 fallback: #lowcodeOptimizedNullaryInlinePrimitive: offset: 0;
+		generateInstructionsInterpreterDispatch: #lowcodeUnaryInlinePrimitive args: 1 fallback: #lowcodeOptimizedUnaryInlinePrimitive: offset: -1000;
+		generateInstructionsInterpreterDispatch: #lowcodeBinaryInlinePrimitive args: 2 fallback: #lowcodeOptimizedBinaryInlinePrimitive: offset: -2000;
+		generateInstructionsInterpreterDispatch: #lowcodeTrinaryInlinePrimitive args: 3 fallback: #lowcodeOptimizedTrinaryInlinePrimitive: offset: -3000
 ]
 
 { #category : #generation }

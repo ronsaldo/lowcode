@@ -1,10 +1,13 @@
+"
+I represent a pointer type.
+"
 Class {
 	#name : #LowcodePointerType,
 	#superclass : #LowcodeValueType,
 	#instVars : [
 		'pointed'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #accessing }

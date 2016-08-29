@@ -1,10 +1,13 @@
+"
+I am a native type that reuses the code present in the FFI types such as FFIUInt32.
+"
 Class {
 	#name : #LowcodeFFIType,
 	#superclass : #LowcodeNativeType,
 	#instVars : [
 		'ffiType'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #construction }

@@ -1,10 +1,13 @@
+"
+I represent objects that are used for boxing native values.
+"
 Class {
 	#name : #LowcodeObjectReferenceType,
 	#superclass : #LowcodeObjectType,
 	#instVars : [
 		'referenced'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #construction }

@@ -1,10 +1,13 @@
+"
+I am used to represent a reference to a value. I am normally used internally by the compiler to provide C l-value style semantics.
+"
 Class {
 	#name : #LowcodeReferenceType,
 	#superclass : #LowcodeType,
 	#instVars : [
 		'referenced'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #construction }

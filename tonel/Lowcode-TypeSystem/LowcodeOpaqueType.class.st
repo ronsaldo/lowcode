@@ -1,7 +1,10 @@
+"
+I am used to represent special opaque types.
+"
 Class {
 	#name : #LowcodeOpaqueType,
 	#superclass : #LowcodeType,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #comparing }

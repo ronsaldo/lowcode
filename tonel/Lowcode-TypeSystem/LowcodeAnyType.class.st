@@ -1,7 +1,10 @@
+"
+I represent any possible type. I am to be used for function and templates signatures.
+"
 Class {
 	#name : #LowcodeAnyType,
 	#superclass : #LowcodeType,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #comparing }

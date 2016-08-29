@@ -1,10 +1,18 @@
+"
+I represent a place holder for template parameters. I am used to infer types of inlined messages such as ifTrue:ifFalse:
+
+Signature for ifTrue:ifFalse: present in OCLowcodeASTSemanticAnalyzer >> #initialize
+
+ifTrue:ifFalse: (bool , (-> 1), (-> 1) -> 1)
+
+"
 Class {
 	#name : #LowcodePlaceHolderType,
 	#superclass : #LowcodeType,
 	#instVars : [
 		'index'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #accessing }

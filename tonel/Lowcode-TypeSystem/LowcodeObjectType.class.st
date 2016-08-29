@@ -1,7 +1,12 @@
+"
+I represent any Smalltalk object.
+
+My subclasses are used to represent boxes of other types, or a class that can be instantiated to produce native data.
+"
 Class {
 	#name : #LowcodeObjectType,
 	#superclass : #LowcodeType,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #comparing }

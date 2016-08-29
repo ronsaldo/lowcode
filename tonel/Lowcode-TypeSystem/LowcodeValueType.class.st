@@ -4,7 +4,7 @@ I am the base class of types that are passed by value.
 Class {
 	#name : #LowcodeValueType,
 	#superclass : #LowcodeType,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #testing }

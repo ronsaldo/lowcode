@@ -1,7 +1,10 @@
+"
+I represent a void type.
+"
 Class {
 	#name : #LowcodeVoidType,
 	#superclass : #LowcodeOpaqueType,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #initialization }

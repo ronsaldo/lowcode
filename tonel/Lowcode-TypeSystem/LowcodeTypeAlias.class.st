@@ -1,10 +1,13 @@
+"
+I am used to represent type aliases, in a similar way to C typedef.
+"
 Class {
 	#name : #LowcodeTypeAlias,
 	#superclass : #LowcodeType,
 	#instVars : [
 		'aliasedType'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #construction }

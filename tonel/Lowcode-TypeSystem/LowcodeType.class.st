@@ -1,3 +1,12 @@
+"
+I represent a Lowcode type that is used by the Lowcode Opal compiler.
+
+An instace from me can be obtained by sending the #asLowcodeType to a Symbol or to an Array.
+
+#float asLowcodeType
+#(float pointer) asLowcodeType
+#((int -> int) pointer) asLowcodeType
+"
 Class {
 	#name : #LowcodeType,
 	#superclass : #Object,
@@ -23,7 +32,7 @@ Class {
 		'UInt8Type',
 		'VoidType'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #accessing }

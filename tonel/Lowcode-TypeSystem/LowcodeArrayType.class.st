@@ -1,3 +1,11 @@
+"
+I represent an array type. My notation is as follow:
+
+#(float array: 5) asLowcodeType
+#(float array) asLowcodeType ""Unbounded array""
+
+My values can be boxed in a NativeArray or in a NativeOrderedCollection.
+"
 Class {
 	#name : #LowcodeArrayType,
 	#superclass : #LowcodeType,
@@ -5,7 +13,7 @@ Class {
 		'element',
 		'numberOfElements'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #construction }

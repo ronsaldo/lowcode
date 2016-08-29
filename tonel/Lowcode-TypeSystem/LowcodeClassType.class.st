@@ -1,10 +1,13 @@
+"
+I represent an object which is actually a class. I am used for type inference purposes.
+"
 Class {
 	#name : #LowcodeClassType,
 	#superclass : #LowcodeObjectType,
 	#instVars : [
 		'referenced'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #accessing }

@@ -4,7 +4,7 @@ I am the base class of a native field type.
 Class {
 	#name : #LowcodeNativeType,
 	#superclass : #LowcodeValueType,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #testing }

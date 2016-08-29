@@ -1,3 +1,6 @@
+"
+I represent a function type. I am used to provide function signatures and to represent pointers to functions.
+"
 Class {
 	#name : #LowcodeFunctionType,
 	#superclass : #LowcodeType,
@@ -5,7 +8,7 @@ Class {
 		'arguments',
 		'returnType'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #construction }

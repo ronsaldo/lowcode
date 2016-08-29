@@ -1,10 +1,13 @@
+"
+I am used to represent a reference to a value that is boxed in a Smalltalk object.
+"
 Class {
 	#name : #LowcodeBoxedStructureFieldReferenceType,
 	#superclass : #LowcodeReferenceType,
 	#instVars : [
 		'offset'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #construction }

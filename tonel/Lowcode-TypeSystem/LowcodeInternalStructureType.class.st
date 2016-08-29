@@ -1,10 +1,13 @@
+"
+I represent an internal structure type.
+"
 Class {
 	#name : #LowcodeInternalStructureType,
 	#superclass : #LowcodeStructureType,
 	#instVars : [
 		'structureClass'
 	],
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #comparing }

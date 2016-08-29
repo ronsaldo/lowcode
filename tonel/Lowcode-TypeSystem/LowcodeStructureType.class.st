@@ -1,7 +1,10 @@
+"
+I represent a C like structure type.
+"
 Class {
 	#name : #LowcodeStructureType,
 	#superclass : #LowcodeValueType,
-	#category : #'Lowcode-TypeSystem'
+	#category : #'Lowcode-TypeSystem-Types'
 }
 
 { #category : #testing }

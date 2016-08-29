@@ -184,6 +184,11 @@ LowcodeFFIType >> ffiType: anObject [
 ]
 
 { #category : #'read write' }
+LowcodeFFIType >> fromMemory: pointer offset: offset [
+	^ ffiType basicHandle: pointer at: offset + 1
+]
+
+{ #category : #'read write' }
 LowcodeFFIType >> fromStructure: anObject offset: offset [
 	^ ffiType readFromInternalStructure: anObject at: offset
 ]
@@ -221,6 +226,11 @@ LowcodeFFIType >> isNumberType [
 { #category : #accessing }
 LowcodeFFIType >> size [
 	^ ffiType typeSize
+]
+
+{ #category : #'read write' }
+LowcodeFFIType >> write: aValue toMemory: pointer offset: offset [
+	^ ffiType basicHandle: pointer at: offset + 1 put: aValue
 ]
 
 { #category : #'read write' }

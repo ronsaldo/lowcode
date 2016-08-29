@@ -1,6 +1,6 @@
 Class {
 	#name : #LowcodeStructureType,
-	#superclass : #LowcodeType,
+	#superclass : #LowcodeValueType,
 	#category : #'Lowcode-TypeSystem'
 }
 

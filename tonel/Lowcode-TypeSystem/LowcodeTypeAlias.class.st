@@ -153,6 +153,11 @@ LowcodeTypeAlias >> fieldType: fieldName [
 ]
 
 { #category : #'read write' }
+LowcodeTypeAlias >> fromMemory: pointer offset: offset [
+	^ aliasedType fromMemory: pointer offset: offset
+]
+
+{ #category : #'read write' }
 LowcodeTypeAlias >> fromStructure: anObject offset: offset [
 	^ aliasedType fromStructure: anObject offset: offset
 ]
@@ -192,6 +197,26 @@ LowcodeTypeAlias >> isNumberType [
 	^ aliasedType isNumberType
 ]
 
+{ #category : #'native pointers' }
+LowcodeTypeAlias >> nativeNew [
+	^ aliasedType nativeNew
+]
+
+{ #category : #'native pointers' }
+LowcodeTypeAlias >> nativeNew: size [
+	^ aliasedType nativeNew: size
+]
+
+{ #category : #'native pointers' }
+LowcodeTypeAlias >> nativeNullPointer [
+	^ aliasedType nativeNullPointer
+]
+
+{ #category : #'native pointers' }
+LowcodeTypeAlias >> nativePointer: address [
+	^ aliasedType nativePointer: address
+]
+
 { #category : #printing }
 LowcodeTypeAlias >> printOn: aStream [
 	aStream print: name
@@ -205,6 +230,11 @@ LowcodeTypeAlias >> size [
 { #category : #accessing }
 LowcodeTypeAlias >> withoutAliases [
 	^ aliasedType withoutAliases
+]
+
+{ #category : #'read write' }
+LowcodeTypeAlias >> write: aValue toMemory: anObject offset: offset [
+	^ aliasedType write: aValue toMemory: anObject offset: offset
 ]
 
 { #category : #'read write' }

@@ -43,3 +43,33 @@ Array >> asLowcodeTypeAtEnvironment: anEnvironment [
 	hasReturnType ifFalse: [ ^ currentType ].
 	^ LowcodeFunctionType arguments: arguments returnType: currentType
 ]
+
+{ #category : #'*Lowcode-TypeSystem' }
+Array >> nativeNew [
+	^ self asLowcodeType nativeNew
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+Array >> nativeNew: size [
+	^ self asLowcodeType nativeNew: size
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+Array >> nativeNullPointer [
+	^ self asLowcodeType nativeNullPointer
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+Array >> nativePointer: address [
+	^ self asLowcodeType nativePointer: address
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+Array >> uncheckedAt: index [
+	^ self at: index
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+Array >> uncheckedAt: index put: value [
+	^ self at: index put: value
+]

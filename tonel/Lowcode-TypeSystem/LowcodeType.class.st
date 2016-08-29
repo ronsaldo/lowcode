@@ -20,7 +20,8 @@ Class {
 		'UInt16Type',
 		'UInt32Type',
 		'UInt64Type',
-		'UInt8Type'
+		'UInt8Type',
+		'VoidType'
 	],
 	#category : #'Lowcode-TypeSystem'
 }
@@ -78,6 +79,7 @@ LowcodeType class >> initialize [
 
 	AnyType := LowcodeAnyType new.
 	ObjectType := LowcodeObjectType new.
+	VoidType := LowcodeVoidType new.
 	
 	BoolType := LowcodeFFIType named: #bool on: FFIBool new.
 	
@@ -99,7 +101,7 @@ LowcodeType class >> initialize [
 	
 	PrimitiveTypeDictionary := Dictionary new.
 	{
-		AnyType . ObjectType . BoolType .
+		AnyType . ObjectType . VoidType . BoolType .
 		Int8Type . Int16Type . Int32Type . Int64Type .
 		UInt8Type . UInt16Type . UInt32Type . UInt64Type .
 		SizeType .
@@ -351,6 +353,11 @@ LowcodeType >> fieldType: fieldName [
 ]
 
 { #category : #'read write' }
+LowcodeType >> fromMemory: pointer offset: offset [
+	self subclassResponsibility
+]
+
+{ #category : #'read write' }
 LowcodeType >> fromStructure: anObject offset: offset [
 	self subclassResponsibility
 ]
@@ -494,6 +501,16 @@ LowcodeType >> isStructureType [
 	^ false
 ]
 
+{ #category : #testing }
+LowcodeType >> isValueType [
+	^ false
+]
+
+{ #category : #testing }
+LowcodeType >> isVoidType [
+	^ false
+]
+
 { #category : #template }
 LowcodeType >> matchesType: templateArgument withEnvironment: templateEnvironment [
 	^ self withoutAliases = templateArgument withoutAliases
@@ -507,6 +524,31 @@ LowcodeType >> name [
 { #category : #accessing }
 LowcodeType >> name: anObject [
 	name := anObject
+]
+
+{ #category : #'native pointers' }
+LowcodeType >> nativeNew [
+	self subclassResponsibility
+]
+
+{ #category : #'native pointers' }
+LowcodeType >> nativeNew: size [
+	self subclassResponsibility
+]
+
+{ #category : #'native pointers' }
+LowcodeType >> nativeNewType [
+	self subclassResponsibility
+]
+
+{ #category : #'native pointers' }
+LowcodeType >> nativeNullPointer [
+	self subclassResponsibility
+]
+
+{ #category : #'native pointers' }
+LowcodeType >> nativePointer: address [
+	self subclassResponsibility
 ]
 
 { #category : #'type decorators' }
@@ -537,6 +579,11 @@ LowcodeType >> withoutAliases [
 { #category : #'type decorators' }
 LowcodeType >> withoutReference [
 	^ self
+]
+
+{ #category : #'read write' }
+LowcodeType >> write: aValue toMemory: anObject offset: offset [
+	self subclassResponsibility
 ]
 
 { #category : #'read write' }

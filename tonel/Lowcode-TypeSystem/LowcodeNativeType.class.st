@@ -3,7 +3,7 @@ I am the base class of a native field type.
 "
 Class {
 	#name : #LowcodeNativeType,
-	#superclass : #LowcodeType,
+	#superclass : #LowcodeValueType,
 	#category : #'Lowcode-TypeSystem'
 }
 

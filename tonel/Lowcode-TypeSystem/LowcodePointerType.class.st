@@ -1,6 +1,6 @@
 Class {
 	#name : #LowcodePointerType,
-	#superclass : #LowcodeType,
+	#superclass : #LowcodeValueType,
 	#instVars : [
 		'pointed'
 	],

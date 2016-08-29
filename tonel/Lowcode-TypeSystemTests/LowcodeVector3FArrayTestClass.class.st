@@ -1,3 +1,6 @@
+"
+I am a structured with a native array inside.
+"
 Class {
 	#name : #LowcodeVector3FArrayTestClass,
 	#superclass : #InternalStructure,

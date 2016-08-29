@@ -56,6 +56,11 @@ FFIUInt8 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt8 >> hasLosslessLowcodeConversionForLiteral: literalValue [
+	^ literalValue between: 0 and: 255
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt8 >> readFromInternalStructure: anObject at: offset [
 	^ anObject byteAt: offset + 1
 ]

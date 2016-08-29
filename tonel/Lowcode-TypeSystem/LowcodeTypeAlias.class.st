@@ -109,6 +109,11 @@ LowcodeTypeAlias >> emitLocalValue: aMethodBuilder name: localName [
 
 ]
 
+{ #category : #literals }
+LowcodeTypeAlias >> emitLowcode: methodBuilder pushLiteral: literalValue [
+	aliasedType emitLowcode: methodBuilder pushLiteral: literalValue
+]
+
 { #category : #emitting }
 LowcodeTypeAlias >> emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType [
 	aliasedType emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType
@@ -168,6 +173,11 @@ LowcodeTypeAlias >> fromStructure: anObject offset: offset [
 { #category : #accessing }
 LowcodeTypeAlias >> getCompiledMethodForSelector: aSelector [
 	^ aliasedType getCompiledMethodForSelector: aSelector
+]
+
+{ #category : #literals }
+LowcodeTypeAlias >> hasLosslessConversionForLiteral: literalValue [
+	^ aliasedType hasLosslessConversionForLiteral: literalValue
 ]
 
 { #category : #comparing }

@@ -56,6 +56,11 @@ FFIUInt32 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt32 >> hasLosslessLowcodeConversionForLiteral: literalValue [
+	^ literalValue between: 0 and: 4294967295
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt32 >> readFromInternalStructure: anObject at: offset [
 	^ (((anObject byteAt: offset + 1)
 		bitOr: ((anObject byteAt: offset + 2) bitShift: 8))

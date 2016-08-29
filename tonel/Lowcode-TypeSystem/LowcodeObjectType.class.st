@@ -63,9 +63,19 @@ LowcodeObjectType >> emitLocalValue: aMethodBuilder name: localName [
 	aMethodBuilder pushTemp: localName
 ]
 
+{ #category : #literals }
+LowcodeObjectType >> emitLowcode: methodBuilder pushLiteral: literalValue [
+	methodBuilder pushLiteral: literalValue
+]
+
 { #category : #emitting }
 LowcodeObjectType >> emitPop: aMethodBuilder [
 	aMethodBuilder popTop
+]
+
+{ #category : #literals }
+LowcodeObjectType >> hasLosslessConversionForLiteral: literalValue [
+	^ true
 ]
 
 { #category : #comparing }

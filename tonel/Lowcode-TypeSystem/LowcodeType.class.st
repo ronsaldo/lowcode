@@ -302,6 +302,11 @@ LowcodeType >> emitLocalValue: aMethodBuilder name: localName [
 	self subclassResponsibility
 ]
 
+{ #category : #literals }
+LowcodeType >> emitLowcode: methodBuilder pushLiteral: literalValue [
+	self subclassResponsibility
+]
+
 { #category : #emitting }
 LowcodeType >> emitLowcodeMemoryValueAsObject: aMethodBuilder [
 	self
@@ -407,6 +412,11 @@ LowcodeType >> hasImplicitConversionTo: otherType [
 	"Allow converting boxed structures into unboxed structures."
 	(self isObjectReference and: [ otherType withoutAliases = self referenced withoutAliases ]) ifTrue: [ ^ true ].
 	
+	^ false
+]
+
+{ #category : #literals }
+LowcodeType >> hasLosslessConversionForLiteral: literalValue [
 	^ false
 ]
 

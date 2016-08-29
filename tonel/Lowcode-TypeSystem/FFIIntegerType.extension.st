@@ -15,6 +15,14 @@ FFIIntegerType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIIntegerType >> emitLowcode: methodBuilder pushLiteral: literalValue [
+	literalValue = 0 ifTrue: [ ^ methodBuilder lowcodePushZero32 ].
+	literalValue = 1 ifTrue: [ ^ methodBuilder lowcodePushOne32 ].
+	methodBuilder
+		lowcodePushConstantUInt32: (literalValue asInteger bitAnd: 16rffffffff)
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIIntegerType >> emitLowcodeBitInvert: aMethodBuilder [
 	aMethodBuilder lowcodeNot32
 ]
@@ -32,6 +40,11 @@ FFIIntegerType >> emitLowcodeNegated: aMethodBuilder [
 { #category : #'*Lowcode-TypeSystem' }
 FFIIntegerType >> emitLowcodePop: aMethodBuilder [
 	aMethodBuilder lowcodePopInt32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIIntegerType >> hasLosslessLowcodeConversionForLiteral: literalValue [
+	^ literalValue isInteger
 ]
 
 { #category : #'*Lowcode-TypeSystem' }

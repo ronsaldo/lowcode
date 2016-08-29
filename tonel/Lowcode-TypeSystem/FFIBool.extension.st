@@ -1,6 +1,15 @@
 Extension { #name : #FFIBool }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIBool >> emitLowcode: methodBuilder pushLiteral: literalValue [
+	literalValue ifTrue: [
+		methodBuilder lowcodePushOne32
+	] ifFalse: [ 
+		methodBuilder lowcodePushZero32
+	]
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIBool >> emitLowcodeConvertFromObject: aMethodBuilder [
 	aMethodBuilder
 		lowcodeOopToBoolean32
@@ -27,6 +36,11 @@ FFIBool >> emitLowcodeNot: aMethodBuilder [
 { #category : #'*Lowcode-TypeSystem' }
 FFIBool >> emitLowcodePop: aMethodBuilder [
 	aMethodBuilder lowcodePopInt32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIBool >> hasLosslessLowcodeConversionForLiteral: literalValue [
+	^ literalValue == true or: [ literalValue == false ]
 ]
 
 { #category : #'*Lowcode-TypeSystem' }

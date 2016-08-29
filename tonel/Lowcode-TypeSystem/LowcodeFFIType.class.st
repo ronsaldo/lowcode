@@ -115,6 +115,11 @@ LowcodeFFIType >> emitLocalValue: aMethodBuilder name: localName [
 	ffiType emitLowcodeLocalValue: aMethodBuilder name: localName
 ]
 
+{ #category : #'as yet unclassified' }
+LowcodeFFIType >> emitLowcode: methodBuilder pushLiteral: literalValue [
+	^ ffiType emitLowcode: methodBuilder pushLiteral: literalValue
+]
+
 { #category : #emitting }
 LowcodeFFIType >> emitLowcodeStore: aMethodBuilder selfOffset: offset valueType: valueType [
 	self assert: valueType withoutAliases = self.
@@ -194,6 +199,11 @@ LowcodeFFIType >> fromMemory: pointer offset: offset [
 { #category : #'read write' }
 LowcodeFFIType >> fromStructure: anObject offset: offset [
 	^ ffiType readFromInternalStructure: anObject at: offset
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeFFIType >> hasLosslessConversionForLiteral: literalValue [
+	^ ffiType hasLosslessLowcodeConversionForLiteral: literalValue
 ]
 
 { #category : #comparing }

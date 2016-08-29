@@ -1,6 +1,15 @@
 Extension { #name : #FFIFloat32 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloat32 >> emitLowcode: methodBuilder pushLiteral: literalValue [
+	literalValue = 0.0 ifTrue: [ ^ methodBuilder lowcodePushZeroFloat32 ].
+	literalValue = 1.0 ifTrue: [ ^ methodBuilder lowcodePushOneFloat32 ].
+	methodBuilder
+		pushLiteral: literalValue asFloat;
+		lowcodeOopToFloat32
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloat32 >> emitLowcode: methodBuilder toFloatSize: floatSize [
 	floatSize = 8 ifTrue: [ methodBuilder lowcodeFloat32ToFloat64 ]
 ]

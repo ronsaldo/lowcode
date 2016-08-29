@@ -1,6 +1,14 @@
 Extension { #name : #FFIUInt64 }
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> emitLowcode: methodBuilder pushLiteral: literalValue [
+	literalValue = 0 ifTrue: [ ^ methodBuilder lowcodePushZero64 ].
+	literalValue = 1 ifTrue: [ ^ methodBuilder lowcodePushOne64 ].
+	methodBuilder
+		lowcodePushConstantUInt64: (literalValue asInteger bitAnd: 16rffffffffffffffff)
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIUInt64 >> emitLowcodeBitInvert: aMethodBuilder [
 	aMethodBuilder lowcodeNot64
 ]
@@ -60,6 +68,11 @@ FFIUInt64 >> emitLowcodeValue: aMethodBuilder selfOffset: offset [
 		lowcodeFirstFieldPointer;
 		lowcodePointerAddConstantOffset: offset;
 		lowcodeLoadUInt64FromMemory
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
+FFIUInt64 >> hasLosslessLowcodeConversionForLiteral: literalValue [
+	^ literalValue between: 0 and: 18446744073709551615
 ]
 
 { #category : #'*Lowcode-TypeSystem' }

@@ -16,6 +16,11 @@ FFIFloatType >> emitArgumentTypeCheck: aMethodBuilder name: argumentName [
 ]
 
 { #category : #'*Lowcode-TypeSystem' }
+FFIFloatType >> hasLosslessLowcodeConversionForLiteral: literalValue [
+	^ literalValue isNumber
+]
+
+{ #category : #'*Lowcode-TypeSystem' }
 FFIFloatType >> isBooleanType [
 	^ false
 ]

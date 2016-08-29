@@ -305,6 +305,7 @@ OCLowcodeASTSemanticAnalyzer >> checkNormalMessage: aMessageNode [
 	receiverType := aMessageNode receiver propertyAt: #type.
 	argumentTypes := aMessageNode arguments collect: [ :arg | arg propertyAt: #type ].
 	objectType := LowcodeType object.
+
 	self checkImplicitConversionFrom: receiverType to: objectType on: aMessageNode.
 	aMessageNode arguments do: [ :argument |
 		argumenType := argument propertyAt: #type.
@@ -579,7 +580,7 @@ OCLowcodeASTSemanticAnalyzer >> visitAssignmentNode: anAssignmentNode [
 { #category : #visitor }
 OCLowcodeASTSemanticAnalyzer >> visitBlockNode: aBlockNode [
 	super visitBlockNode: aBlockNode.
-	aBlockNode isInlined ifTrue: [^ self visitInlinedBlockNode: aBlockNode ].
+	aBlockNode isInlined ifTrue: [^ self visitInlinedBlockNodeForType: aBlockNode ].
 	aBlockNode propertyAt: #type put: LowcodeType object
 ]
 
@@ -590,9 +591,8 @@ OCLowcodeASTSemanticAnalyzer >> visitCascadeNode: aCascadeNode [
 ]
 
 { #category : #visitor }
-OCLowcodeASTSemanticAnalyzer >> visitInlinedBlockNode: aBlockNode [
+OCLowcodeASTSemanticAnalyzer >> visitInlinedBlockNodeForType: aBlockNode [
 	| argumentTypes returnType blockType |
-	super visitInlinedBlockNode: aBlockNode.
 	argumentTypes := aBlockNode arguments collect: [ :arg | LowcodeType object. ].
 	returnType := aBlockNode statements last propertyAt: #type.
 	blockType := LowcodeFunctionType arguments: argumentTypes asArray returnType: returnType.

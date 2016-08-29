@@ -435,7 +435,7 @@ OCLowcodeASTTranslator >> visitMethodNode: aMethodNode [
 	
 	| allTempNames argumentTemporaries temporaryVariables argumentTypes temporaryTypes |
 	aMethodNode arguments size > 15 ifTrue: [self backendError: 'Too many arguments' forNode: aMethodNode ].
-
+	
 	methodBuilder compilationContext: aMethodNode compilationContext.
 	
 	"Add the temporary variables, including the special variables that are required by Lowcode methods."

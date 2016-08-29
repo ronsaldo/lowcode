@@ -70,6 +70,13 @@ InternalStructure >> readBytesFrom: aByteArray position: byteArrayPosition [
 	]
 ]
 
+{ #category : #'memory access' }
+InternalStructure >> readBytesFrom: aByteArray size: readSize position: byteArrayPosition [
+	1 to: readSize do: [ :i |
+		self basicAt: i put: (aByteArray byteAt: byteArrayPosition + i - 1)
+	]
+]
+
 { #category : #'as yet unclassified' }
 InternalStructure >> replaceFrom: start to: stop with: replacement startingAt: repStart [ 
 	"This destructively replaces elements from start to stop in the receiver 

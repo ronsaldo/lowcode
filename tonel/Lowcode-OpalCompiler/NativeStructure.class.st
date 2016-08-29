@@ -1,20 +1,24 @@
+"
+I represent a native structure.
+"
 Class {
 	#name : #NativeStructure,
 	#superclass : #InternalStructure,
 	#traits : 'TWithNativeData',
 	#classTraits : 'TWithNativeData classTrait',
 	#classInstVars : [
-		'nativeMethodDict'
+		'nativeMethodDictionary'
 	],
 	#category : #'Lowcode-OpalCompiler-Using'
 }
 
-{ #category : #accessing }
-NativeStructure class >> nativeMethodDict [
-	^ nativeMethodDict
+{ #category : #'native methods' }
+NativeStructure class >> nativeMethodDictionary [
+	nativeMethodDictionary ifNil: [ nativeMethodDictionary := MethodDictionary new ].
+	^ nativeMethodDictionary
 ]
 
-{ #category : #accessing }
-NativeStructure class >> nativeMethodDict: aMethodDictionary [
-	nativeMethodDict := aMethodDictionary
+{ #category : #'native methods' }
+NativeStructure class >> nativeMethodDictionary: aMethodDictionary [
+	nativeMethodDictionary := aMethodDictionary
 ]

@@ -1,3 +1,6 @@
+"
+I am a trait that provides support for native data.
+"
 Trait {
 	#name : #TWithNativeData,
 	#category : #'Lowcode-OpalCompiler-Using'

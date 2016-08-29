@@ -10,11 +10,14 @@ Class {
 	#classVars : [
 		'ArithmeticMessages',
 		'ArithmeticUnaryMessages',
+		'ArrayMessages',
 		'ComparisonMessages',
 		'IdentityEqualityMessages',
 		'NewObjectMessages',
 		'OptimizedInlineMessages',
-		'SpecialTypeConversionMessages'
+		'PointerMessages',
+		'SpecialTypeConversionMessages',
+		'TypeMessages'
 	],
 	#category : #'Lowcode-OpalCompiler-Semantic'
 }
@@ -68,6 +71,15 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 	IdentityEqualityMessages := Set newFrom: #(== ~~).
 	NewObjectMessages := Set newFrom: #(basicNew basicNew: new new:).
 	
+	TypeMessages := Dictionary newFromPairs: #(
+		nativeNew nativeNewType
+		nativeNew: nativeNewType
+		nativeNullPointer nativeNewType
+		nativePointer: nativeNewType
+	).
+	ArrayMessages := Set newFrom: #(at: at:put: uncheckedAt: uncheckedAt:put:).
+	PointerMessages := Set newFrom: #(delete value value:).
+	
 	OptimizedInlineMessages := Dictionary new.
 	#(
 		ifTrue:ifFalse: (bool , (-> 1), (-> 1) -> 1)
@@ -80,7 +92,7 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 OCLowcodeASTSemanticAnalyzer >> addClassDependencies: aClassCollection [
 	| dependencies |
 	aClassCollection ifEmpty: [ ^ self ].
@@ -88,14 +100,14 @@ OCLowcodeASTSemanticAnalyzer >> addClassDependencies: aClassCollection [
 	dependencies addAll: (aClassCollection collect: #binding).
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 OCLowcodeASTSemanticAnalyzer >> addClassDependency: aClass [
 	| dependencies |
 	dependencies := self methodDependencies.
 	dependencies add: aClass binding.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #adding }
 OCLowcodeASTSemanticAnalyzer >> addMethodDependency: aCompiledMethod [
 	| dependencies |
 	dependencies := self methodDependencies.
@@ -148,7 +160,7 @@ OCLowcodeASTSemanticAnalyzer >> checkAccessorMessage: aMessageNode [
 		"Nothing to check"
 		aMessageNode propertyAt: #type put: fieldType. 
 	] ifNotEmpty: [ 
-		self checkImplicitConversionFrom: argumentTypes first to: fieldType on: aMessageNode arguments first.
+		self checkImplicitConversionFromNode: aMessageNode arguments first to: fieldType.
 		aMessageNode propertyAt: #type put: receiverType.
 	].
  
@@ -261,7 +273,7 @@ OCLowcodeASTSemanticAnalyzer >> checkConstructorMesage: aMessageNode [
 				signal
 		].
 		argumentType := argumentTypes at: index.
-		self checkImplicitConversionFrom: argumentType to: fieldType on: (aMessageNode arguments at: index).
+		self checkImplicitConversionFromNode: (aMessageNode arguments at: index) to: fieldType.
 		fieldType -> (instanceType fieldOffset: fieldName)
 	].
 
@@ -296,6 +308,32 @@ OCLowcodeASTSemanticAnalyzer >> checkImplicitConversionFrom: sourceType to: targ
 				signal
 	].
 
+]
+
+{ #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkImplicitConversionFromNode: sourceNode to: targetType [
+	| sourceType |
+	sourceType := sourceNode propertyAt: #type.
+	(sourceType hasImplicitConversionTo: targetType) ifTrue: [ ^ self ].
+	
+	(sourceNode propertyAt: #literal ifAbsent: [ false ]) ifTrue: [
+		(targetType hasLosslessConversionForLiteral: sourceNode value) ifTrue: [
+			sourceNode propertyAt: #type put: targetType.
+			^ self
+		] ifFalse: [ 
+			^ OCLowcodeCannotConvertImplicitlyTypeError new
+				node: sourceNode;
+				compilationContext: compilationContext;
+				messageText: 'Cannot perform implicit conversion of literal ' , sourceNode value printString , ' into type ', targetType printString, '.';
+				signal
+		]
+	].
+	
+	^ OCLowcodeCannotConvertImplicitlyTypeError new
+		node: sourceNode;
+		compilationContext: compilationContext;
+		messageText: 'Cannot perform implicit conversion from type ' , sourceType printString , ' to ', targetType printString, '.';
+		signal
 ]
 
 { #category : #'message type checking' }
@@ -374,6 +412,15 @@ OCLowcodeASTSemanticAnalyzer >> checkSpecialConversionMessage: aMessageNode [
 	aMessageNode propertyAt: #nativeInline put: true.
 ]
 
+{ #category : #'message type checking' }
+OCLowcodeASTSemanticAnalyzer >> checkTypeMessage: messageNode [
+	| type |
+	type := self parseTypeExpression: messageNode receiver value.
+	messageNode propertyAt: #nativeInline put: true.
+	messageNode propertyAt: #nativeInlineKind put: #Type.
+	self halt
+]
+
 { #category : #'as yet unclassified' }
 OCLowcodeASTSemanticAnalyzer >> compiledMethodProperties [
 	scope node methodNode properties ifNil: [ scope node methodNode properties: (AdditionalMethodState new copyWith: #eagerInstallationRequired -> true)].
@@ -446,7 +493,7 @@ OCLowcodeASTSemanticAnalyzer >> methodDependencies [
 		result := Set new.
 		scope node methodNode properties: (scope node methodNode properties copyWith: #dependencies -> result).
 		^ result
-		]
+	]
 ]
 
 { #category : #parsing }
@@ -567,8 +614,9 @@ OCLowcodeASTSemanticAnalyzer >> visitAssignmentNode: anAssignmentNode [
 	binding := anAssignmentNode variable propertyAt: #binding.
 	type := binding lowcodeTypeFor: self.
 	anAssignmentNode variable propertyAt: #type put: type.
+	self checkImplicitConversionFromNode: anAssignmentNode value to: type.
+
 	valueType := anAssignmentNode value propertyAt: #type.
-	self checkImplicitConversionFrom: valueType to: type on: anAssignmentNode.
 	anAssignmentNode propertyAt: #variableType put: type.
 	(type ~= valueType and: [ type hasDirectStoreFrom: valueType ]) ifTrue: [ 
 		anAssignmentNode propertyAt: #type put: (binding lowcodeReferenceTypeFor: self).
@@ -608,7 +656,9 @@ OCLowcodeASTSemanticAnalyzer >> visitLiteralArrayNode: aLiteralArrayNode [
 { #category : #visitor }
 OCLowcodeASTSemanticAnalyzer >> visitLiteralNode: aLiteralNode [
 	super visitLiteralNode: aLiteralNode.
-	aLiteralNode propertyAt: #type put: LowcodeType object.
+	aLiteralNode
+		propertyAt: #literal put: true;
+		propertyAt: #type put: LowcodeType object.
 ]
 
 { #category : #visitor }
@@ -620,6 +670,13 @@ OCLowcodeASTSemanticAnalyzer >> visitMessageNode: aMessageNode [
 	aMessageNode propertyAt: #type put: LowcodeType object.
 	aMessageNode propertyAt: #nativeInline put: false.
 	aMessageNode isSuperSend ifTrue: [ ^ self ].
+	
+	(aMessageNode receiver propertyAt: #literal ifAbsent: [ false ]) ifTrue: [
+		(TypeMessages includesKey: selector) ifTrue: [ 
+			^ self checkTypeMessage: aMessageNode
+		]
+	].
+	
 	(aMessageNode isInlined and: [ self isOptimizedInlineMessage: selector ]) ifTrue: [
 		^ self checkOptimizedInlineMessage: aMessageNode
 	].
@@ -689,11 +746,10 @@ OCLowcodeASTSemanticAnalyzer >> visitPragmaNode: aPragmaNode [
 
 { #category : #visitor }
 OCLowcodeASTSemanticAnalyzer >> visitReturnNode: aReturnNode [
-	| valueType returnType |
+	| returnType |
 	super visitReturnNode: aReturnNode.
-	valueType := aReturnNode value propertyAt: #type.
 	returnType := scope node propertyAt: #returnType ifAbsent: [ LowcodeType object ].
-	self checkImplicitConversionFrom: valueType to: returnType on: aReturnNode.
+	self checkImplicitConversionFromNode: aReturnNode value to: returnType.
 	aReturnNode propertyAt: #type put: returnType
 ]
 

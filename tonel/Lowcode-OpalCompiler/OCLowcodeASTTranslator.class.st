@@ -431,6 +431,15 @@ OCLowcodeASTTranslator >> visitCascadeNode: aCascadeNode [
 ]
 
 { #category : #'visitor-double dispatching' }
+OCLowcodeASTTranslator >> visitLiteralNode: aLiteralNode [
+	| type |
+	type := aLiteralNode propertyAt: #type.
+	type emitLowcode: methodBuilder pushLiteral: aLiteralNode value.
+
+
+]
+
+{ #category : #'visitor-double dispatching' }
 OCLowcodeASTTranslator >> visitMethodNode: aMethodNode [
 	
 	| allTempNames argumentTemporaries temporaryVariables argumentTypes temporaryTypes |

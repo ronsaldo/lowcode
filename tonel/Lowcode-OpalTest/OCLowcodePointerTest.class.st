@@ -9,12 +9,12 @@ Class {
 	#category : #'Lowcode-OpalTest'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'lowcode methods' }
 OCLowcodePointerTest >> allocateInt [
 	^ #int nativeNew
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'lowcode methods' }
 OCLowcodePointerTest >> allocateIntWith2 [
 	^ (#int nativeNew) value: 2; yourself
 ]

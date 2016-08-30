@@ -941,7 +941,7 @@ IRLowcodeBuilder >> lowcodePlaftormCode [
 
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodePointerAddConstantOffset: a1Noffset [
-	self add: (IRInstruction lowcodeInstruction: 1147 extendA: a1Noffset)
+	self add: (IRInstruction lowcodeInstruction: 1147 extendB: a1Noffset)
 ]
 
 { #category : #'lowcode instructions' }

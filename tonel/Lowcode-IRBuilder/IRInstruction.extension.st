@@ -35,6 +35,14 @@ IRInstruction class >> lowcodeInstruction: opcode extendA: extendA extendB: exte
 ]
 
 { #category : #'*Lowcode-IRBuilder' }
+IRInstruction class >> lowcodeInstruction: opcode extendB: extendB [
+	^ IRLowcodeInstruction new
+		opcode: opcode;
+		extendB: extendB;
+		yourself
+]
+
+{ #category : #'*Lowcode-IRBuilder' }
 IRInstruction class >> lowcodeInstruction: opcode literal: literal [
 	^ IRLowcodeInstruction new
 		opcode: opcode;

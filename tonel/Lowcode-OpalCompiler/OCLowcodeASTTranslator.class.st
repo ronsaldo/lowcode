@@ -10,9 +10,12 @@ Class {
 	#classVars : [
 		'ArithmeticMessages',
 		'ArithmeticUnaryMessages',
+		'ArrayMessages',
 		'ComparisonMessages',
 		'IdentityEqualityMessages',
-		'SpecialTypeConversionMessages'
+		'PointerMessages',
+		'SpecialTypeConversionMessages',
+		'TypeMessages'
 	],
 	#category : #'Lowcode-OpalCompiler-Translator'
 }
@@ -75,6 +78,28 @@ OCLowcodeASTTranslator class >> initialize [
 	).
 
 	IdentityEqualityMessages := Set newFrom: #(== ~~).
+	
+	TypeMessages := Dictionary newFromPairs: #(
+		nativeNew emitNativeNew:
+		nativeNew: emitNativeNewArray:
+		nativeNullPointer emitNativeNullPointer:
+		nativePointer: emitNativePointerCast:
+	).
+	
+	PointerMessages := Dictionary newFromPairs: #(
+		value emitPointerValue:
+		value: emitPointerValueSet:
+		delete emitPointerDelete:
+		+ emitPointerAddOffset:
+		- emitPointerAddOffset:
+	).
+	
+	ArrayMessages := Dictionary newFromPairs: #(
+		at: emitArrayAt:
+		at:put: emitArrayAtPut:
+		uncheckedAt: emitArrayUncheckedAt:
+		uncheckedAt:put: emitArrayUncheckedAtPut:
+	).
 ]
 
 { #category : #'native code emition' }
@@ -355,6 +380,31 @@ OCLowcodeASTTranslator >> emitMessageNode: aMessageNode [
 
 ]
 
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitNativeNew: messageNode [
+	| type valueType |
+	type := messageNode propertyAt: #type.
+	valueType := type pointed.
+	methodBuilder
+		lowcodePushConstantUInt32: valueType size;
+		lowcodeMalloc32.
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitNativeNewArray: messageNode [
+	self halt
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitNativeNullPointer: messageNode [
+	methodBuilder lowcodePushNullPointer
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitNativePointerCast: messageNode [
+	self halt
+]
+
 { #category : #'inline messages factored' }
 OCLowcodeASTTranslator >> emitOr: aMessageNode [
 
@@ -372,6 +422,73 @@ OCLowcodeASTTranslator >> emitOr: aMessageNode [
 	self emitConversionFrom: argumentType returnType to: LowcodeType object.
 		
 	methodBuilder jumpAheadTarget: #end.
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitPointerDelete: messageNode [
+	messageNode isCascaded ifFalse: [
+		valueTranslator visitNode: messageNode receiver
+	].
+
+	methodBuilder
+		lowcodeFree;
+		pushLiteral: nil.
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitPointerMessage: messageNode [
+	| emitSelector |
+	emitSelector := PointerMessages at: messageNode selector.
+	^ self perform: emitSelector with: messageNode
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitPointerValue: messageNode [
+	| pointerType resultType |
+	pointerType := messageNode receiver propertyAt: #type.
+	resultType := messageNode propertyAt: #type.
+	messageNode isCascaded ifFalse: [
+		valueTranslator visitNode: messageNode receiver
+	].
+
+	(messageNode propertyAt: #referenceAsked) ifFalse: [
+		resultType emitMemoryValue: methodBuilder
+	].
+
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitPointerValueSet: messageNode [
+	| pointerType valueType value tempVar resultType |
+	pointerType := messageNode receiver propertyAt: #type.
+	value := messageNode arguments first.
+	resultType := messageNode propertyAt: #type.
+	valueType := value propertyAt: #type.
+	messageNode isCascaded ifFalse: [
+		valueTranslator visitNode: messageNode receiver
+	].
+
+	tempVar := methodBuilder generateTempOfType: pointerType.
+	pointerType emitLocalStoreAndPop: methodBuilder name: tempVar.
+	
+	valueTranslator visitNode: value.
+	(messageNode propertyAt: #referenceAsked) ifTrue: [ 
+		pointerType emitLocalValue: methodBuilder name: tempVar.
+		pointerType pointed emitMemoryStoreAndPop: methodBuilder valueType: valueType.
+	] ifFalse: [ 
+		self emitConversionFrom: valueType to: resultType.
+		resultType emitDuplicate: methodBuilder.
+		pointerType emitLocalValue: methodBuilder name: tempVar.
+		pointerType pointed emitMemoryStoreAndPop: methodBuilder valueType: resultType.
+	].
+
+]
+
+{ #category : #'native code emition' }
+OCLowcodeASTTranslator >> emitTypeMessage: messageNode [
+	| emitSelector |
+	emitSelector := TypeMessages at: messageNode selector.
+	^ self perform: emitSelector with: messageNode
 ]
 
 { #category : #initialization }

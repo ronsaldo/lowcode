@@ -78,7 +78,7 @@ OCLowcodeASTSemanticAnalyzer class >> initialize [
 		nativePointer: nativeNewType
 	).
 	ArrayMessages := Set newFrom: #(at: at:put: uncheckedAt: uncheckedAt:put:).
-	PointerMessages := Set newFrom: #(delete value value:).
+	PointerMessages := Set newFrom: #(delete value value: +).
 	
 	OptimizedInlineMessages := Dictionary new.
 	#(
@@ -397,8 +397,45 @@ OCLowcodeASTSemanticAnalyzer >> checkOptimizedInlineMessage: aMessageNode [
 ]
 
 { #category : #'message type checking' }
-OCLowcodeASTSemanticAnalyzer >> checkPointerMessage: aMessageNode [
-	self halt.
+OCLowcodeASTSemanticAnalyzer >> checkPointerMessage: messageNode [
+	| selector type resultType |
+	selector := messageNode selector.
+	(ArrayMessages includes: selector) ifTrue: [ 
+		^ self checkArrayMessage: messageNode
+	].
+
+	(PointerMessages includes: messageNode selector) ifFalse: [ 
+		^ self checkNormalMessage: messageNode
+	].
+
+	messageNode propertyAt: #nativeInline put: true.
+	messageNode propertyAt: #nativeInlineKind put: #Pointer.
+	
+	type := messageNode receiver propertyAt: #type.
+	resultType := type.
+	(#(value value:) includes: selector) ifTrue: [
+		resultType := type pointed.
+		messageNode propertyAt: #referenceAsked ifAbsentPut: false.
+		(resultType isReferenceType or: [ resultType canBePushedInTheStack not or: [messageNode propertyAt: #referenceAsked] ] ) ifTrue: [
+			messageNode propertyAt: #referenceAsked put: true.
+			resultType := resultType reference.
+		].
+	
+		messageNode arguments ifNotEmpty: [
+			self checkImplicitConversionFromNode: messageNode arguments first to: resultType.
+		].
+	].
+
+	(#(+ -) includes: selector) ifTrue: [ 
+		self halt.
+	].
+
+	#delete == selector ifTrue: [ 
+		resultType = LowcodeType object.
+	].
+
+	messageNode propertyAt: #type put: resultType.
+	
 ]
 
 { #category : #'message type checking' }
@@ -414,11 +451,14 @@ OCLowcodeASTSemanticAnalyzer >> checkSpecialConversionMessage: aMessageNode [
 
 { #category : #'message type checking' }
 OCLowcodeASTSemanticAnalyzer >> checkTypeMessage: messageNode [
-	| type |
+	| type resultTypeSelector resultType |
 	type := self parseTypeExpression: messageNode receiver value.
 	messageNode propertyAt: #nativeInline put: true.
 	messageNode propertyAt: #nativeInlineKind put: #Type.
-	self halt
+
+	resultTypeSelector := TypeMessages at: messageNode selector.
+	resultType := type perform: resultTypeSelector.
+	messageNode propertyAt: #type put: resultType.
 ]
 
 { #category : #'as yet unclassified' }

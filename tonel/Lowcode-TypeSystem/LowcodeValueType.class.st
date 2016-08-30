@@ -34,5 +34,5 @@ LowcodeValueType >> nativeNullPointer [
 
 { #category : #'native pointers' }
 LowcodeValueType >> nativePointer: address [
-	^ NativePointerBox new type: self; address: address
+	^ address asNativePointerBoxWithType: self
 ]

@@ -17,16 +17,6 @@ NativePointerBox class >> type: type pointer: pointer [
 ]
 
 { #category : #accessing }
-NativePointerBox >> address: anAddress [
-	anAddress isInteger ifTrue: [
-		pointer := ExternalAddress fromAddress: anAddress
-	] ifFalse: [
-		self assert: anAddress isExternalAddress.
-		pointer := anAddress
-	]
-]
-
-{ #category : #accessing }
 NativePointerBox >> at: index [
 	^ self uncheckedAt: index
 ]

@@ -221,6 +221,11 @@ LowcodeTypeAlias >> nativeNew: size [
 ]
 
 { #category : #'native pointers' }
+LowcodeTypeAlias >> nativeNewType [
+	^ aliasedType nativeNewType
+]
+
+{ #category : #'native pointers' }
 LowcodeTypeAlias >> nativeNullPointer [
 	^ aliasedType nativeNullPointer
 ]

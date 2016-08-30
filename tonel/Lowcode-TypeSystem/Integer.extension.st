@@ -9,3 +9,8 @@ Integer >> asLowcodeType [
 Integer >> asLowcodeTypeAtEnvironment: environment [
 	^ LowcodePlaceHolderType new index: self
 ]
+
+{ #category : #'*Lowcode-TypeSystem' }
+Integer >> asNativePointerBoxWithType: pointedType [
+	^ NativePointerBox type: pointedType pointer: (ExternalAddress fromAddress: self)
+]

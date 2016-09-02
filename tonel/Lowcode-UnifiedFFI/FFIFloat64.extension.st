@@ -14,6 +14,13 @@ FFIFloat64 >> emitLowcodeCallArgument: aBuilder [
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
+FFIFloat64 >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
+	self emitArgument: aBuilder context: aContext.
+	^ aBuilder
+		lowcodeOopToFloat64
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
 FFIFloat64 >> emitLowcodeReturn: builder [
 	self isPointer ifTrue: [ ^ super emitLowcodeReturn: builder ].
 	^ builder

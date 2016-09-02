@@ -14,6 +14,13 @@ FFIUInt64 >> emitLowcodeCallArgument: aBuilder [
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
+FFIUInt64 >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
+	^ aBuilder
+		pushTemp: tempName;
+		lowcodeOopToUInt64
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
 FFIUInt64 >> emitLowcodeReturn: builder [
 	self isPointer ifTrue: [ ^ super emitLowcodeReturn: builder ].
 	^ builder

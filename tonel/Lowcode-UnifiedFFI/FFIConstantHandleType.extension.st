@@ -5,7 +5,7 @@ FFIConstantHandleType >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: te
 	self assert: self isPointer not.
 	aBuilder
 		pushTemp: tempName.
-	self externalTypeSize = 4 ifTrue: [ 
+	self typeSize = 4 ifTrue: [ 
 		aBuilder lowcodeOopToUInt32.
 	] ifFalse: [
 		aBuilder lowcodeOopToUInt64.
@@ -15,7 +15,7 @@ FFIConstantHandleType >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: te
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIConstantHandleType >> emitLowcodeReturnConvertHandle: aBuilder [
-	self externalTypeSize = 4 ifTrue: [ 
+	self typeSize = 4 ifTrue: [ 
 		aBuilder
 			lowcodeUint32ToOop.
 	] ifFalse: [ 

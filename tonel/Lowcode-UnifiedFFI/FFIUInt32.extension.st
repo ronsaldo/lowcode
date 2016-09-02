@@ -2,8 +2,9 @@ Extension { #name : #FFIUInt32 }
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIUInt32 >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
-	self emitArgument: aBuilder context: aContext.
-	^ aBuilder lowcodeOopToUInt32
+	^ aBuilder
+		pushTemp: tempName;
+		lowcodeOopToUInt32
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }

@@ -81,7 +81,7 @@ FFIExternalString >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempNa
 		lowcodeLoadLocalPointer: cstring;
 		lowcodeLoadLocalInt32: sizeof;
 		lowcodePointerAddOffset32;
-		lowcodeStoreInt32ToMemory;
+		lowcodeStoreInt8ToMemory;
 		
 		"Use the string pointer"
 		lowcodeLoadLocalPointer: cstring

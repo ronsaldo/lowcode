@@ -4,3 +4,8 @@ Extension { #name : #UndefinedObject }
 UndefinedObject >> lowcodeFFICheckPointerOfType: pointerType [
 	^ self
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+UndefinedObject >> lowcodeFFICoerceInteger [
+	^ 0
+]

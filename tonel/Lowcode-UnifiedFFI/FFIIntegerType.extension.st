@@ -10,27 +10,30 @@ FFIIntegerType >> emitLowcode: builder performCall: functionAddress [
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIIntegerType >> emitLowcodeArgumentTempVar: aBuilder context: aContext [
 	self isPointer ifTrue: [ ^ super emitLowcodeArgumentTempVar: aBuilder context: aContext ].
-	^ nil
+	^ aBuilder generateOopTemp
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIIntegerType >> emitLowcodeArgumentTypeCheck: aBuilder temp: tempName context: aContext [
+	self isPointer ifTrue: [ ^ super emitLowcodeArgumentTypeCheck: aBuilder temp: tempName context: aContext ].
 	self loader emitArgument: aBuilder context: aContext.
 	aBuilder
-		lowcodeIsIntegerObject;
-		lowcodeBoolean32ToOop;
-		jumpAheadTo: #validInteger if: true;
-		pushReceiver;
-		pushLiteral: 'expected an integer argument';
-		send: #error:;
-		returnTop;
-		jumpAheadTarget: #validInteger.
+		send: #lowcodeFFICoerceInteger;
+		storeTemp: tempName;
+		popTop
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIIntegerType >> emitLowcodeCallArgument: aBuilder [
 	self isPointer ifTrue: [ ^ super emitLowcodeCallArgument: aBuilder ].
 	^ aBuilder lowcodeCallArgumentInt32
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIIntegerType >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
+	^ aBuilder
+		pushTemp: tempName;
+		lowcodeOopSmallIntegerToInt32
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }

@@ -63,8 +63,13 @@ FFIExternalType >> emitLowcodeMarshallPointerValue: aBuilder context: aContext [
 		send: #class;
 		pushLiteralVariable: ExternalAddress binding;
 		send: #==;
-		jumpAheadTo: #ifExternalAddress if: true; 
-			
+		jumpAheadTo: #ifExternalAddress if: true;
+		
+		"Test for alien pointer. Used by callbacks"
+		pushDup;
+		send: #lowcodeFFIIsAlienPointer;
+		jumpAheadTo: #ifAlienPointer if: true;
+		
 		"Test for bytes or words"
 		pushDup;
 		lowcodeIsWordsOrBytes;
@@ -81,6 +86,13 @@ FFIExternalType >> emitLowcodeMarshallPointerValue: aBuilder context: aContext [
 		jumpAheadTarget: #ifExternalAddress;
 		lowcodeOopToPointer;
 		jumpAheadTo: #convertedPointer;
+		
+		"Convert alien pointer"
+		jumpAheadTarget: #ifAlienPointer;
+		lowcodeFirstFieldPointer;
+		lowcodePointerAddConstantOffset: 4;
+		lowcodeLoadPointerFromMemory;
+		jumpAheadTo: #convertedPointer;
 
 		"Convert nil"
 		jumpAheadTarget: #ifNil;
@@ -94,6 +106,7 @@ FFIExternalType >> emitLowcodeMarshallPointerValue: aBuilder context: aContext [
 		jumpAheadTo: #convertedPointer;
 
 		"Converted pointer"
+		jumpAheadTarget: #convertedPointer;
 		jumpAheadTarget: #convertedPointer;
 		jumpAheadTarget: #convertedPointer;
 		jumpAheadTarget: #convertedPointer.

@@ -2,7 +2,7 @@ Extension { #name : #FFIExternalEnumerationType }
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIExternalEnumerationType >> emitLowcode: aBuilder performCall: functionAddress [
-	self externalTypeSize = 4 ifTrue: [ 
+	self typeSize = 4 ifTrue: [ 
 		aBuilder lowcodePerformCallInt32: functionAddress.
 	] ifFalse: [ 
 		aBuilder lowcodePerformCallInt64: functionAddress.
@@ -11,7 +11,7 @@ FFIExternalEnumerationType >> emitLowcode: aBuilder performCall: functionAddress
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIExternalEnumerationType >> emitLowcodeCallArgument: aBuilder [
-	self externalTypeSize = 4 ifTrue: [ 
+	self typeSize = 4 ifTrue: [ 
 		aBuilder lowcodeCallArgumentInt32.
 	] ifFalse: [ 
 		aBuilder lowcodeCallArgumentInt64.
@@ -23,7 +23,7 @@ FFIExternalEnumerationType >> emitLowcodeMarshallPrimitiveArgument: aBuilder tem
 	self assert: self isPointer not.
 	aBuilder
 		pushTemp: tempName.
-	self externalTypeSize = 4 ifTrue: [ 
+	self typeSize = 4 ifTrue: [ 
 		aBuilder lowcodeOopToUInt32.
 	] ifFalse: [
 		aBuilder lowcodeOopToUInt64.
@@ -33,7 +33,7 @@ FFIExternalEnumerationType >> emitLowcodeMarshallPrimitiveArgument: aBuilder tem
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIExternalEnumerationType >> emitLowcodeReturnConvertHandle: aBuilder [
-	self externalTypeSize = 4 ifTrue: [ 
+	self typeSize = 4 ifTrue: [ 
 		aBuilder
 			lowcodeUint32ToOop.
 	] ifFalse: [ 

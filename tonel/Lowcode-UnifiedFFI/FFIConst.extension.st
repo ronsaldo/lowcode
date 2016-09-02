@@ -1,6 +1,16 @@
 Extension { #name : #FFIConst }
 
 { #category : #'*Lowcode-UnifiedFFI' }
+FFIConst >> emitLowcodeArgumentTempVar: builder context: sender [
+	^ nil
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIConst >> emitLowcodeArgumentTypeCheck: builder temp: tempName context: aContext [
+	"Nothing to do"
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
 FFIConst >> emitLowcodeCallArgument: builder [
 	value == nil ifTrue: [
 		^ builder lowcodeCallArgumentPointer
@@ -19,7 +29,7 @@ FFIConst >> emitLowcodeCallArgument: builder [
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
-FFIConst >> emitLowcodeMarshallArgument: builder context: sender [
+FFIConst >> emitLowcodeMarshallArgument: builder temp: tempName context: sender [
 	value == nil ifTrue: [
 		^ builder lowcodePushNullPointer
 	].

@@ -7,12 +7,6 @@ FFIVoid >> emitLowcode: builder performCall: functionAddress [
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
-FFIVoid >> emitLowcodeNil: builder [
-	self isPointer ifTrue: [ ^ super emitLowcodeNil: builder ].
-	builder lowcodePushZero32
-]
-
-{ #category : #'*Lowcode-UnifiedFFI' }
 FFIVoid >> emitLowcodeReturn: builder [
 	self isPointer ifTrue: [ ^ super emitLowcodeReturn: builder ].
 	^ builder

@@ -1,22 +1,22 @@
-Extension { #name : #FFIUInt64 }
+Extension { #name : #FFIFloat32 }
 
 { #category : #'*Lowcode-UnifiedFFI' }
-FFIUInt64 >> emitLowcode: builder performCall: functionAddress [
+FFIFloat32 >> emitLowcode: builder performCall: functionAddress [
 	self isPointer ifTrue: [ ^ super emitLowcode: builder performCall: functionAddress ].
 	^ builder
-		lowcodePerformCallInt64: functionAddress
+		lowcodePerformCallFloat32: functionAddress
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
-FFIUInt64 >> emitLowcodeCallArgument: aBuilder [
+FFIFloat32 >> emitLowcodeCallArgument: aBuilder [
 	self isPointer ifTrue: [ ^ super emitLowcodeCallArgument: aBuilder ].
-	^ aBuilder lowcodeCallArgumentInt64
+	^ aBuilder lowcodeCallArgumentFloat32
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
-FFIUInt64 >> emitLowcodeReturn: builder [
+FFIFloat32 >> emitLowcodeReturn: builder [
 	self isPointer ifTrue: [ ^ super emitLowcodeReturn: builder ].
 	^ builder
-		lowcodeUint64ToOop;
+		lowcodeFloat32ToOop;
 		returnTop
 ]

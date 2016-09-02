@@ -10,7 +10,7 @@ Class {
 { #category : #'as yet unclassified' }
 LowcodeFFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 	"Builds a method call"
-	| externalFunction functionAddress |
+	| externalFunction functionAddress argumentTemps |
 	builder
 		numArgs: self method argumentNames size;
 		addTemps: self method argumentNames.
@@ -23,9 +23,16 @@ LowcodeFFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec
 	] ifFalse: [
 		functionAddress := externalFunction getHandle value.
 	].
+
+	argumentTemps := functionSpec arguments collect: [ :each | each emitLowcodeArgumentTempVar: builder context: sender ].
 	
-	functionSpec arguments
-		do: [ :each | each emitLowcodeMarshallArgument: builder context: sender ].
+	functionSpec arguments doWithIndex: [ :each :index |
+		each emitLowcodeArgumentTypeCheck: builder temp: (argumentTemps at: index) context: sender
+	].
+			
+	functionSpec arguments doWithIndex: [ :each :index |
+		each emitLowcodeMarshallArgument: builder temp: (argumentTemps at: index) context: sender
+	].
 
 	builder lowcodeBeginCall: self stackAlignment.
 	functionSpec arguments
@@ -38,7 +45,11 @@ LowcodeFFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec
 	] ifFalse: [
 		builder lowcodeEndCall.
 	].
-	
+
+	functionSpec arguments doWithIndex: [ :each :index |
+		each emitLowcodeCleanAndReturnArgument: builder temp: (argumentTemps at: index) context: sender
+	].
+		
 	^ functionSpec returnType
 		emitLowcodeReturn: builder.
 

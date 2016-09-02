@@ -8,8 +8,23 @@ Class {
 }
 
 { #category : #misc }
+LibCWithLowcode >> atof: string [
+	^ self ffiCall: #(double atof(String string)) module: LibC
+]
+
+{ #category : #misc }
+LibCWithLowcode >> atoi: string [
+	^ self ffiCall: #(int atoi(String string)) module: LibC
+]
+
+{ #category : #misc }
 LibCWithLowcode >> malloc: size [
 	^ self ffiCall: #(void *malloc(size_t size)) module: LibC
+]
+
+{ #category : #misc }
+LibCWithLowcode >> memCmp: first with: second size: n [
+	^ self ffiCall: #(int memcmp(const void *first, const void *second, size_t n)) module: LibC
 ]
 
 { #category : #misc }

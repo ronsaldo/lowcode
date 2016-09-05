@@ -23,6 +23,22 @@ IRLowcodeBuilder >> addNativeTemps: aNativeTempNamesWithSizes [
 ]
 
 { #category : #temporaries }
+IRLowcodeBuilder >> generateNativeTemp: size [
+	| tempSymbol |
+	tempSymbol := self generateSymbol.
+	self addNativeTemp: tempSymbol -> size.
+	^ tempSymbol
+]
+
+{ #category : #temporaries }
+IRLowcodeBuilder >> generateOopTemp [
+	| tempSymbol |
+	tempSymbol := self generateSymbol.
+	self addTemp: tempSymbol.
+	^ tempSymbol
+]
+
+{ #category : #temporaries }
 IRLowcodeBuilder >> generateSymbol [
 	gensymCount := gensymCount + 1.
 	^ ('gensym:' , gensymCount printString) asSymbol

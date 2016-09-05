@@ -1,6 +1,13 @@
 Extension { #name : #FFIExternalString }
 
 { #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalString >> emitLowcode: builder performCall: functionAddress [
+	self isPointer ifTrue: [ ^ super emitLowcode: builder performCall: functionAddress ].
+	^ builder
+		lowcodePerformCallPointer: functionAddress
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
 FFIExternalString >> emitLowcodeArgumentTempVar: builder context: aContext [
 	self isPointer ifTrue: [ ^ super emitLowcodeArgumentTempVar: builder context: aContext ].
 	^ { 
@@ -85,4 +92,21 @@ FFIExternalString >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempNa
 		
 		"Use the string pointer"
 		lowcodeLoadLocalPointer: cstring
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalString >> emitLowcodeReturn: builder [
+	| temp |
+	self isPointer ifTrue: [ ^ super emitLowcodeReturn: builder ].
+	temp := builder generateOopTemp.
+	^ builder
+		lowcodePointerToOop: ExternalAddress;
+		storeTemp: temp;
+		popTop;
+		pushLiteral: ExternalData;
+		pushTemp: temp;
+		pushLiteral: ExternalType char asPointerType;
+		send: #fromHandle:type:;
+		send: #fromCString;
+		returnTop
 ]

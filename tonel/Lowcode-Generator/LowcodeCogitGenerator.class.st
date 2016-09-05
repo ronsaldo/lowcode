@@ -11,8 +11,10 @@ Class {
 	],
 	#classVars : [
 		'CTypeForType',
+		'CogitClassName',
 		'FloatRegisters',
 		'IntegerRegisters',
+		'InterpreterClassName',
 		'PopMethodForType',
 		'PushMethodForType'
 	],
@@ -36,6 +38,8 @@ LowcodeCogitGenerator class >> initialize [
 	
 	IntegerRegisters := #(Arg1Reg SendNumArgsReg ClassReg ReceiverResultReg).
 	FloatRegisters := #(DPFPReg0 DPFPReg1 DPFPReg2 DPFPReg3 DPFPReg4 DPFPReg5 DPFPReg6 DPFPReg7).
+	CogitClassName := #StackToRegisterMappingCogit.
+	InterpreterClassName := #StackInterpreter.
 
 	PopMethodForType := Dictionary newFromPairs: #(
 		int32 internalPopStackInt32
@@ -230,7 +234,7 @@ LowcodeCogitGenerator >> beginCaseOf [
 LowcodeCogitGenerator >> beginInstructionMethod: selector [
 	self resetAllocatedRegisterNames.
 	
-	out nextPutAll: '!StackToRegisterMappingCogit methodsFor: ''inline primitive generators generated code'' !'; cr; cr.
+	out nextPut: $!; nextPutAll: CogitClassName; nextPutAll: ' methodsFor: ''inline primitive generators generated code'' !'; cr; cr.
 	out nextPutAll: selector; cr.
 	out tab; nextPutAll: '<option: #LowcodeVM>'.
 	out nextPutAll:
@@ -244,7 +248,7 @@ LowcodeCogitGenerator >> beginInstructionMethod: selector [
 LowcodeCogitGenerator >> beginInterpreterInstructionMethod: selector [
 	self resetAllocatedRegisterNames.
 	
-	out nextPutAll: '!StackInterpreter methodsFor: ''inline primitive generated code'' !'; cr; cr.
+	out nextPut: $!; nextPutAll: InterpreterClassName; nextPutAll: ' methodsFor: ''inline primitive generated code'' !'; cr; cr.
 	out nextPutAll: selector; cr.
 	out tab; nextPutAll: '<option: #LowcodeVM>'.
 	out nextPutAll:
@@ -284,8 +288,14 @@ LowcodeCogitGenerator >> checkReceiverRegisterLive [
 LowcodeCogitGenerator >> cleanExtendedArgument: arg [
 	| type |
 	type := arg type.
-	(((type = 'extend-a' or: [ type = 'literal' ]) or: [ type = 'local' ]) or: [ type = 'instance-var' ]) ifTrue: [ self emitIndentations. ^ out nextPutAll: 'extA := 0.'; cr. ].
-	(type = 'extend-b' or: [ type = 'label' ]) ifTrue: [ self emitIndentations. ^ out nextPutAll: 'extB := 0.'; cr. ].
+	(#('extend-a' 'literal' 'local' 'native-argument' 'instance-var') includes: type) ifTrue: [
+		self emitIndentations.
+		^ out nextPutAll: 'extA := 0.'; cr.
+	].
+	(type = 'extend-b' or: [ type = 'label' ]) ifTrue: [
+		self emitIndentations.
+		^ out nextPutAll: 'extB := 0.'; cr.
+	].
 	self error: 'Unknown extended argument.'
 ]
 
@@ -451,7 +461,7 @@ LowcodeCogitGenerator >> fetchExtendedArgument: argument [
 		^ self.
 	].
 
-	((type = 'extend-a' or: [type = 'local']) or: [type = 'instance-var']) ifTrue: [ var := 'extA' ].
+	(#('extend-a' 'local' 'native-argument' 'instance-var') includes: type) ifTrue: [ var := 'extA' ].
 	type = 'extend-b' ifTrue: [ var := 'extB' ].
 	self emitIndentations.
 	out nextPutAll: argument name , ' := ' , var , '.'; cr
@@ -476,7 +486,7 @@ LowcodeCogitGenerator >> fetchInterpreterExtendedArgument: argument [
 		^ self.
 	].
 
-	((type = 'extend-a' or: [type = 'local']) or: [type = 'instance-var']) ifTrue: [ var := 'extA' ].
+	(#('extend-a' 'local' 'native-argument' 'instance-var') includes: type) ifTrue: [ var := 'extA' ].
 	type = 'extend-b' ifTrue: [ var := 'extB' ].
 	out tab; nextPutAll: argument name , ' := ' , var , '.'; cr
 ]

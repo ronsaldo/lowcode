@@ -23,6 +23,7 @@ LowcodeOpalCompilerGenerator class >> initialize [
 	TypeMap := Dictionary newFromPairs: #(
 		literal literal:
 		local extendA:
+		'native-argument' nativeArgument:
 		'instance-var' extendA:
 		'extend-a' extendA:
 		'extend-b' extendB:

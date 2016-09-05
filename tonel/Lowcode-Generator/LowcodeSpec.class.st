@@ -30,7 +30,7 @@ LowcodeSpec class >> generateOpcodes [
 	self generateOpcodes
 	"
 |spec sortedInstructions currentArity arityCount arity arityStart arityDiffs |
-spec := LowcodeSpecLoader fromFileNamed: 'old-lowcode.xml'.
+spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
 sortedInstructions := spec instructions sort: [ :a :b |
 	a oopStackDifference = b oopStackDifference ifTrue: [
 		a mnemonic < b mnemonic
@@ -79,7 +79,10 @@ LowcodeSpec class >> todoList [
 	"
 	|spec|
 	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
-	((spec instructions select: [ :ins | (ins hasSemanticFor: 'Smalltalk/Cog') not and: [(ins hasSemanticFor: 'Smalltalk/Cog/32') not]]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
+	((spec instructions select: [ :ins |
+		(ins hasSemanticFor: 'Smalltalk/Cog') not and:
+		[(ins hasSemanticFor: 'Smalltalk/Cog/32') not and:
+		[(ins hasSemanticFor: 'Smalltalk/Cog/Raw') not]]]) sorted: [ :a :b | a mnemonic < b mnemonic ]) inspect 
 ]
 
 { #category : #scripts }

@@ -14,7 +14,7 @@ LowcodeFFICalloutAPI class >> install [
 
 { #category : #actions }
 LowcodeFFICalloutAPI class >> uninstall [
-	FFICalloutAPI calloutAPIClass: FFICalloutAPI defaultCalloutAPIClas
+	FFICalloutAPI calloutAPIClass: FFICalloutAPI defaultCalloutAPIClass
 ]
 
 { #category : #action }

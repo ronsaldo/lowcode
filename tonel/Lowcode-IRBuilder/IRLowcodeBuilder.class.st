@@ -60,7 +60,7 @@ IRLowcodeBuilder >> ir [
 		(ins ~~ localFrameInstruction and: [ ins isLowcodeInstruction ]) ifTrue: [ hasLowcodeInstructions := true ].
 	].
 	hasLowcodeInstructions ifFalse: [
-		localFrameInstruction sequence remove: localFrameInstruction
+		self removeLowcodeStuff.
 	].
 	^ super ir
 ]
@@ -1528,4 +1528,14 @@ IRLowcodeBuilder >> pushScope: aScope [
 	nativeScope := (IRLowcodeScope on: aScope builder: self).
 	currentScope ifNotEmpty: [ nativeScope parentLowcodeScope: self currentScope ].
 	^ super pushScope: nativeScope.
+]
+
+{ #category : #accessing }
+IRLowcodeBuilder >> removeLowcodeStuff [
+	| lowcodeTempNames |
+	localFrameInstruction sequence remove: localFrameInstruction.
+	lowcodeTempNames := self currentScope tempMap keys select: [:key | key beginsWith: #__lowcode].
+	lowcodeTempNames size == self currentScope tempMap size ifTrue: [
+		self currentScope tempMap removeAll.
+	].
 ]

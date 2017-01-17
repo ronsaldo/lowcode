@@ -41,3 +41,12 @@ FFIExternalEnumerationType >> emitLowcodeReturnConvertHandle: aBuilder [
 			lowcodeUint64ToOop.
 	].	
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalEnumerationType >> lowcodeValueRegisterMarshaller [
+	self typeSize = 4 ifTrue: [ 
+		^ LowcodeFFIRegisterMarshallerInt32 new
+	] ifFalse: [
+		^ LowcodeFFIRegisterMarshallerInt64 new
+	].	
+]

@@ -23,3 +23,12 @@ FFIConstantHandleType >> emitLowcodeReturnConvertHandle: aBuilder [
 			lowcodeUint64ToOop.
 	].	
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIConstantHandleType >> lowcodeValueRegisterMarshaller [
+	self typeSize = 4 ifTrue: [ 
+		^ LowcodeFFIRegisterMarshallerInt32 new
+	] ifFalse: [
+		^ LowcodeFFIRegisterMarshallerInt64 new
+	].	
+]

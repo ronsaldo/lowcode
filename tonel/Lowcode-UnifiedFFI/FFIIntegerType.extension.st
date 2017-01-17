@@ -43,3 +43,13 @@ FFIIntegerType >> emitLowcodeReturn: builder [
 		lowcodeSmallInt32ToOop;
 		returnTop
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIIntegerType >> lowcodeValueParameterClass [
+	^ #integer
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIIntegerType >> lowcodeValueRegisterMarshaller [
+	^ LowcodeFFIRegisterMarshallerInt32 new
+]

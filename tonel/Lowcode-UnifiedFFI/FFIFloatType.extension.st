@@ -20,3 +20,8 @@ FFIFloatType >> emitLowcodeArgumentTypeCheck: aBuilder temp: tempName context: a
 		returnTop;
 		jumpAheadTarget: #validFloat.
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIFloatType >> lowcodeValueParameterClass [
+	^ #float
+]

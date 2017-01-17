@@ -110,3 +110,13 @@ FFIExternalString >> emitLowcodeReturn: builder [
 		send: #fromCString;
 		returnTop
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalString >> lowcodeValueParameterClass [
+	^ #integer
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalString >> lowcodeValueRegisterMarshaller [
+	^ LowcodeFFIRegisterMarshallerPointer new
+]

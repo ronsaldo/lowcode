@@ -4,13 +4,16 @@ I am a FFI method builder that uses Lowcode for doing callouts.
 Class {
 	#name : #LowcodeFFICalloutMethodBuilder,
 	#superclass : #FFICalloutMethodBuilder,
+	#instVars : [
+		'callingConvention'
+	],
 	#category : #'Lowcode-UnifiedFFI-Core'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #private }
 LowcodeFFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 	"Builds a method call"
-	| externalFunction functionAddress argumentTemps |
+	| externalFunction functionAddress argumentTemps actualArguments integerRegisters floatRegisters registerArguments stackArguments usedIntegerRegisters usedFloatRegisters |
 	builder
 		numArgs: self method argumentNames size;
 		addTemps: self method argumentNames.
@@ -29,21 +32,76 @@ LowcodeFFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec
 	functionSpec arguments doWithIndex: [ :each :index |
 		each emitLowcodeArgumentTypeCheck: builder temp: (argumentTemps at: index) context: sender
 	].
-			
-	functionSpec arguments doWithIndex: [ :each :index |
-		each emitLowcodeMarshallArgument: builder temp: (argumentTemps at: index) context: sender
+
+	actualArguments := self processArguments: functionSpec arguments withNativeTemps: argumentTemps.
+	integerRegisters := callingConvention integerRegisterParameters.
+	floatRegisters := callingConvention floatRegisterParameters.
+	
+	registerArguments := OrderedCollection new.
+	stackArguments := OrderedCollection new.
+	usedIntegerRegisters := 0.
+	usedFloatRegisters := 0.
+	actualArguments do: [ :arg |
+		(arg parameterClass == #register and:
+		[ usedIntegerRegisters + arg integerRegisterCount <= integerRegisters size and:
+		[ usedFloatRegisters + arg floatRegisterCount <= floatRegisters size]]) ifTrue: [
+			usedIntegerRegisters := usedIntegerRegisters + arg integerRegisterCount.
+			usedFloatRegisters := usedFloatRegisters + arg floatRegisterCount.
+			registerArguments add: arg
+		] ifFalse: [
+			stackArguments add: arg.
+		]
+	].
+	
+	registerArguments reverseDo: [ :each |
+		each argument emitLowcodeMarshallArgument: builder temp: each temp context: sender.
+		
+		"Do some further marshalling"
+		each registerMarshallers size to: 1 by: -1 do: [ :i |
+			i > 1 ifTrue: [
+				builder lowcodeDuplicatePointer.
+			].
+			(each registerMarshallers at: i) marshallRegisterParameterWith: builder
+		].
+	].
+
+	stackArguments do: [ :each |
+		each argument emitLowcodeMarshallArgument: builder temp: each temp context: sender
 	].
 
 	builder lowcodeBeginCall: self stackAlignment.
-	functionSpec arguments
-		reverseDo: [ :each | each emitLowcodeCallArgument: builder ].
+	stackArguments
+		reverseDo: [ :each | each argument emitLowcodeCallArgument: builder ].
 		
+	registerArguments ifNotEmpty: [
+		builder lowcodeLockRegisters.
+		usedIntegerRegisters := 0.
+		usedFloatRegisters := 0.
+		
+		registerArguments do: [ :argument |
+			argument registerMarshallers do: [ :marshaller |
+				marshaller registerKind == #integer ifTrue: [
+					usedIntegerRegisters := usedIntegerRegisters + 1.
+					marshaller passRegister: (integerRegisters at: usedIntegerRegisters) with: builder
+				] ifFalse: [
+					self assert: marshaller registerKind == #float.
+					usedFloatRegisters := usedFloatRegisters + 1.
+					marshaller passRegister: (floatRegisters at: usedFloatRegisters) with: builder
+				]
+			]
+		]
+	].
+	
 	functionSpec returnType emitLowcode: builder performCall: functionAddress.
 
-	calloutAPI callingConvention == #stdcall ifTrue: [
-		builder lowcodeEndCallNoCleanup.		
-	] ifFalse: [
+	registerArguments ifNotEmpty: [
+		builder lowcodeUnlockRegisters.
+	].
+
+	callingConvention isStackCleanedByCaller ifTrue: [
 		builder lowcodeEndCall.
+	] ifFalse: [
+		builder lowcodeEndCallNoCleanup.
 	].
 
 	functionSpec arguments doWithIndex: [ :each :index |
@@ -66,7 +124,7 @@ LowcodeFFICalloutMethodBuilder >> generateLowcodeSpecialTemporaries: builder [
 	).
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #private }
 LowcodeFFICalloutMethodBuilder >> generateMethodFromSpec: functionSpec [
 	| ir |
 	ir := IRLowcodeBuilder buildIR: [ :builder |
@@ -78,6 +136,63 @@ LowcodeFFICalloutMethodBuilder >> generateMethodFromSpec: functionSpec [
 		setSignFlag;
 		setFrameBit: true; 
 		yourself
+]
+
+{ #category : #initialization }
+LowcodeFFICalloutMethodBuilder >> initialize [
+	super initialize.
+	callingConvention := LowcodeABI current callingConventionNamed: calloutAPI callingConvention.
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeFFICalloutMethodBuilder >> processArgument: rawArgument tempName: rawTemp into: result [
+	| parameterClass rawSize integerRegisterCount floatRegisterCount registerKinds registerMarshallers |
+	parameterClass := rawArgument lowcodeParameterClass.
+	rawSize := rawArgument typeSize.
+	integerRegisterCount := 0.
+	floatRegisterCount := 0.
+	registerMarshallers := #().
+	
+	(parameterClass = #integer and: [rawSize <= callingConvention maxIntegerRegisterSize]) ifTrue: [
+		parameterClass := #register.
+		integerRegisterCount := 1.
+		registerMarshallers := { rawArgument lowcodeRegisterMarshaller }.
+	] ifFalse: [ 
+		(parameterClass = #float and: [rawSize <= callingConvention maxFloatRegisterSize]) ifTrue: [
+			parameterClass := #register.
+			floatRegisterCount := 1.
+			registerMarshallers := { rawArgument lowcodeRegisterMarshaller }.
+		] ifFalse: [
+			parameterClass := #memory
+		]
+	].
+
+	(callingConvention areStructuresSplitInRegisters and: [ parameterClass == #structure ]) ifTrue: [ 
+		self halt.
+	] ifFalse: [
+		result add: (LowcodeFFIArgumentDescription new
+			argument: rawArgument;
+			size: rawSize;
+			parameterClass: parameterClass;
+			temp: rawTemp;
+			integerRegisterCount: integerRegisterCount;
+			floatRegisterCount: floatRegisterCount;
+			registerMarshallers: registerMarshallers;
+			yourself)
+	]
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeFFICalloutMethodBuilder >> processArguments: arguments withNativeTemps: argumentTemps [
+	"Some structures have to be split into registers, so lets split them."
+	| result rawTemp |
+	result := OrderedCollection new.
+	arguments doWithIndex: [ :rawArgument :index |
+		rawTemp := argumentTemps at: index.
+		self processArgument: rawArgument tempName: rawTemp into: result.
+	].
+
+	^ result
 ]
 
 { #category : #'as yet unclassified' }

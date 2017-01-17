@@ -20,3 +20,8 @@ FFISizeT >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName contex
 		pushTemp: tempName.
 	^ self pointerSize = 4 ifTrue: [ aBuilder lowcodeOopToUInt32 ] ifFalse: [ aBuilder lowcodeOopToUInt64 ]
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFISizeT >> lowcodeValueRegisterMarshaller [
+	^ self pointerSize = 4 ifTrue: [ LowcodeFFIRegisterMarshallerInt32 new ] ifFalse: [ LowcodeFFIRegisterMarshallerInt64 new ]
+]

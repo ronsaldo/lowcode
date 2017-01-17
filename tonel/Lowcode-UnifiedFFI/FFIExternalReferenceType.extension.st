@@ -72,3 +72,13 @@ FFIExternalReferenceType >> emitLowcodeReturn: aBuilder [
 FFIExternalReferenceType >> emitLowcodeReturnConvertHandle: aBuilder [
 	aBuilder lowcodePointerToOop: ExternalAddress
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalReferenceType >> lowcodeValueParameterClass [
+	^ #integer
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalReferenceType >> lowcodeValueRegisterMarshaller [
+	^ LowcodeFFIRegisterMarshallerPointer new
+]

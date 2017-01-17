@@ -33,3 +33,13 @@ FFIOop >> emitLowcodeReturn: builder [
 	^ builder
 		lowcodePointerToOop: ExternalAddress
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIOop >> lowcodeValueParameterClass [
+	^ #integer
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIOop >> lowcodeValueRegisterMarshaller [
+	^ LowcodeFFIRegisterMarshallerPointer new
+]

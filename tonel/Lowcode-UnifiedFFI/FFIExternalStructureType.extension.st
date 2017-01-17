@@ -50,3 +50,8 @@ FFIExternalStructureType >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp:
 		pushTemp: tempName.
 	self emitLowcodeMarshallPointerValue: aBuilder context: aContext
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalStructureType >> lowcodeValueParameterClass [
+	^ #structure
+]

@@ -27,3 +27,8 @@ FFIFloat64 >> emitLowcodeReturn: builder [
 		lowcodeFloat64ToOop;
 		returnTop
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIFloat64 >> lowcodeValueRegisterMarshaller [
+	^ LowcodeFFIRegisterMarshallerFloat64 new
+]

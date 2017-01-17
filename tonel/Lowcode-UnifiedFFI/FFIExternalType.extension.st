@@ -132,3 +132,23 @@ FFIExternalType >> emitLowcodeReturn: builder [
 		send: #fromHandle:type:;
 		returnTop
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalType >> lowcodeParameterClass [
+	^ self isPointer ifTrue: [ #integer ] ifFalse: [ self lowcodeValueParameterClass ]
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalType >> lowcodeRegisterMarshaller [
+	^ self isPointer ifTrue: [ LowcodeFFIRegisterMarshallerPointer new ] ifFalse: [ self lowcodeValueRegisterMarshaller ]
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalType >> lowcodeValueParameterClass [
+	self subclassResponsibility
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalType >> lowcodeValueRegisterMarshaller [
+	self subclassResponsibility
+]

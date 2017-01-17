@@ -57,3 +57,13 @@ FFIBool >> emitLowcodeReturn: builder [
 		lowcodeBoolean32ToOop;
 		returnTop
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIBool >> lowcodeValueParameterClass [
+	^ #integer
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIBool >> lowcodeValueRegisterMarshaller [
+	^ LowcodeFFIRegisterMarshallerInt32 new
+]

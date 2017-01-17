@@ -27,3 +27,8 @@ FFIUInt64 >> emitLowcodeReturn: builder [
 		lowcodeUint64ToOop;
 		returnTop
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIUInt64 >> lowcodeValueRegisterMarshaller [
+	^ LowcodeFFIRegisterMarshallerInt64 new
+]

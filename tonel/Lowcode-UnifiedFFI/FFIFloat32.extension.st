@@ -27,3 +27,8 @@ FFIFloat32 >> emitLowcodeReturn: builder [
 		lowcodeFloat32ToOop;
 		returnTop
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIFloat32 >> lowcodeValueRegisterMarshaller [
+	^ LowcodeFFIRegisterMarshallerFloat32 new
+]

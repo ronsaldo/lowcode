@@ -57,5 +57,14 @@ FFIConst >> emitLowcodeMarshallArgument: builder temp: tempName context: sender 
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIConst >> lowcodeValueParameterClass [
-	^ value isFloat ifTrue: [ #float ] ifFalse: [#integer]
+	^ value isFloat ifTrue: [
+		self typeSize > 4
+			ifTrue: [LowcodeFFIRegisterMarshallerFloat64 new]
+			ifFalse: [LowcodeFFIRegisterMarshallerFloat32 new]
+	] ifFalse: [
+		self typeSize > 4
+			ifTrue: [LowcodeFFIRegisterMarshallerInt64 new]
+			ifFalse: [LowcodeFFIRegisterMarshallerInt32 new]
+	]
+
 ]

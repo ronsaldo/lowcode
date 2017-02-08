@@ -30,8 +30,8 @@ FFIExternalStructureType >> emitLowcodeArgumentTypeCheck: aBuilder temp: tempNam
 
 		jumpAheadTarget: #validStructure;
 		
-		lowcodeLoadObjectField: (self objectClass instVarIndexFor: self instanceVariableName 
-			ifAbsent: [ self error: 'No ', self instanceVariableName, ' instVar' ]) - 1;
+		lowcodeLoadObjectField: (self objectClass instVarIndexFor: #handle 
+			ifAbsent: [ self error: 'No handle instVar' ]) - 1;
 			
 		storeTemp: tempName;
 		popTop.

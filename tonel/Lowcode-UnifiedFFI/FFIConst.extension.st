@@ -54,3 +54,8 @@ FFIConst >> emitLowcodeMarshallArgument: builder temp: tempName context: sender 
 
 	^ self error: 'constant type not supported.'
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+FFIConst >> lowcodeValueParameterClass [
+	^ value isFloat ifTrue: [ #float ] ifFalse: [#integer]
+]

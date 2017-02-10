@@ -146,7 +146,7 @@ LowcodeFFICalloutMethodBuilder >> initialize [
 
 { #category : #'as yet unclassified' }
 LowcodeFFICalloutMethodBuilder >> processArgument: rawArgument tempName: rawTemp into: result [
-	| parameterClass rawSize integerRegisterCount floatRegisterCount registerKinds registerMarshallers |
+	| parameterClass rawSize integerRegisterCount floatRegisterCount registerMarshallers |
 	parameterClass := rawArgument lowcodeParameterClass.
 	rawSize := rawArgument typeSize.
 	integerRegisterCount := 0.
@@ -163,23 +163,23 @@ LowcodeFFICalloutMethodBuilder >> processArgument: rawArgument tempName: rawTemp
 			floatRegisterCount := 1.
 			registerMarshallers := { rawArgument lowcodeRegisterMarshaller }.
 		] ifFalse: [
-			parameterClass := #memory
+			(callingConvention areStructuresSplitInRegisters and: [ parameterClass == #structure ]) 				ifTrue: [ 
+				self halt.
+			] ifFalse: [
+				parameterClass := #memory
+			]
 		]
 	].
 
-	(callingConvention areStructuresSplitInRegisters and: [ parameterClass == #structure ]) ifTrue: [ 
-		self halt.
-	] ifFalse: [
-		result add: (LowcodeFFIArgumentDescription new
-			argument: rawArgument;
-			size: rawSize;
-			parameterClass: parameterClass;
-			temp: rawTemp;
-			integerRegisterCount: integerRegisterCount;
-			floatRegisterCount: floatRegisterCount;
-			registerMarshallers: registerMarshallers;
-			yourself)
-	]
+	result add: (LowcodeFFIArgumentDescription new
+		argument: rawArgument;
+		size: rawSize;
+		parameterClass: parameterClass;
+		temp: rawTemp;
+		integerRegisterCount: integerRegisterCount;
+		floatRegisterCount: floatRegisterCount;
+		registerMarshallers: registerMarshallers;
+		yourself)
 ]
 
 { #category : #'as yet unclassified' }

@@ -68,7 +68,7 @@ FFIExternalType >> emitLowcodeMarshallPointerValue: aBuilder context: aContext [
 		"Test for alien pointer. Used by callbacks"
 		pushDup;
 		send: #lowcodeFFIIsAlienPointer;
-		jumpAheadTo: #ifAlienPointer if: true;
+		jumpAheadTo: #ifAlienObject if: true;
 		
 		"Test for bytes or words"
 		pushDup;
@@ -88,9 +88,10 @@ FFIExternalType >> emitLowcodeMarshallPointerValue: aBuilder context: aContext [
 		jumpAheadTo: #convertedPointer;
 		
 		"Convert alien pointer"
-		jumpAheadTarget: #ifAlienPointer;
+		jumpAheadTarget: #ifAlienObject;
 		lowcodeFirstFieldPointer;
-		lowcodePointerAddConstantOffset: 4;
+		"TODO: Check the size of the alien"
+		lowcodePointerAddConstantOffset: self pointerSize;
 		lowcodeLoadPointerFromMemory;
 		jumpAheadTo: #convertedPointer;
 

@@ -294,7 +294,9 @@ LowcodeCogitGenerator >> cleanExtendedArgument: arg [
 	].
 	(type = 'extend-b' or: [ type = 'label' ]) ifTrue: [
 		self emitIndentations.
-		^ out nextPutAll: 'extB := 0.'; cr.
+		out nextPutAll: 'extB := 0.'; cr.
+		self emitIndentations.
+		^ out nextPutAll: 'numExtB := 0.'; cr.
 	].
 	self error: 'Unknown extended argument.'
 ]

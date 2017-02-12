@@ -60,7 +60,7 @@ IRLowcodeBuilder >> ir [
 		(ins ~~ localFrameInstruction and: [ ins isLowcodeInstruction ]) ifTrue: [ hasLowcodeInstructions := true ].
 	].
 	hasLowcodeInstructions ifFalse: [
-		self removeLowcodeStuff.
+		localFrameInstruction sequence remove: localFrameInstruction
 	].
 	^ super ir
 ]
@@ -950,74 +950,110 @@ IRLowcodeBuilder >> lowcodeOr64 [
 	self add: (IRInstruction lowcodeInstruction: 1146)
 ]
 
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallFloat32: aFunction [
+	self
+		lowcodePerformCallout: aFunction;
+		lowcodePushCalloutResultFloat32
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallFloat64: aFunction [
+	self
+		lowcodePerformCallout: aFunction;
+		lowcodePushCalloutResultFloat64
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallIndirectFloat32 [
+	self
+		lowcodePerformCalloutIndirect;
+		lowcodePushCalloutResultFloat32
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallIndirectFloat64 [
+	self
+		lowcodePerformCalloutIndirect;
+		lowcodePushCalloutResultFloat64
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallIndirectInt32 [
+	self
+		lowcodePerformCalloutIndirect;
+		lowcodePushCalloutResultInt32
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallIndirectInt64 [
+	self
+		lowcodePerformCalloutIndirect;
+		lowcodePushCalloutResultInt64
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallIndirectPointer [
+	self
+		lowcodePerformCalloutIndirect;
+		lowcodePushCalloutResultPointer
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallIndirectStructure: structureSize [
+	self
+		lowcodePerformCalloutIndirect;
+		lowcodePushCalloutResultPointer
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallIndirectVoid [
+	self
+		lowcodePerformCalloutIndirect
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallInt32: aFunction [
+	self
+		lowcodePerformCallout: aFunction;
+		lowcodePushCalloutResultInt32
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallInt64: aFunction [
+	self
+		lowcodePerformCallout: aFunction;
+		lowcodePushCalloutResultInt64
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallPointer: aFunction [
+	self
+		lowcodePerformCallout: aFunction;
+		lowcodePushCalloutResultPointer
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallStructure: aFunction structureSize: structureSize [
+	self
+		lowcodePerformCallout: aFunction;
+		lowcodePushCalloutResultPointer
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePerformCallVoid: aFunction [
+	self
+		lowcodePerformCallout: aFunction
+]
+
 { #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallFloat32: a1Nfunction [
+IRLowcodeBuilder >> lowcodePerformCallout: a1Nfunction [
 	self add: (IRInstruction lowcodeInstruction: 1147 extendA: a1Nfunction)
 ]
 
 { #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallFloat64: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1148 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectFloat32 [
-	self add: (IRInstruction lowcodeInstruction: 1149)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectFloat64 [
-	self add: (IRInstruction lowcodeInstruction: 1150)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectInt32 [
-	self add: (IRInstruction lowcodeInstruction: 1151)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectInt64 [
-	self add: (IRInstruction lowcodeInstruction: 1152)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectPointer [
-	self add: (IRInstruction lowcodeInstruction: 1153)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectStructure: a1NstructureSize [
-	self add: (IRInstruction lowcodeInstruction: 1154 extendA: a1NstructureSize)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectVoid [
-	self add: (IRInstruction lowcodeInstruction: 1155)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallInt32: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1156 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallInt64: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1157 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallPointer: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1158 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallStructure: a1Nfunction structureSize: a2NstructureSize [
-	self add: (IRInstruction lowcodeInstruction: 1159 extendA: a1Nfunction extendB: a2NstructureSize)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallVoid: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1160 extendA: a1Nfunction)
+IRLowcodeBuilder >> lowcodePerformCalloutIndirect [
+	self add: (IRInstruction lowcodeInstruction: 1148)
 ]
 
 { #category : #'lowcode instructions' }
@@ -1103,6 +1139,31 @@ IRLowcodeBuilder >> lowcodePopMultipleNative: a1NpopSize [
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodePopPointer [
 	self add: (IRInstruction lowcodeInstruction: 1174)
+]
+
+{ #category : #'lowcode instructions' }
+IRLowcodeBuilder >> lowcodePushCalloutResultFloat32 [
+	self add: (IRInstruction lowcodeInstruction: 1149)
+]
+
+{ #category : #'lowcode instructions' }
+IRLowcodeBuilder >> lowcodePushCalloutResultFloat64 [
+	self add: (IRInstruction lowcodeInstruction: 1150)
+]
+
+{ #category : #'lowcode instructions' }
+IRLowcodeBuilder >> lowcodePushCalloutResultInt32 [
+	self add: (IRInstruction lowcodeInstruction: 1151)
+]
+
+{ #category : #'lowcode instructions' }
+IRLowcodeBuilder >> lowcodePushCalloutResultInt64 [
+	self add: (IRInstruction lowcodeInstruction: 1152)
+]
+
+{ #category : #'lowcode instructions' }
+IRLowcodeBuilder >> lowcodePushCalloutResultPointer [
+	self add: (IRInstruction lowcodeInstruction: 1153)
 ]
 
 { #category : #'lowcode instructions' }
@@ -1528,14 +1589,4 @@ IRLowcodeBuilder >> pushScope: aScope [
 	nativeScope := (IRLowcodeScope on: aScope builder: self).
 	currentScope ifNotEmpty: [ nativeScope parentLowcodeScope: self currentScope ].
 	^ super pushScope: nativeScope.
-]
-
-{ #category : #accessing }
-IRLowcodeBuilder >> removeLowcodeStuff [
-	| lowcodeTempNames |
-	localFrameInstruction sequence remove: localFrameInstruction.
-	lowcodeTempNames := self currentScope tempMap keys select: [:key | key beginsWith: #__lowcode].
-	lowcodeTempNames size == self currentScope tempMap size ifTrue: [
-		self currentScope tempMap removeAll.
-	].
 ]

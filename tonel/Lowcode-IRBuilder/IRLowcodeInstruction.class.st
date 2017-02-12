@@ -209,20 +209,13 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 		1144	not64
 		1145	or32
 		1146	or64
-		1147	performCallFloat32
-		1148	performCallFloat64
-		1149	performCallIndirectFloat32
-		1150	performCallIndirectFloat64
-		1151	performCallIndirectInt32
-		1152	performCallIndirectInt64
-		1153	performCallIndirectPointer
-		1154	performCallIndirectStructure
-		1155	performCallIndirectVoid
-		1156	performCallInt32
-		1157	performCallInt64
-		1158	performCallPointer
-		1159	performCallStructure
-		1160	performCallVoid
+		1147	performCallout
+		1148	performCalloutIndirect
+		1149	pushCalloutResultFloat32
+		1150	pushCalloutResultFloat64
+		1151	pushCalloutResultInt32
+		1152	pushCalloutResultInt64
+		1153	pushCalloutResultPointer
 		1161	plaftormCode
 		1162	pointerAddConstantOffset
 		1163	pointerAddOffset32

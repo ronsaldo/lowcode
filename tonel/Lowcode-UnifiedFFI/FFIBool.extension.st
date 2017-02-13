@@ -10,7 +10,7 @@ FFIBool >> emitLowcode: builder performCall: functionAddress [
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIBool >> emitLowcodeArgumentTempVar: builder context: aContext [
 	self isPointer ifTrue: [ ^ super emitLowcodeArgumentTempVar: builder context: aContext ].
-	^ nil
+	^ builder generateOopTemp
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
@@ -18,23 +18,10 @@ FFIBool >> emitLowcodeArgumentTypeCheck: aBuilder temp: tempName context: aConte
 	self isPointer ifTrue: [ ^ super emitLowcodeArgumentTypeCheck: aBuilder temp: tempName context: aContext ].
 	self loader emitArgument: aBuilder context: aContext.
 	aBuilder
-		pushDup;
-		pushLiteral: true;
-		send: #==;
-		jumpAheadTo: #validBoolean if: true;
-
-		pushDup;
-		pushLiteral: false;
-		send: #==;
-		jumpAheadTo: #validBoolean if: true;
+		send: #lowcodeFFICoerceBoolean;
+		storeTemp: tempName;
+		popTop
 		
-		pushReceiver;
-		pushLiteral: 'expected a boolean argument';
-		send: #error;
-		returnTop;
-		
-		jumpAheadTarget: #validBoolean;
-		jumpAheadTarget: #validBoolean.
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
@@ -47,6 +34,7 @@ FFIBool >> emitLowcodeCallArgument: aBuilder [
 FFIBool >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
 	self emitArgument: aBuilder context: aContext.
 	^ aBuilder
+		pushTemp: tempName;
 		lowcodeOopToBoolean32
 ]
 

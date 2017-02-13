@@ -10,7 +10,7 @@ FFICharacterType >> emitLowcode: builder performCall: functionAddress [
 { #category : #'*Lowcode-UnifiedFFI' }
 FFICharacterType >> emitLowcodeArgumentTempVar: aBuilder context: aContext [
 	self isPointer ifTrue: [ ^ super emitLowcodeArgumentTempVar: aBuilder context: aContext ].
-	^ aBuilder generateNativeTemp: 4
+	^ aBuilder generateOopTemp
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
@@ -18,17 +18,9 @@ FFICharacterType >> emitLowcodeArgumentTypeCheck: aBuilder temp: tempName contex
 	self isPointer ifTrue: [ ^ super emitLowcodeArgumentTypeCheck: aBuilder temp: tempName context: aContext ].
 	self loader emitArgument: aBuilder context: aContext.
 	aBuilder
-		pushDup;
-		send: #isCharacter;
-		jumpAheadTo: #validCharacter if: true;
-		pushReceiver;
-		pushLiteral: 'expected a character.';
-		send: #error:;
-		
-		jumpAheadTarget: #validCharacter;
-		send: #charCode;
-		lowcodeOopSmallIntegerToInt32;
-		lowcodeStoreLocalInt32: tempName.
+		send: #lowcodeFFICoerceCharacter;
+		storeTemp: tempName;
+		popTop
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
@@ -39,8 +31,9 @@ FFICharacterType >> emitLowcodeCallArgument: aBuilder [
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFICharacterType >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
-	"Already marshalled"
-	^ aBuilder
+	aBuilder 
+		pushTemp: tempName;
+		lowcodeOopSmallIntegerToInt32
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }

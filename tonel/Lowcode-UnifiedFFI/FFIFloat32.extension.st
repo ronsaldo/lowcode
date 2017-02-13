@@ -17,6 +17,7 @@ FFIFloat32 >> emitLowcodeCallArgument: aBuilder [
 FFIFloat32 >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
 	self emitArgument: aBuilder context: aContext.
 	^ aBuilder
+		pushTemp: tempName;
 		lowcodeOopToFloat32
 ]
 

@@ -17,6 +17,7 @@ FFIFloat64 >> emitLowcodeCallArgument: aBuilder [
 FFIFloat64 >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
 	self emitArgument: aBuilder context: aContext.
 	^ aBuilder
+		pushTemp: tempName;
 		lowcodeOopToFloat64
 ]
 

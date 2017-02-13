@@ -13,7 +13,8 @@ FFIExternalString >> emitLowcodeArgumentTempVar: builder context: aContext [
 	^ { 
 		"ByteString" builder generateOopTemp .
 		"Sizeof" builder generateNativeTemp: 4 .
-		"C String pointer" builder generateNativeTemp: self pointerSize
+		"C String pointer" builder generateNativeTemp: self pointerSize.
+		"Is string?" builder generateOopTemp.
 	}
 ]
 
@@ -22,19 +23,10 @@ FFIExternalString >> emitLowcodeArgumentTypeCheck: aBuilder temp: tempName conte
 	self isPointer ifTrue: [ ^ super emitLowcodeArgumentTypeCheck: aBuilder temp: tempName context: aContext ].
 	self loader emitArgument: aBuilder context: aContext.
 	aBuilder
-		pushDup;
-		"Check is string"
-		send: #isString;
-		jumpAheadTo: #isString if: true;
-		pushReceiver;
-		pushLiteral: 'expected a string argument.';
-		send: #error:;
-		returnTop;
-		jumpAheadTarget: #isString;
-
-		"Convert to byte string."
-		send: #asByteString;
+		send: #lowcodeFFICoerceString;
 		storeTemp: tempName first;
+		send: #isString;
+		storeTemp: tempName fourth;
 		popTop.
 ]
 
@@ -50,18 +42,24 @@ FFIExternalString >> emitLowcodeCleanAndReturnArgument: builder temp: tempVar co
  ].
 
 	builder
+		pushTemp: tempVar fourth;
+		jumpAheadTo: #dontFreeString if: false;
 		lowcodeLoadLocalPointer: tempVar third;
-		lowcodeFree
+		lowcodeFree;
+		jumpAheadTarget: #dontFreeString
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIExternalString >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
-	| byteString sizeof cstring |
+	| byteString sizeof cstring isString |
 	self assert: self isPointer not.
 	byteString := tempName first.
 	sizeof := tempName second.
 	cstring := tempName third.
+	isString := tempName fourth.
 	aBuilder
+		pushTemp: isString;
+		jumpAheadTo: #ifNotAString if: false;
 		"Get the size of"
 		pushTemp: byteString;
 		lowcodeByteSizeOf;
@@ -91,7 +89,16 @@ FFIExternalString >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempNa
 		lowcodeStoreInt8ToMemory;
 		
 		"Use the string pointer"
-		lowcodeLoadLocalPointer: cstring
+		lowcodeLoadLocalPointer: cstring;
+		jumpAheadTo: #stringCoerced;
+		
+		"Non string case. This could be a buffer."
+		jumpAheadTarget: #ifNotAString;
+		pushTemp: byteString.
+	super emitLowcodeMarshallPointerValue: aBuilder context: aContext.
+	
+	aBuilder
+		jumpAheadTarget: #stringCoerced
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }

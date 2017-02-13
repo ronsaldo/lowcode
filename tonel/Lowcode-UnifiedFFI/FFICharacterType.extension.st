@@ -37,6 +37,11 @@ FFICharacterType >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempNam
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
+FFICharacterType >> emitLowcodePointerReturnPostprocess: builder [
+	pointerArity = 1 ifTrue: [ builder send: #readString ].
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
 FFICharacterType >> emitLowcodeReturn: builder [
 	self isPointer ifTrue: [ ^ super emitLowcodeReturn: builder ].
 	^ builder

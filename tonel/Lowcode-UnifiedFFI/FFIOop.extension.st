@@ -25,7 +25,7 @@ FFIOop >> emitLowcodeCallArgument: aBuilder [
 { #category : #'*Lowcode-UnifiedFFI' }
 FFIOop >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName context: aContext [
 	self emitArgument: aBuilder context: aContext.
-	^ aBuilder lowcodeFirstFieldPointer
+	^ self emitLowcodeMarshallPointerValue: aBuilder context: aContext
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }

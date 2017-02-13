@@ -26,6 +26,11 @@ Object >> lowcodeFFICoerceInteger [
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
+Object >> lowcodeFFICoerceString [
+	 self error: 'expected a string argument'
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
 Object >> lowcodeFFIIsAlienPointer [
 	^ false
 ]

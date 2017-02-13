@@ -119,18 +119,26 @@ FFIExternalType >> emitLowcodeMarshallPrimitiveArgument: aBuilder temp: tempName
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
+FFIExternalType >> emitLowcodePointerReturnPostprocess: builder [
+	"By default, do nothing."
+]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
 FFIExternalType >> emitLowcodeReturn: builder [
 	| temp |
 	self assert: self isPointer.
 	temp := builder generateOopTemp.
-	^ builder
+	builder
 		lowcodePointerToOop: ExternalAddress;
 		storeTemp: temp;
 		popTop;
 		pushLiteral: ExternalData;
 		pushTemp: temp;
 		pushLiteral: self externalTypeWithArity;
-		send: #fromHandle:type:;
+		send: #fromHandle:type:.
+		
+	self emitLowcodePointerReturnPostprocess: builder.
+	^ builder
 		returnTop
 ]
 

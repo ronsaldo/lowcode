@@ -4,3 +4,8 @@ Extension { #name : #ByteString }
 ByteString >> lowcodeFFICheckPointerOfType: type [
 	^ self
 ]
+
+{ #category : #'*Lowcode-UnifiedFFI' }
+ByteString >> lowcodeFFICoerceString [
+	^ self
+]

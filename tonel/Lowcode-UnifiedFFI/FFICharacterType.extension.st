@@ -51,11 +51,6 @@ FFICharacterType >> emitLowcodeReturn: builder [
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
-FFICharacterType >> lowcodeValueParameterClass [
-	^ #integer
-]
-
-{ #category : #'*Lowcode-UnifiedFFI' }
 FFICharacterType >> lowcodeValueRegisterMarshaller [
 	^ LowcodeFFIRegisterMarshallerInt32 new
 ]

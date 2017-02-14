@@ -47,11 +47,6 @@ FFIBool >> emitLowcodeReturn: builder [
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
-FFIBool >> lowcodeValueParameterClass [
-	^ #integer
-]
-
-{ #category : #'*Lowcode-UnifiedFFI' }
 FFIBool >> lowcodeValueRegisterMarshaller [
 	^ LowcodeFFIRegisterMarshallerInt32 new
 ]

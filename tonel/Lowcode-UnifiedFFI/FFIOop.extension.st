@@ -35,11 +35,6 @@ FFIOop >> emitLowcodeReturn: builder [
 ]
 
 { #category : #'*Lowcode-UnifiedFFI' }
-FFIOop >> lowcodeValueParameterClass [
-	^ #integer
-]
-
-{ #category : #'*Lowcode-UnifiedFFI' }
 FFIOop >> lowcodeValueRegisterMarshaller [
 	^ LowcodeFFIRegisterMarshallerPointer new
 ]

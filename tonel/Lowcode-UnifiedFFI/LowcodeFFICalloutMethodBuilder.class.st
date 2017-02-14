@@ -147,7 +147,7 @@ LowcodeFFICalloutMethodBuilder >> initialize [
 { #category : #'as yet unclassified' }
 LowcodeFFICalloutMethodBuilder >> processArgument: rawArgument tempName: rawTemp into: result [
 	| parameterClass rawSize integerRegisterCount floatRegisterCount registerMarshallers |
-	parameterClass := rawArgument lowcodeParameterClass.
+	parameterClass := rawArgument stackParameterClass.
 	rawSize := rawArgument typeSize.
 	integerRegisterCount := 0.
 	floatRegisterCount := 0.

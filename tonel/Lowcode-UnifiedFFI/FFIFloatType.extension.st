@@ -15,8 +15,3 @@ FFIFloatType >> emitLowcodeArgumentTypeCheck: aBuilder temp: tempName context: a
 		storeTemp: tempName;
 		popTop
 ]
-
-{ #category : #'*Lowcode-UnifiedFFI' }
-FFIFloatType >> lowcodeValueParameterClass [
-	^ #float
-]

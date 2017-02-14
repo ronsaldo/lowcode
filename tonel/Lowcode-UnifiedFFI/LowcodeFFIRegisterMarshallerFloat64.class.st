@@ -8,6 +8,13 @@ Class {
 }
 
 { #category : #marshalling }
+LowcodeFFIRegisterMarshallerFloat64 >> dereferencePointerWith: builder [
+	builder
+		lowcodePointerAddConstantOffset: structureMember offset;
+		lowcodeLoadFloat64FromMemory.
+]
+
+{ #category : #marshalling }
 LowcodeFFIRegisterMarshallerFloat64 >> passRegister: aRegister with: builder [
 	builder lowcodeMoveFloat64ToPhysical: aRegister
 ]

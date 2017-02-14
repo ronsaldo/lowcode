@@ -24,6 +24,12 @@ LowcodeCallingConvention >> areStructuresSplitInRegisters [
 ]
 
 { #category : #accessing }
+LowcodeCallingConvention >> computeStructureRegisterPassingLayout: aStructureClass [
+	^ nil
+	
+]
+
+{ #category : #accessing }
 LowcodeCallingConvention >> floatRegisterParameters [
 	self subclassResponsibility
 ]
@@ -65,5 +71,10 @@ LowcodeCallingConvention >> shadowStackSpace [
 
 { #category : #accessing }
 LowcodeCallingConvention >> stackAlignment [
+	self subclassResponsibility
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeCallingConvention >> structureFieldRegisterMarshaller: aStructureField [
 	self subclassResponsibility
 ]

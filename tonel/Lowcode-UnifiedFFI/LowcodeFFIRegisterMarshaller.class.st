@@ -17,12 +17,12 @@ LowcodeFFIRegisterMarshaller >> dereferencePointerWith: builder [
 
 { #category : #initialization }
 LowcodeFFIRegisterMarshaller >> initialize [
-	structureMember := false.
+	structureMember := nil.
 ]
 
 { #category : #marshalling }
 LowcodeFFIRegisterMarshaller >> marshallRegisterParameterWith: builder [
-	structureMember ifTrue: [ self dereferencePointerWith: builder ]
+	structureMember ifNotNil: [ self dereferencePointerWith: builder ]
 ]
 
 { #category : #marshalling }

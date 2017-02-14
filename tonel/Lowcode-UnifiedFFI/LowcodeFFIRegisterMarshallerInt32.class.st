@@ -8,6 +8,13 @@ Class {
 }
 
 { #category : #marshalling }
+LowcodeFFIRegisterMarshallerInt32 >> dereferencePointerWith: builder [
+	builder
+		lowcodePointerAddConstantOffset: structureMember offset;
+		lowcodeLoadInt32FromMemory.
+]
+
+{ #category : #marshalling }
 LowcodeFFIRegisterMarshallerInt32 >> passRegister: aRegister with: builder [
 	builder lowcodeMoveInt32ToPhysical: aRegister
 ]

@@ -15,6 +15,14 @@ LowcodeX64SystemVCallingConvention >> areStructuresSplitInRegisters [
 ]
 
 { #category : #accessing }
+LowcodeX64SystemVCallingConvention >> computeStructureRegisterPassingLayout: aStructureClass [
+	| layout |
+	aStructureClass structureSize > self maxStructureSplitSize ifTrue: [ ^ nil ].
+	layout := aStructureClass flatStructureLayout sysVAMD64PostProcess.
+	^ layout isPassedInMemory ifTrue: [ nil ] ifFalse: [ layout ]
+]
+
+{ #category : #accessing }
 LowcodeX64SystemVCallingConvention >> floatRegisterParameters [
 	^ { XMM0 . XMM1 . XMM2 . XMM3 . XMM4 . XMM5 . XMM6 . XMM7 }
 ]
@@ -31,7 +39,7 @@ LowcodeX64SystemVCallingConvention >> isStackCleanedByCaller [
 
 { #category : #accessing }
 LowcodeX64SystemVCallingConvention >> maxStructureSplitSize [
-	^ 32
+	^ 16
 ]
 
 { #category : #accessing }
@@ -42,4 +50,17 @@ LowcodeX64SystemVCallingConvention >> shadowStackSpace [
 { #category : #accessing }
 LowcodeX64SystemVCallingConvention >> stackAlignment [
 	^ 16
+]
+
+{ #category : #'as yet unclassified' }
+LowcodeX64SystemVCallingConvention >> structureFieldRegisterMarshaller: aStructureField [
+	aStructureField registerClass == #integer ifTrue: [ 
+		^ LowcodeFFIRegisterMarshallerInt64 new
+			structureMember: aStructureField
+	] ifFalse: [
+		self assert: aStructureField registerClass == #float.
+		^ LowcodeFFIRegisterMarshallerFloat64 new
+			structureMember: aStructureField
+	]
+
 ]

@@ -13,7 +13,7 @@ Class {
 { #category : #private }
 LowcodeFFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec [
 	"Builds a method call"
-	| externalFunction functionAddress argumentTemps actualArguments integerRegisters floatRegisters registerArguments stackArguments usedIntegerRegisters usedFloatRegisters |
+	| externalFunction functionAddress argumentTemps actualArguments integerRegisters floatRegisters registerArguments stackArguments usedIntegerRegisters usedFloatRegisters structurePointerTemp |
 	builder
 		numArgs: self method argumentNames size;
 		addTemps: self method argumentNames.
@@ -55,11 +55,15 @@ LowcodeFFICalloutMethodBuilder >> generateFFICallout: builder spec: functionSpec
 	
 	registerArguments reverseDo: [ :each |
 		each argument emitLowcodeMarshallArgument: builder temp: each temp context: sender.
+		each registerMarshallers size > 1 ifTrue: [
+			structurePointerTemp := builder generateNativeTemp: Smalltalk wordSize.
+			builder lowcodeStoreLocalPointer: structurePointerTemp
+		].
 		
 		"Do some further marshalling"
 		each registerMarshallers size to: 1 by: -1 do: [ :i |
-			i > 1 ifTrue: [
-				builder lowcodeDuplicatePointer.
+			each registerMarshallers size > 1 ifTrue: [
+				builder lowcodeLoadLocalPointer: structurePointerTemp
 			].
 			(each registerMarshallers at: i) marshallRegisterParameterWith: builder
 		].
@@ -146,7 +150,7 @@ LowcodeFFICalloutMethodBuilder >> initialize [
 
 { #category : #'as yet unclassified' }
 LowcodeFFICalloutMethodBuilder >> processArgument: rawArgument tempName: rawTemp into: result [
-	| parameterClass rawSize integerRegisterCount floatRegisterCount registerMarshallers |
+	| parameterClass rawSize integerRegisterCount floatRegisterCount registerMarshallers structureRegisterLayout |
 	parameterClass := rawArgument stackParameterClass.
 	rawSize := rawArgument typeSize.
 	integerRegisterCount := 0.
@@ -163,8 +167,15 @@ LowcodeFFICalloutMethodBuilder >> processArgument: rawArgument tempName: rawTemp
 			floatRegisterCount := 1.
 			registerMarshallers := { rawArgument lowcodeRegisterMarshaller }.
 		] ifFalse: [
-			(callingConvention areStructuresSplitInRegisters and: [ parameterClass == #structure ]) 				ifTrue: [ 
-				self halt.
+			(parameterClass == #structure and:
+			 [ callingConvention areStructuresSplitInRegisters and:
+				[ (structureRegisterLayout := callingConvention computeStructureRegisterPassingLayout: rawArgument objectClass) isNotNil ]]) ifTrue: [ 
+				integerRegisterCount := structureRegisterLayout integerRegisterCount.
+				floatRegisterCount := structureRegisterLayout floatRegisterCount.
+				registerMarshallers := structureRegisterLayout fields collect: [ :structureField |
+					callingConvention structureFieldRegisterMarshaller: structureField
+				].
+				parameterClass := #register
 			] ifFalse: [
 				parameterClass := #memory
 			]

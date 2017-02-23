@@ -144,6 +144,43 @@ ConfigurationOfLowcode >> baseline01: spec [
 
 ]
 
+{ #category : #baselines }
+ConfigurationOfLowcode >> baseline02: spec [
+	<version: '0.2-baseline'>
+
+	spec for: #'common' do: [
+		spec blessing: #'baseline'.
+		spec repository: 'http://smalltalkhub.com/mc/ronsaldo/Lowcode/main'.
+		spec project: 'XMLParser' with: [
+				spec
+					className: #ConfigurationOfXMLParser;
+					versionString: #'stable';
+					repository: 'http://smalltalkhub.com/mc/PharoExtras/XMLParser/main/' ].
+		spec 
+			package: 'Lowcode-Generator' with: [
+				spec requires: #('XMLParser' ). ];
+			package: #'Lowcode-IRBuilder';
+			package: #'Lowcode-OpalCompiler' with: [
+				spec requires: #(#'Lowcode-IRBuilder' #'Lowcode-TypeSystem' ). ];
+			package: #'Lowcode-OpalTest' with: [
+				spec requires: #('Lowcode-OpalCompiler' ). ];
+			package: #'Lowcode-Runtime' with: [
+				spec postLoadDoIt: #postloadForRuntime:package: ];
+			package: #'Lowcode-TypeSystem' with: [
+				spec requires: #(#'Lowcode-IRBuilder' )];
+			package: #'Lowcode-UnifiedFFI' with: [
+				spec requires: #(#'Lowcode-IRBuilder' 'Lowcode-Runtime'). ].
+		spec
+			group: 'Runtime' with: #(#'Lowcode-Runtime' );
+			group: 'Core' with: #(#'Runtime' #'Lowcode-IRBuilder'  );
+			group: 'OpalCompiler' with: #(#'Core' #'Lowcode-TypeSystem' #'Lowcode-OpalCompiler' );
+			group: 'Generator' with: #(#'Core' #'Lowcode-Generator' );
+			group: 'UnifiedFFI' with: #(#'Core' #'Lowcode-UnifiedFFI');
+			group: 'WithOpalCompiler' with: #('Core' 'UnifiedFFI' 'OpalCompiler');
+			group: 'default' with: #('UnifiedFFI')].
+
+]
+
 { #category : #accessing }
 ConfigurationOfLowcode >> customProjectAttributes [
 	 "Edit to return a collection of any custom attributes e.g. for conditional loading: Array with: #'Condition1' with: #'Condition2.
@@ -156,8 +193,13 @@ ConfigurationOfLowcode >> customProjectAttributes [
 ConfigurationOfLowcode >> development: spec [
 	<symbolicVersion: #'development'>
 
-	spec for: #'common' version: '0.1-baseline'.
+	spec for: #'common' version: '0.2-baseline'.
 
+]
+
+{ #category : #'as yet unclassified' }
+ConfigurationOfLowcode >> postloadForRuntime: loader package: packageSpec [
+	Smalltalk recreateSpecialObjectsArray
 ]
 
 { #category : #accessing }
@@ -171,4 +213,33 @@ ConfigurationOfLowcode >> project [
 		(Smalltalk at: #MetacelloVersionConstructor) on: self project: project.
 		project loadType: #linear. "change to #atomic if desired"
 		project ]
+]
+
+{ #category : #'symbolic versions' }
+ConfigurationOfLowcode >> stable: spec [
+	<symbolicVersion: #'stable'>
+
+	spec for: #'common' version: '0.1'.
+
+]
+
+{ #category : #versions }
+ConfigurationOfLowcode >> version01: spec [
+	<version: '0.1' imports: #('0.2-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 0.1'.
+		spec author: 'RonieSalgado'.
+		spec timestamp: '2/23/2017 04:56'.
+		spec project: 'XMLParser' with: '3.0.1'.
+		spec 
+			package: 'Lowcode-Generator' with: 'Lowcode-Generator-RonieSalgado.46';
+			package: #'Lowcode-IRBuilder' with: 'Lowcode-IRBuilder-RonieSalgado.15';
+			package: #'Lowcode-OpalCompiler' with: 'Lowcode-OpalCompiler-RonieSalgado.40';
+			package: #'Lowcode-OpalTest' with: #'Lowcode-OpalTest-RonieSalgado.3';
+			package: #'Lowcode-Runtime' with: 'Lowcode-Runtime-RonieSalgado.1';
+			package: #'Lowcode-TypeSystem' with: 'Lowcode-TypeSystem-RonieSalgado.40';
+			package: #'Lowcode-UnifiedFFI' with: 'Lowcode-UnifiedFFI-RonieSalgado.14'. ].
+
 ]

@@ -8,8 +8,37 @@ Class {
 		'aliased',
 		'allocate'
 	],
+	#classVars : [
+		'RegisterSignature64On32Map',
+		'RegisterSignatureMap'
+	],
 	#category : #'Lowcode-Generator'
 }
+
+{ #category : #initialization }
+LowcodeSpecArgument class >> initialize [
+	RegisterSignatureMap := Dictionary newFromPairs: #(
+		"oop Oop"
+		oop Integer
+		int32 Integer
+		int64 Integer
+		pointer Integer
+		
+		float32 Float
+		float64 Float
+	).
+	
+	RegisterSignature64On32Map := Dictionary newFromPairs: #(
+		"oop Oop"
+		oop Integer
+		int32 Integer
+		int64 #(Integer Integer)
+		pointer Integer
+		
+		float32 Float
+		float64 Float
+	)
+]
 
 { #category : #accessing }
 LowcodeSpecArgument >> aliased [
@@ -108,6 +137,16 @@ LowcodeSpecArgument >> name: anObject [
 { #category : #'as yet unclassified' }
 LowcodeSpecArgument >> printOn: aStream [
 	aStream nextPutAll: type , ' ' , name
+]
+
+{ #category : #accessing }
+LowcodeSpecArgument >> registerSignature [
+	^ RegisterSignatureMap at: type
+]
+
+{ #category : #accessing }
+LowcodeSpecArgument >> registerSignature64On32 [
+	^ RegisterSignature64On32Map at: type
 ]
 
 { #category : #accessing }

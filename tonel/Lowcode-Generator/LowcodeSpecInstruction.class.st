@@ -186,9 +186,62 @@ LowcodeSpecInstruction >> opcode: anObject [
 	opcode := anObject
 ]
 
+{ #category : #'register signature' }
+LowcodeSpecInstruction >> prettyPrintRegisterSignature: registerSignature [
+	| count lastElement |
+	count := 0.
+	lastElement := nil.
+	^ ByteString streamContents: [ :out |
+		registerSignature do: [ :element |
+			(element ~= lastElement and: [ lastElement isNotNil ]) ifTrue: [ 
+				out nextPutAll: lastElement.
+				count > 1 ifTrue: [ out print: count ].
+				count := 0.
+			].
+		
+			lastElement := element.
+			count := count + 1.
+		].
+	
+		lastElement ifNotNil: [ 
+			out nextPutAll: lastElement.
+			count > 1 ifTrue: [ out print: count ].
+		]
+	]
+]
+
+{ #category : #'register signature' }
+LowcodeSpecInstruction >> prettyRegisterSignature [
+	^ self prettyPrintRegisterSignature: self registerSignature
+]
+
+{ #category : #'register signature' }
+LowcodeSpecInstruction >> prettyRegisterSignature64On32 [
+	^ self prettyPrintRegisterSignature: self registerSignature64On32
+]
+
 { #category : #'as yet unclassified' }
 LowcodeSpecInstruction >> printOn: aStream [
 	aStream nextPutAll: mnemonic , ' := ' , opcode printString
+]
+
+{ #category : #'register signature' }
+LowcodeSpecInstruction >> registerSignature [
+	^ ((self stackArguments collect: #registerSignature) ,
+	(self stackResults reject: #aliased thenCollect: #registerSignature)) sorted
+]
+
+{ #category : #'register signature' }
+LowcodeSpecInstruction >> registerSignature64On32 [
+	^ (Array streamContents: [:out |
+		self stackArguments collect: #registerSignature64On32 thenDo: [:register |
+			register isArray ifTrue: [ out nextPutAll: register ] ifFalse: [ out nextPut: register ]
+		].
+		
+		(self stackResults reject: #aliased thenCollect: #registerSignature64On32) do: [:register |
+			register isArray ifTrue: [ out nextPutAll: register ] ifFalse: [ out nextPut: register ]
+		]
+	]) sorted
 ]
 
 { #category : #accessing }

@@ -10,6 +10,34 @@ Class {
 }
 
 { #category : #scripts }
+LowcodeSpec class >> computeRegisterSignatures [
+	| spec signatures |
+	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
+	signatures := Set new.
+	spec instructions do: [ :instruction |
+		signatures add: instruction prettyRegisterSignature
+	].
+
+	signatures := signatures collect: #yourself as: Array.
+	signatures sort.
+
+]
+
+{ #category : #scripts }
+LowcodeSpec class >> computeRegisterSignatures64On32 [
+	| spec signatures |
+	spec := LowcodeSpecLoader fromFileNamed: 'lowcode.xml'.
+	signatures := Set new.
+	spec instructions do: [ :instruction |
+		signatures add: instruction prettyRegisterSignature64On32
+	].
+
+	signatures := signatures collect: #yourself as: Array.
+	signatures sort.
+
+]
+
+{ #category : #scripts }
 LowcodeSpec class >> generateClassComments [
 	"
 	self generateClassComments

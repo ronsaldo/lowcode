@@ -18,8 +18,7 @@ Class {
 { #category : #initialization }
 LowcodeSpecArgument class >> initialize [
 	RegisterSignatureMap := Dictionary newFromPairs: #(
-		"oop Oop"
-		oop Integer
+		oop Oop
 		int32 Integer
 		int64 Integer
 		pointer Integer
@@ -29,8 +28,7 @@ LowcodeSpecArgument class >> initialize [
 	).
 	
 	RegisterSignature64On32Map := Dictionary newFromPairs: #(
-		"oop Oop"
-		oop Integer
+		oop Oop
 		int32 Integer
 		int64 #(Integer Integer)
 		pointer Integer

@@ -23,6 +23,15 @@ LowcodeSpecInstruction >> allArguments [
 	^ self arguments , self stackArguments , self stackResults
 ]
 
+{ #category : #'register signature' }
+LowcodeSpecInstruction >> allocatedRegisters [
+	stackArguments size == 0 ifTrue: [ 
+		^ {#() . stackResults reversed select: #allocate }
+	] ifFalse: [ 
+		^ {stackArguments reversed . (stackResults reversed reject: #aliased) }
+	]
+]
+
 { #category : #accessing }
 LowcodeSpecInstruction >> argumentEncodingCode [
 	encodingCode ifNil: [
@@ -95,6 +104,13 @@ LowcodeSpecInstruction >> description [
 LowcodeSpecInstruction >> description: anObject [
 	
 	description := anObject
+]
+
+{ #category : #'register signature' }
+LowcodeSpecInstruction >> flattenArray: anArray [
+	^ Array streamContents: [ :out |
+		anArray do: [ :el | el isArray ifTrue: [ out nextPutAll: el ] ifFalse: [ out nextPut: el ] ]
+	]
 ]
 
 { #category : #accessing }
@@ -188,6 +204,14 @@ LowcodeSpecInstruction >> opcode: anObject [
 
 { #category : #'register signature' }
 LowcodeSpecInstruction >> prettyPrintRegisterSignature: registerSignature [
+	| arg result |
+	arg := self prettyPrintRegisterSignaturePart: registerSignature first.
+	result :=  self prettyPrintRegisterSignaturePart: registerSignature second.
+	^ result ifNotEmpty: [ arg , 'Result', result ] ifEmpty: [ arg ]
+]
+
+{ #category : #'register signature' }
+LowcodeSpecInstruction >> prettyPrintRegisterSignaturePart: registerSignature [
 	| count lastElement |
 	count := 0.
 	lastElement := nil.
@@ -227,21 +251,12 @@ LowcodeSpecInstruction >> printOn: aStream [
 
 { #category : #'register signature' }
 LowcodeSpecInstruction >> registerSignature [
-	^ ((self stackArguments collect: #registerSignature) ,
-	(self stackResults reject: #aliased thenCollect: #registerSignature)) sorted
+	^ self allocatedRegisters collect: [:part | (part collect: #registerSignature) sorted]
 ]
 
 { #category : #'register signature' }
 LowcodeSpecInstruction >> registerSignature64On32 [
-	^ (Array streamContents: [:out |
-		self stackArguments collect: #registerSignature64On32 thenDo: [:register |
-			register isArray ifTrue: [ out nextPutAll: register ] ifFalse: [ out nextPut: register ]
-		].
-		
-		(self stackResults reject: #aliased thenCollect: #registerSignature64On32) do: [:register |
-			register isArray ifTrue: [ out nextPutAll: register ] ifFalse: [ out nextPut: register ]
-		]
-	]) sorted
+	^ self allocatedRegisters collect: [:part | (self flattenArray: (part collect: #registerSignature64On32)) sorted]
 ]
 
 { #category : #accessing }

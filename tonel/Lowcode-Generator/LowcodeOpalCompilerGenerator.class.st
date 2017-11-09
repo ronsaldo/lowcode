@@ -33,7 +33,14 @@ LowcodeOpalCompilerGenerator class >> initialize [
 { #category : #generation }
 LowcodeOpalCompilerGenerator >> compileIRBuilder: code [
 	Author useAuthor: 'Lowcode' during: [ 
-		(Smalltalk at: #IRLowcodeBuilder) compile: code classified: 'lowcode instructions' ].
+		Smalltalk globals at: #IRLowcodeBuilder ifPresent: [ :cls |
+			cls compile: code classified: 'lowcode instructions'
+		].
+
+		Smalltalk globals at: #SLVMPharoLowcodeFunctionCodeGenerator ifPresent: [ :cls |
+			cls compile: code classified: 'lowcode instructions'
+		] 
+	].
 ]
 
 { #category : #generation }

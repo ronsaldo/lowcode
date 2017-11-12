@@ -16,21 +16,21 @@ LowcodeMethodSaverBinaryReader >> next: aSize [
 LowcodeMethodSaverBinaryReader >> nextI16 [
 	| result |
 	result := self nextU16.
-	^ (result & 16r7fff) - (result & 16r8000)
+	^ (result bitAnd: 16r7fff) - (result bitAnd: 16r8000)
 ]
 
 { #category : #'as yet unclassified' }
 LowcodeMethodSaverBinaryReader >> nextI32 [
 	| result |
 	result := self nextU32.
-	^ (result & 16r7fffffff) - (result & 16r80000000)
+	^ (result bitAnd: 16r7fffffff) - (result bitAnd: 16r80000000)
 ]
 
 { #category : #'as yet unclassified' }
 LowcodeMethodSaverBinaryReader >> nextI8 [
 	| result |
 	result := self nextU8.
-	^ (result & 16r7f) - (result & 16r80)
+	^ (result bitAnd: 16r7f) - (result bitAnd: 16r80)
 ]
 
 { #category : #'as yet unclassified' }

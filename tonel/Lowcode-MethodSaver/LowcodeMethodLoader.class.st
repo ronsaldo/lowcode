@@ -14,16 +14,22 @@ LowcodeMethodLoader class >> fromFileNamed: aFileName [
 
 { #category : #'instance creation' }
 LowcodeMethodLoader >> fromFileNamed: aFileName [
-	aFileName asFileReference readStreamDo: [ :stream |
-		stream binary.
-		in := LowcodeMethodSaverBinaryReader new stream: stream.
-		^ self readCompiledMethod
-	]
+	| stream |
+	stream := FileStream fileNamed: aFileName.
+	stream binary.
+	in := LowcodeMethodSaverBinaryReader new stream: stream.
+	^ self readCompiledMethod
+
 ]
 
 { #category : #'instance creation' }
 LowcodeMethodLoader >> readAdditionalMethodState [
 	^ self readByteSymbol
+]
+
+{ #category : #'instance creation' }
+LowcodeMethodLoader >> readAssociation [
+	^ Association key: (self readLiteral) value: (self readLiteral)
 ]
 
 { #category : #'instance creation' }
@@ -40,6 +46,11 @@ LowcodeMethodLoader >> readByteString [
 { #category : #'instance creation' }
 LowcodeMethodLoader >> readByteSymbol [
 	^ self readByteString asSymbol
+]
+
+{ #category : #'instance creation' }
+LowcodeMethodLoader >> readClassVariable [
+	^ ClassVariableClass key: (self readLiteral) value: (self readLiteral)
 ]
 
 { #category : #'instance creation' }
@@ -67,7 +78,7 @@ LowcodeMethodLoader >> readCompiledMethod [
 
 { #category : #'instance creation' }
 LowcodeMethodLoader >> readGlobalVariable [
-	^ GlobalVariable key: (self readLiteral) value: (self readLiteral)
+	^ GlobalVariableClass key: (self readLiteral) value: (self readLiteral)
 ]
 
 { #category : #'instance creation' }

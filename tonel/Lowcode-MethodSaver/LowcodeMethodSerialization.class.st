@@ -2,6 +2,8 @@ Class {
 	#name : #LowcodeMethodSerialization,
 	#superclass : #Object,
 	#classVars : [
+		'ClassVariableClass',
+		'GlobalVariableClass',
 		'LiteralClasses'
 	],
 	#category : #'Lowcode-MethodSaver'
@@ -9,8 +11,13 @@ Class {
 
 { #category : #initialization }
 LowcodeMethodSerialization class >> initialize [
+	"
+	self initialize
+	"
 	super initialize.
 	
+	ClassVariableClass := Smalltalk at: #ClassVariable ifAbsent: [Association].
+	GlobalVariableClass := Smalltalk at: #GlobalVariable ifAbsent: [Association].
 	LiteralClasses := {
 		UndefinedObject .
 		True .
@@ -22,7 +29,7 @@ LowcodeMethodSerialization class >> initialize [
 		BoxedFloat64 .
 		AdditionalMethodState .
 		
-		ClassVariable .
-		GlobalVariable .
+		ClassVariableClass.
+		GlobalVariableClass
 	}
 ]

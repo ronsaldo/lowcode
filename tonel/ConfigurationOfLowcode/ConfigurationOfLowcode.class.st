@@ -219,8 +219,8 @@ ConfigurationOfLowcode >> project [
 ConfigurationOfLowcode >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'pharo6.x' version: '0.1'.
 	spec for: #'common' version: '0.2'.
+	spec for: #'pharo6.x' version: '0.1'.
 
 ]
 
@@ -251,9 +251,9 @@ ConfigurationOfLowcode >> version02: spec [
 
 	spec for: #'common' do: [
 		spec blessing: #'stable'.
-		spec description: 'version 0.1'.
+		spec description: 'version 0.2'.
 		spec author: 'RonieSalgado'.
-		spec timestamp: '2/23/2017 04:56'.
+		spec timestamp: '31/08/2018 15:12'.
 		spec project: 'XMLParser' with: '3.0.1'.
 		spec 
 			package: 'Lowcode-Generator' with: 'Lowcode-Generator-RonieSalgado.46';

@@ -1,7 +1,7 @@
-Extension { #name : #OpalEncoderForSistaV1 }
+Extension { #name : #EncoderForSistaV1 }
 
 { #category : #'*Lowcode-IRBuilder' }
-OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction [
+EncoderForSistaV1 >> genLowcodeInstruction: instruction [
 	instruction extendA ifNotNil: [ self genUnsignedMultipleExtendA: instruction extendA. ].
 	instruction extendB ifNotNil: [ self genLowcodeSignedMultipleExtendB: instruction extendB ].
 	
@@ -9,7 +9,7 @@ OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction [
 ]
 
 { #category : #'*Lowcode-IRBuilder' }
-OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction literal: literalIndex [
+EncoderForSistaV1 >> genLowcodeInstruction: instruction literal: literalIndex [
 	self genUnsignedMultipleExtendA: literalIndex.
 	instruction extendB ifNotNil: [ self genLowcodeSignedMultipleExtendB: instruction extendB ].
 	
@@ -17,7 +17,7 @@ OpalEncoderForSistaV1 >> genLowcodeInstruction: instruction literal: literalInde
 ]
 
 { #category : #'*Lowcode-IRBuilder' }
-OpalEncoderForSistaV1 >> genLowcodeSignedMultipleExtendB: value [
+EncoderForSistaV1 >> genLowcodeSignedMultipleExtendB: value [
 	(value between: -128 and: 127) ifFalse:
 		[self genLowcodeSignedMultipleExtendB: (value bitShift: -8)].
 	"225		11100001	sbbbbbbb	Extend B (Ext B = Ext B prev * 256 + Ext B)"

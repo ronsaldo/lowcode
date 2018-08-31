@@ -219,13 +219,35 @@ ConfigurationOfLowcode >> project [
 ConfigurationOfLowcode >> stable: spec [
 	<symbolicVersion: #'stable'>
 
-	spec for: #'common' version: '0.1'.
+	spec for: #'pharo6.x' version: '0.1'.
+	spec for: #'common' version: '0.2'.
 
 ]
 
 { #category : #versions }
 ConfigurationOfLowcode >> version01: spec [
 	<version: '0.1' imports: #('0.2-baseline' )>
+
+	spec for: #'common' do: [
+		spec blessing: #'stable'.
+		spec description: 'version 0.1'.
+		spec author: 'RonieSalgado'.
+		spec timestamp: '2/23/2017 04:56'.
+		spec project: 'XMLParser' with: '3.0.1'.
+		spec 
+			package: 'Lowcode-Generator' with: 'Lowcode-Generator-RonieSalgado.46';
+			package: #'Lowcode-IRBuilder' with: 'Lowcode-IRBuilder-RonieSalgado.15';
+			package: #'Lowcode-OpalCompiler' with: 'Lowcode-OpalCompiler-RonieSalgado.40';
+			package: #'Lowcode-OpalTest' with: #'Lowcode-OpalTest-RonieSalgado.3';
+			package: #'Lowcode-Runtime' with: 'Lowcode-Runtime-RonieSalgado.1';
+			package: #'Lowcode-TypeSystem' with: 'Lowcode-TypeSystem-RonieSalgado.40';
+			package: #'Lowcode-UnifiedFFI' with: 'Lowcode-UnifiedFFI-RonieSalgado.14'. ].
+
+]
+
+{ #category : #versions }
+ConfigurationOfLowcode >> version02: spec [
+	<version: '0.2' imports: #('0.2-baseline' )>
 
 	spec for: #'common' do: [
 		spec blessing: #'stable'.

@@ -39,3 +39,8 @@ BaselineOfLowcode >> baseline: spec [
 			group: 'default' with: #('UnifiedFFI')].
 
 ]
+
+{ #category : #'as yet unclassified' }
+BaselineOfLowcode >> postloadForRuntime: loader package: packageSpec [
+	Smalltalk recreateSpecialObjectsArray
+]

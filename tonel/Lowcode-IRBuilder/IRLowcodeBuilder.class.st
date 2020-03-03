@@ -11,6 +11,19 @@ Class {
 	#category : #'Lowcode-IRBuilder'
 }
 
+{ #category : #'as yet unclassified' }
+IRLowcodeBuilder class >> here: aBlock [
+	^ self buildIR: [ :builder |
+		| argumentNames |
+		argumentNames := thisContext sender method argumentNames.
+		builder
+			numArgs: argumentNames size;
+			addTemps: argumentNames;
+			addLowcodeRuntimeTemporaries.
+		aBlock value: builder
+	]
+]
+
 { #category : #adding }
 IRLowcodeBuilder >> addLowcodeRuntimeTemporaries [
 	self addTemps: #(

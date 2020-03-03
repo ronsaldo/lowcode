@@ -27,7 +27,7 @@ IRLowcodeBuilderTest class >> initialize [
 	DisassembleMethod := false
 ]
 
-{ #category : #tests }
+{ #category : #helper }
 IRLowcodeBuilderTest >> assertMethod: method withArguments: arguments equals: expectedResult [
 	| result |
 	result := self runMethod: method withArguments: arguments.
@@ -347,6 +347,27 @@ IRLowcodeBuilderTest >> testByteArrayLoadInt8 [
 ]
 
 { #category : #tests }
+IRLowcodeBuilderTest >> testByteArrayLoadPointer [
+	| method byteArray firstPointer secondPointer |
+	method := self byteArrayAtOffsetLoadMethodWith: [ :builder |
+		builder
+			lowcodeLoadPointerFromMemory;
+			lowcodePointerToOop: ExternalAddress
+	].
+
+	self assert: ExternalAddress wordSize <= 8.
+	byteArray := ByteArray new: 16.
+	firstPointer := ExternalAddress fromAddress: 16rDEADC0DE.
+	secondPointer := ExternalAddress fromAddress: 16rBEEFDEAD.
+	byteArray
+		pointerAt: 1 put: firstPointer;
+		pointerAt: 9 put: secondPointer.
+	
+	self assertMethod: method withArguments: { byteArray . 0 } equals: firstPointer.
+	self assertMethod: method withArguments: { byteArray . 8 } equals: secondPointer.
+]
+
+{ #category : #tests }
 IRLowcodeBuilderTest >> testByteArrayLoadUInt16 [
 	| method byteArray |
 	method := self byteArrayAtOffsetLoadMethodWith: [ :builder |
@@ -425,6 +446,129 @@ IRLowcodeBuilderTest >> testByteArrayLoadUInt8 [
 	self assertMethod: method withArguments: { byteArray . 3 } equals: 255.
 	self assertMethod: method withArguments: { byteArray . 4 } equals: 254.
 	self assertMethod: method withArguments: { byteArray . 5 } equals: 253.
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testByteArrayStoreFloat32 [
+	| method byteArray |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToFloat32] 		storeAtByteArrayOffsetMethodWith: [: builder | builder lowcodeStoreFloat32ToMemory].
+
+	byteArray := (ByteArray new: 24) atAllPut: 80.
+	self runMethod: method withArguments: { byteArray . 0 . 0.0 }.
+	self runMethod: method withArguments: { byteArray . 4 . 1.5 }.
+	self runMethod: method withArguments: { byteArray . 8 . 2.0 }.
+	self runMethod: method withArguments: { byteArray . 12 . -1.0 }.
+	self runMethod: method withArguments: { byteArray . 16 . -2.5 }.
+	self runMethod: method withArguments: { byteArray . 20 . -3.0 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		byteArray floatAt: (index-1)*4 + 1
+	]) equals: #(0.0 1.5 2.0 -1.0 -2.5 -3.0)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testByteArrayStoreFloat64 [
+	| method byteArray |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToFloat64] 		storeAtByteArrayOffsetMethodWith: [: builder | builder lowcodeStoreFloat64ToMemory].
+
+	byteArray := (ByteArray new: 48) atAllPut: 80.
+	self runMethod: method withArguments: { byteArray . 0 . 0.0 }.
+	self runMethod: method withArguments: { byteArray . 8 . 1.5 }.
+	self runMethod: method withArguments: { byteArray . 16 . 2.0 }.
+	self runMethod: method withArguments: { byteArray . 24 . -1.0 }.
+	self runMethod: method withArguments: { byteArray . 32 . -2.5 }.
+	self runMethod: method withArguments: { byteArray . 40 . -3.0 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		byteArray doubleAt: (index-1)*8 + 1
+	]) equals: #(0.0 1.5 2.0 -1.0 -2.5 -3.0)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testByteArrayStoreInt16 [
+	| method byteArray |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToInt32] 		storeAtByteArrayOffsetMethodWith: [: builder | builder lowcodeStoreInt16ToMemory].
+
+	byteArray := (ByteArray new: 12) atAllPut: 80.
+	self runMethod: method withArguments: { byteArray . 0 . 0 }.
+	self runMethod: method withArguments: { byteArray . 2 . 1 }.
+	self runMethod: method withArguments: { byteArray . 4 . 2 }.
+	self runMethod: method withArguments: { byteArray . 6 . -1 }.
+	self runMethod: method withArguments: { byteArray . 8 . -2 }.
+	self runMethod: method withArguments: { byteArray . 10 . -3 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		byteArray signedShortAt: (index-1)*2 + 1
+	]) equals: #(0 1 2 -1 -2 -3)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testByteArrayStoreInt32 [
+	| method byteArray |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToInt32] 		storeAtByteArrayOffsetMethodWith: [: builder | builder lowcodeStoreInt32ToMemory].
+
+	byteArray := (ByteArray new: 24) atAllPut: 80.
+	self runMethod: method withArguments: { byteArray . 0 . 0 }.
+	self runMethod: method withArguments: { byteArray . 4 . 1 }.
+	self runMethod: method withArguments: { byteArray . 8 . 2 }.
+	self runMethod: method withArguments: { byteArray . 12 . -1 }.
+	self runMethod: method withArguments: { byteArray . 16 . -2 }.
+	self runMethod: method withArguments: { byteArray . 20 . -3 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		byteArray signedLongAt: (index-1)*4 + 1
+	]) equals: #(0 1 2 -1 -2 -3)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testByteArrayStoreInt64 [
+	| method byteArray |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToInt64] 		storeAtByteArrayOffsetMethodWith: [: builder | builder lowcodeStoreInt64ToMemory].
+
+	byteArray := (ByteArray new: 48) atAllPut: 80.
+	self runMethod: method withArguments: { byteArray . 0 . 0 }.
+	self runMethod: method withArguments: { byteArray . 8 . 1 }.
+	self runMethod: method withArguments: { byteArray . 16 . 2 }.
+	self runMethod: method withArguments: { byteArray . 24 . -1 }.
+	self runMethod: method withArguments: { byteArray . 32 . -2 }.
+	self runMethod: method withArguments: { byteArray . 40 . -3 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		byteArray signedLongLongAt: (index-1)*8 + 1
+	]) equals: #(0 1 2 -1 -2 -3)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testByteArrayStoreInt8 [
+	| method byteArray |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToInt32] 		storeAtByteArrayOffsetMethodWith: [: builder | builder lowcodeStoreInt8ToMemory].
+
+	byteArray := (ByteArray new: 6) atAllPut: 80.
+	self runMethod: method withArguments: { byteArray . 0 . 0 }.
+	self runMethod: method withArguments: { byteArray . 1 . 1 }.
+	self runMethod: method withArguments: { byteArray . 2 . 2 }.
+	self runMethod: method withArguments: { byteArray . 3 . -1 }.
+	self runMethod: method withArguments: { byteArray . 4 . -2 }.
+	self runMethod: method withArguments: { byteArray . 5 . -3 }.
+	
+	self assert: byteArray equals: #[0 1 2 255 254 253].
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testByteArrayStorePointer [
+	| method byteArray firstPointer secondPointer |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToPointer] 		storeAtByteArrayOffsetMethodWith: [: builder | builder lowcodeStorePointerToMemory].
+
+	self assert: ExternalAddress wordSize <= 8.
+	byteArray := (ByteArray new: 16) atAllPut: 80.
+	firstPointer := ExternalAddress fromAddress: 16rDEADC0DE.
+	secondPointer := ExternalAddress fromAddress: 16rBEEFDEAD.
+	
+	self runMethod: method withArguments: { byteArray . 0 . firstPointer }.
+	self runMethod: method withArguments: { byteArray . 8 . secondPointer }.
+	
+	self assert: (byteArray pointerAt: 1) equals: firstPointer.
+	self assert: (byteArray pointerAt: 9) equals: secondPointer.
 ]
 
 { #category : #tests }
@@ -617,6 +761,27 @@ IRLowcodeBuilderTest >> testExternalAddressLoadInt8 [
 ]
 
 { #category : #tests }
+IRLowcodeBuilderTest >> testExternalAddressLoadPointer [
+	| method externalAddress firstPointer secondPointer |
+	method := self externalAddressAtOffsetLoadMethodWith: [ :builder |
+		builder
+			lowcodeLoadPointerFromMemory;
+			lowcodePointerToOop: ExternalAddress
+	].
+
+	self assert: ExternalAddress wordSize <= 8.
+	externalAddress := ExternalAddress gcallocate: 16.
+	firstPointer := ExternalAddress fromAddress: 16rDEADC0DE.
+	secondPointer := ExternalAddress fromAddress: 16rBEEFDEAD.
+	externalAddress
+		pointerAt: 1 put: firstPointer;
+		pointerAt: 9 put: secondPointer.
+	
+	self assertMethod: method withArguments: { externalAddress . 0 } equals: firstPointer.
+	self assertMethod: method withArguments: { externalAddress . 8 } equals: secondPointer.
+]
+
+{ #category : #tests }
 IRLowcodeBuilderTest >> testExternalAddressLoadUInt16 [
 	| method byteArray externalAddress |
 	method := self externalAddressAtOffsetLoadMethodWith: [ :builder |
@@ -703,6 +868,131 @@ IRLowcodeBuilderTest >> testExternalAddressLoadUInt8 [
 	self assertMethod: method withArguments: { externalAddress . 3 } equals: 255.
 	self assertMethod: method withArguments: { externalAddress . 4 } equals: 254.
 	self assertMethod: method withArguments: { externalAddress . 5 } equals: 253.
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testExternalAddressStoreFloat32 [
+	| method externalAddress |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToFloat32] 		storeAtExternalAddressOffsetMethodWith: [: builder | builder lowcodeStoreFloat32ToMemory].
+
+	externalAddress := ExternalAddress gcallocate: 24.
+	self runMethod: method withArguments: { externalAddress . 0 . 0.0 }.
+	self runMethod: method withArguments: { externalAddress . 4 . 1.5 }.
+	self runMethod: method withArguments: { externalAddress . 8 . 2.0 }.
+	self runMethod: method withArguments: { externalAddress . 12 . -1.0 }.
+	self runMethod: method withArguments: { externalAddress . 16 . -2.5 }.
+	self runMethod: method withArguments: { externalAddress . 20 . -3.0 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		externalAddress floatAt: (index-1)*4 + 1
+	]) equals: #(0.0 1.5 2.0 -1.0 -2.5 -3.0)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testExternalAddressStoreFloat64 [
+	| method externalAddress |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToFloat64] 		storeAtExternalAddressOffsetMethodWith: [: builder | builder lowcodeStoreFloat64ToMemory].
+
+	externalAddress := ExternalAddress gcallocate: 48.
+	self runMethod: method withArguments: { externalAddress . 0 . 0.0 }.
+	self runMethod: method withArguments: { externalAddress . 8 . 1.5 }.
+	self runMethod: method withArguments: { externalAddress . 16 . 2.0 }.
+	self runMethod: method withArguments: { externalAddress . 24 . -1.0 }.
+	self runMethod: method withArguments: { externalAddress . 32 . -2.5 }.
+	self runMethod: method withArguments: { externalAddress . 40 . -3.0 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		externalAddress doubleAt: (index-1)*8 + 1
+	]) equals: #(0.0 1.5 2.0 -1.0 -2.5 -3.0)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testExternalAddressStoreInt16 [
+	| method externalAddress |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToInt32] 		storeAtExternalAddressOffsetMethodWith: [: builder | builder lowcodeStoreInt16ToMemory].
+
+	externalAddress := ExternalAddress gcallocate: 12.
+	self runMethod: method withArguments: { externalAddress . 0 . 0 }.
+	self runMethod: method withArguments: { externalAddress . 2 . 1 }.
+	self runMethod: method withArguments: { externalAddress . 4 . 2 }.
+	self runMethod: method withArguments: { externalAddress . 6 . -1 }.
+	self runMethod: method withArguments: { externalAddress . 8 . -2 }.
+	self runMethod: method withArguments: { externalAddress . 10 . -3 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		externalAddress signedShortAt: (index-1)*2 + 1
+	]) equals: #(0 1 2 -1 -2 -3)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testExternalAddressStoreInt32 [
+	| method externalAddress |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToInt32] 		storeAtExternalAddressOffsetMethodWith: [: builder | builder lowcodeStoreInt32ToMemory].
+
+	externalAddress := ExternalAddress gcallocate: 24.
+	self runMethod: method withArguments: { externalAddress . 0 . 0 }.
+	self runMethod: method withArguments: { externalAddress . 4 . 1 }.
+	self runMethod: method withArguments: { externalAddress . 8 . 2 }.
+	self runMethod: method withArguments: { externalAddress . 12 . -1 }.
+	self runMethod: method withArguments: { externalAddress . 16 . -2 }.
+	self runMethod: method withArguments: { externalAddress . 20 . -3 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		externalAddress signedLongAt: (index-1)*4 + 1
+	]) equals: #(0 1 2 -1 -2 -3)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testExternalAddressStoreInt64 [
+	| method externalAddress |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToInt64] 		storeAtExternalAddressOffsetMethodWith: [: builder | builder lowcodeStoreInt64ToMemory].
+
+	externalAddress := ExternalAddress gcallocate: 48.
+	self runMethod: method withArguments: { externalAddress . 0 . 0 }.
+	self runMethod: method withArguments: { externalAddress . 8 . 1 }.
+	self runMethod: method withArguments: { externalAddress . 16 . 2 }.
+	self runMethod: method withArguments: { externalAddress . 24 . -1 }.
+	self runMethod: method withArguments: { externalAddress . 32 . -2 }.
+	self runMethod: method withArguments: { externalAddress . 40 . -3 }.
+	
+	self assert: ((1 to: 6) collect: [ :index |
+		externalAddress signedLongLongAt: (index-1)*8 + 1
+	]) equals: #(0 1 2 -1 -2 -3)
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testExternalAddressStoreInt8 [
+	| method byteArray externalAddress |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToInt32] 		storeAtExternalAddressOffsetMethodWith: [: builder | builder lowcodeStoreInt8ToMemory].
+
+	externalAddress := ExternalAddress gcallocate: 6.
+	self runMethod: method withArguments: { externalAddress . 0 . 0 }.
+	self runMethod: method withArguments: { externalAddress . 1 . 1 }.
+	self runMethod: method withArguments: { externalAddress . 2 . 2 }.
+	self runMethod: method withArguments: { externalAddress . 3 . -1 }.
+	self runMethod: method withArguments: { externalAddress . 4 . -2 }.
+	self runMethod: method withArguments: { externalAddress . 5 . -3 }.
+	
+	byteArray := (ByteArray new: 6) atAllPut: 80.
+	LibC memCopy: externalAddress to: byteArray size: 6.
+	self assert: byteArray equals: #[0 1 2 255 254 253].
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testExternalAddressStorePointer [
+	| method externalAddress firstPointer secondPointer |
+	method := self valueConvertedWith: [:builder | builder lowcodeOopToPointer] 		storeAtExternalAddressOffsetMethodWith: [: builder | builder lowcodeStorePointerToMemory].
+
+	self assert: ExternalAddress wordSize <= 8.
+	externalAddress := ExternalAddress gcallocate: 16.
+	firstPointer := ExternalAddress fromAddress: 16rDEADC0DE.
+	secondPointer := ExternalAddress fromAddress: 16rBEEFDEAD.
+	
+	self runMethod: method withArguments: { externalAddress . 0 . firstPointer }.
+	self runMethod: method withArguments: { externalAddress . 8 . secondPointer }.
+	
+	self assert: (externalAddress pointerAt: 1) equals: firstPointer.
+	self assert: (externalAddress pointerAt: 9) equals: secondPointer.
 ]
 
 { #category : #tests }
@@ -881,4 +1171,46 @@ IRLowcodeBuilderTest >> testSubInt64 [
 	].
 	self assertMethod: method withArguments: #(0 0) equals: 0.
 	self assertMethod: method withArguments: #(1 3) equals: -2.
+]
+
+{ #category : #helper }
+IRLowcodeBuilderTest >> valueConvertedWith: valueConversionBlock storeAtByteArrayOffsetMethodWith: valueStoreBlock [
+	^ self method: #byteArrayStoreValueAt arguments: #(byteArray offset value) buildWith: [ :builder |
+		builder pushTemp: #value.
+		valueConversionBlock value: builder.
+		
+		builder
+			pushTemp: #byteArray;
+			lowcodeFirstFieldPointer;
+			pushTemp: #offset;
+			lowcodeOopToUInt32;
+			lowcodePointerAddOffset32.
+
+		valueStoreBlock value: builder.
+		
+		builder
+			pushReceiver;
+			returnTop
+	].
+]
+
+{ #category : #helper }
+IRLowcodeBuilderTest >> valueConvertedWith: valueConversionBlock storeAtExternalAddressOffsetMethodWith: valueStoreBlock [
+	^ self method: #externalAddressStoreValueAt arguments: #(externalAddress offset value) buildWith: [ :builder |
+		builder pushTemp: #value.
+		valueConversionBlock value: builder.
+		
+		builder
+			pushTemp: #externalAddress;
+			lowcodeOopToPointer;
+			pushTemp: #offset;
+			lowcodeOopToUInt32;
+			lowcodePointerAddOffset32.
+
+		valueStoreBlock value: builder.
+		
+		builder
+			pushReceiver;
+			returnTop
+	].
 ]

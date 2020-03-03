@@ -134,7 +134,7 @@ LowcodeFFICalloutMethodBuilder >> generateMethodFromSpec: functionSpec [
 	ir := IRLowcodeBuilder buildIR: [ :builder |
 		self generateFFICallout: builder spec: functionSpec
 	].
-	ir compilationContext encoderClass: OpalEncoderForSistaV1.
+	ir compilationContext encoderClass: EncoderForSistaV1.
 	"ir inspect. self halt."
 	^ (ir generate: self method trailer)
 		setSignFlag;

@@ -12,6 +12,17 @@ Class {
 }
 
 { #category : #adding }
+IRLowcodeBuilder >> addLowcodeRuntimeTemporaries [
+	self addTemps: #(
+		__lowcodeContextMark__
+		__lowcodePreviousNativeStackPointer__
+		__lowcodeNativeFramePointer__
+		__lowcodeNativeStackPointer__
+		__lowcodeCalloutState__
+	).
+]
+
+{ #category : #adding }
 IRLowcodeBuilder >> addNativeTemp: aNativeTempName [
 	self addNativeTemps: { aNativeTempName }
 ]

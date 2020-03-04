@@ -13,9 +13,9 @@ Class {
 
 { #category : #'as yet unclassified' }
 IRLowcodeBuilder class >> here: aBlock [
+	| argumentNames |
+	argumentNames := thisContext sender arguments.
 	^ self buildIR: [ :builder |
-		| argumentNames |
-		argumentNames := thisContext sender method argumentNames.
 		builder
 			numArgs: argumentNames size;
 			addTemps: argumentNames;
@@ -1103,6 +1103,23 @@ IRLowcodeBuilder >> lowcodePointerAddOffset32 [
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodePointerAddOffset64 [
 	self add: (IRInstruction lowcodeInstruction: 1164)
+]
+
+{ #category : #'lowcode abstract instruction' }
+IRLowcodeBuilder >> lowcodePointerAddOopIndex [
+	Smalltalk wordSize = 4 ifTrue: [
+		self
+			lowcodeOopToInt32;
+			lowcodePushOne32;
+			lowcodeSub32;
+			lowcodePointerAddOffset32
+	] ifFalse: [
+		self
+			lowcodeOopToInt64;
+			lowcodePushOne64;
+			lowcodeSub64;
+			lowcodePointerAddOffset64
+	]
 ]
 
 { #category : #'lowcode instructions' }

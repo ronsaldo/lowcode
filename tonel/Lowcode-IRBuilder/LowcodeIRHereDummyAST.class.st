@@ -21,7 +21,7 @@ LowcodeIRHereDummyAST >> codeGenerationMethod: anObject [
 { #category : #translating }
 LowcodeIRHereDummyAST >> generate: compiledMethodTrailer [
 	| ir |
-	ir := codeGenerationMethod valueWithReceiver: nil arguments: (Array new: codeGenerationMethod numArgs).
+	ir := codeGenerationMethod valueWithReceiver: nil arguments: (originalAST arguments collect: [ :each | each name ] as: Array).
 	ir sourceNode: originalAST.
 	ir compilationContext encoderClass: EncoderForSistaV1.
 	^ (ir generate: compiledMethodTrailer)

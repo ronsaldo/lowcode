@@ -61,17 +61,6 @@ LowcodeIRHereCompilerPlugin >> isMethodWithLowcodeIRBuilder [
 	^ false
 ]
 
-{ #category : #tests }
-LowcodeIRHereCompilerPlugin >> testWithLowcodeBuilder [
-	<useLowcodeIRBuilder>
-	^ IRLowcodeBuilder here: [ :builder |
-		builder
-			lowcodePushOne32; 
-			lowcodeInt32ToOop;
-			returnTop
-	]
-]
-
 { #category : #api }
 LowcodeIRHereCompilerPlugin >> transform [
 	| astWithoutPragma codeGenerationMethod |
@@ -81,7 +70,7 @@ LowcodeIRHereCompilerPlugin >> transform [
 	astWithoutPragma := ast copy.
 	astWithoutPragma removePragma: (astWithoutPragma pragmaNamed: #useLowcodeIRBuilder).
 
-	codeGenerationMethod := astWithoutPragma method.
+	codeGenerationMethod := astWithoutPragma generate.
 
 	ast := LowcodeIRHereDummyAST new
 		originalAST: ast;

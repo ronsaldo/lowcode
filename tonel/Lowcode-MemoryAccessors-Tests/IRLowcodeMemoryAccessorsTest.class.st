@@ -82,6 +82,24 @@ IRLowcodeMemoryAccessorsTest >> testByteArrayInt8 [
 ]
 
 { #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testByteArrayPointer [
+	| pointers wordSize byteArray |
+	pointers := {
+		ExternalAddress fromAddress: 16rDEADC0DE.
+		ExternalAddress fromAddress: 16rBEEFDEAD.
+	}.
+	wordSize := Smalltalk wordSize.
+	self assert: wordSize <= 8.
+	byteArray := ByteArray new: pointers size * wordSize.
+	pointers doWithIndex: [ :pointer :index |
+		| byteIndex |
+		byteIndex := (index - 1) * wordSize + 1.
+		byteArray lcPointerAt: byteIndex put: pointer.
+		self assert: (byteArray lcPointerAt: byteIndex) equals: pointer
+	].
+]
+
+{ #category : #tests }
 IRLowcodeMemoryAccessorsTest >> testByteArrayUInt16 [
 	| numbers byteArray |
 	numbers := #(0 1 2 255 65124 65535 254 253).
@@ -209,6 +227,24 @@ IRLowcodeMemoryAccessorsTest >> testExternalAddressInt8 [
 	byteArray := ByteArray new: numbers size.
 	LibC memCopy: externalAddress to: byteArray size: byteArray size.
 	self assert: byteArray equals: #[0 1 2 255 254 253].
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressPointer [
+	| pointers wordSize byteArray |
+	pointers := {
+		ExternalAddress fromAddress: 16rDEADC0DE.
+		ExternalAddress fromAddress: 16rBEEFDEAD.
+	}.
+	wordSize := Smalltalk wordSize.
+	self assert: wordSize <= 8.
+	byteArray := ExternalAddress gcallocate: pointers size * wordSize.
+	pointers doWithIndex: [ :pointer :index |
+		| byteIndex |
+		byteIndex := (index - 1) * wordSize + 1.
+		byteArray lcPointerAt: byteIndex put: pointer.
+		self assert: (byteArray lcPointerAt: byteIndex) equals: pointer
+	].
 ]
 
 { #category : #tests }

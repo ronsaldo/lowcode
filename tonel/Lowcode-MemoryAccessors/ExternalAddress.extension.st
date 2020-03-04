@@ -77,6 +77,44 @@ ExternalAddress >> lcFloatAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
+ExternalAddress >> lcPointerAt: index [
+	<useLowcodeIRBuilder>
+	^ IRLowcodeBuilder here: [ :builder |
+		builder
+			pushReceiver;
+			lowcodeOopToPointer;
+			
+			pushTemp: index;
+			lowcodePointerAddOopIndex;
+			
+			lowcodeLoadPointerFromMemory;
+			lowcodePointerToOop: ExternalAddress;
+			returnTop
+	]
+]
+
+{ #category : #'*Lowcode-MemoryAccessors' }
+ExternalAddress >> lcPointerAt: index put: value [
+	<useLowcodeIRBuilder>
+	^ IRLowcodeBuilder here: [ :builder |
+		builder
+			pushTemp: value;
+			lowcodeOopToPointer;
+	
+			pushReceiver;
+			lowcodeOopToPointer;
+			
+			pushTemp: index;
+			lowcodePointerAddOopIndex;
+			
+			lowcodeStorePointerToMemory;
+			
+			pushTemp: value;
+			returnTop
+	]
+]
+
+{ #category : #'*Lowcode-MemoryAccessors' }
 ExternalAddress >> lcSignedByteAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |

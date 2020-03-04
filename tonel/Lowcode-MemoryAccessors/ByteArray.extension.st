@@ -77,6 +77,44 @@ ByteArray >> lcFloatAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
+ByteArray >> lcPointerAt: index [
+	<useLowcodeIRBuilder>
+	^ IRLowcodeBuilder here: [ :builder |
+		builder
+			pushReceiver;
+			lowcodeFirstFieldPointer;
+			
+			pushTemp: index;
+			lowcodePointerAddOopIndex;
+			
+			lowcodeLoadPointerFromMemory;
+			lowcodePointerToOop: ExternalAddress;
+			returnTop
+	]
+]
+
+{ #category : #'*Lowcode-MemoryAccessors' }
+ByteArray >> lcPointerAt: index put: value [
+	<useLowcodeIRBuilder>
+	^ IRLowcodeBuilder here: [ :builder |
+		builder
+			pushTemp: value;
+			lowcodeOopToPointer;
+	
+			pushReceiver;
+			lowcodeFirstFieldPointer;
+			
+			pushTemp: index;
+			lowcodePointerAddOopIndex;
+			
+			lowcodeStorePointerToMemory;
+			
+			pushTemp: value;
+			returnTop
+	]
+]
+
+{ #category : #'*Lowcode-MemoryAccessors' }
 ByteArray >> lcSignedByteAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |

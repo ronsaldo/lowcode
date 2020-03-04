@@ -131,3 +131,135 @@ IRLowcodeMemoryAccessorsTest >> testByteArrayUInt8 [
 	].
 	self assert: byteArray equals: #[0 1 2 255 254 253].
 ]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressFloat32 [
+	| numbers externalAddress |
+	numbers := #(0.0 1.0 2.5 -1.5 -2.25 -3.0).
+	externalAddress := ExternalAddress gcallocate: numbers size * 4.
+	numbers doWithIndex: [ :number :index |
+		| byteIndex |
+		byteIndex := (index-1)*4 + 1.
+		externalAddress lcFloatAt: byteIndex put: number.
+		self assert: (externalAddress lcFloatAt: byteIndex) equals: number
+	]
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressFloat64 [
+	| numbers externalAddress |
+	numbers := #(0.0 1.0 2.5 -1.5 -2.25 -3.0).
+	externalAddress := ExternalAddress gcallocate: numbers size * 8.
+	numbers doWithIndex: [ :number :index |
+		| byteIndex |
+		byteIndex := (index-1)*8 + 1.
+		externalAddress lcDoubleAt: byteIndex put: number.
+		self assert: (externalAddress lcDoubleAt: byteIndex) equals: number
+	]
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressInt16 [
+	| numbers externalAddress |
+	numbers := #(0 1 2 12345 -1 -2 -3 -12345).
+	externalAddress := ExternalAddress gcallocate: numbers size * 2.
+	numbers doWithIndex: [ :number :index |
+		| byteIndex |
+		byteIndex := (index-1)*2 + 1.
+		externalAddress lcSignedShortAt: byteIndex put: number.
+		self assert: (externalAddress lcSignedShortAt: byteIndex) equals: number
+	]
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressInt32 [
+	| numbers externalAddress |
+	numbers := #(0 1 2 12345 123456789 -1 -2 -3 -12345 -123456789).
+	externalAddress := ExternalAddress gcallocate: numbers size * 4.
+	numbers doWithIndex: [ :number :index |
+		| byteIndex |
+		byteIndex := (index-1)*4 + 1.
+		externalAddress lcSignedLongAt: byteIndex put: number.
+		self assert: (externalAddress lcSignedLongAt: byteIndex) equals: number
+	]
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressInt64 [
+	| numbers externalAddress |
+	numbers := #(0 1 2 12345 123456789 4611686018427387904 -1 -2 -3 -12345 -123456789 -4611686018427387904).
+	externalAddress := ExternalAddress gcallocate: numbers size * 8.
+	numbers doWithIndex: [ :number :index |
+		| byteIndex |
+		byteIndex := (index-1)*8 + 1.
+		externalAddress lcSignedLongLongAt: byteIndex put: number.
+		self assert: (externalAddress lcSignedLongLongAt: byteIndex) equals: number
+	]
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressInt8 [
+	| numbers externalAddress byteArray |
+	numbers := #(0 1 2 -1 -2 -3).
+	externalAddress := ExternalAddress gcallocate: numbers size.
+	numbers doWithIndex: [ :number :index |
+		externalAddress lcSignedByteAt: index put: number.
+		self assert: (externalAddress lcSignedByteAt: index) equals: number
+	].
+	byteArray := ByteArray new: numbers size.
+	LibC memCopy: externalAddress to: byteArray size: byteArray size.
+	self assert: byteArray equals: #[0 1 2 255 254 253].
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressUInt16 [
+	| numbers externalAddress |
+	numbers := #(0 1 2 255 65124 65535 254 253).
+	externalAddress := ExternalAddress gcallocate: numbers size*2.
+	numbers doWithIndex: [ :number :index |
+		| byteIndex |
+		byteIndex := (index-1)*2 + 1.
+		externalAddress lcUnsignedShortAt: byteIndex put: number.
+		self assert: (externalAddress lcUnsignedShortAt: byteIndex) equals: number
+	]
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressUInt32 [
+	| numbers externalAddress |
+	numbers := #(0 1 2 255 65124 65535 4294967295 254 253).
+	externalAddress := ExternalAddress gcallocate: numbers size*4.
+	numbers doWithIndex: [ :number :index |
+		| byteIndex |
+		byteIndex := (index-1)*4 + 1.
+		externalAddress lcUnsignedLongAt: byteIndex put: number.
+		self assert: (externalAddress lcUnsignedLongAt: byteIndex) equals: number
+	]
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressUInt64 [
+	| numbers externalAddress |
+	numbers := #(0 1 2 255 65124 65535 4294967295 18446744073709551615 254 253).
+	externalAddress := ExternalAddress gcallocate: numbers size*8.
+	numbers doWithIndex: [ :number :index |
+		| byteIndex |
+		byteIndex := (index-1)*8 + 1.
+		externalAddress lcUnsignedLongLongAt: byteIndex put: number.
+		self assert: (externalAddress lcUnsignedLongLongAt: byteIndex) equals: number
+	]
+]
+
+{ #category : #tests }
+IRLowcodeMemoryAccessorsTest >> testExternalAddressUInt8 [
+	| numbers externalAddress byteArray |
+	numbers := #(0 1 2 255 254 253).
+	externalAddress := ExternalAddress gcallocate: numbers size.
+	numbers doWithIndex: [ :number :index |
+		externalAddress lcUnsignedByteAt: index put: number.
+		self assert: (externalAddress lcUnsignedByteAt: index) equals: number
+	].
+	byteArray := ByteArray new: numbers size.
+	LibC memCopy: externalAddress to: byteArray size: byteArray size.
+	self assert: byteArray equals: #[0 1 2 255 254 253].
+]

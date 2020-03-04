@@ -1,12 +1,12 @@
-Extension { #name : #ByteArray }
+Extension { #name : #ExternalAddress }
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcDoubleAt: index [
+ExternalAddress >> lcDoubleAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -18,7 +18,7 @@ ByteArray >> lcDoubleAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcDoubleAt: index put: value [
+ExternalAddress >> lcDoubleAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -26,7 +26,7 @@ ByteArray >> lcDoubleAt: index put: value [
 			lowcodeOopToFloat64;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -39,12 +39,12 @@ ByteArray >> lcDoubleAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcFloatAt: index [
+ExternalAddress >> lcFloatAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -56,7 +56,7 @@ ByteArray >> lcFloatAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcFloatAt: index put: value [
+ExternalAddress >> lcFloatAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -64,7 +64,7 @@ ByteArray >> lcFloatAt: index put: value [
 			lowcodeOopToFloat32;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -77,12 +77,12 @@ ByteArray >> lcFloatAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcSignedByteAt: index [
+ExternalAddress >> lcSignedByteAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -94,7 +94,7 @@ ByteArray >> lcSignedByteAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcSignedByteAt: index put: value [
+ExternalAddress >> lcSignedByteAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -102,7 +102,7 @@ ByteArray >> lcSignedByteAt: index put: value [
 			lowcodeOopToInt32;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -115,12 +115,12 @@ ByteArray >> lcSignedByteAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcSignedLongAt: index [
+ExternalAddress >> lcSignedLongAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -132,7 +132,7 @@ ByteArray >> lcSignedLongAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcSignedLongAt: index put: value [
+ExternalAddress >> lcSignedLongAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -140,7 +140,7 @@ ByteArray >> lcSignedLongAt: index put: value [
 			lowcodeOopToInt32;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -153,12 +153,12 @@ ByteArray >> lcSignedLongAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcSignedLongLongAt: index [
+ExternalAddress >> lcSignedLongLongAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -170,7 +170,7 @@ ByteArray >> lcSignedLongLongAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcSignedLongLongAt: index put: value [
+ExternalAddress >> lcSignedLongLongAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -178,7 +178,7 @@ ByteArray >> lcSignedLongLongAt: index put: value [
 			lowcodeOopToInt64;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -191,12 +191,12 @@ ByteArray >> lcSignedLongLongAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcSignedShortAt: index [
+ExternalAddress >> lcSignedShortAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -208,7 +208,7 @@ ByteArray >> lcSignedShortAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcSignedShortAt: index put: value [
+ExternalAddress >> lcSignedShortAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -216,7 +216,7 @@ ByteArray >> lcSignedShortAt: index put: value [
 			lowcodeOopToInt32;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -229,12 +229,12 @@ ByteArray >> lcSignedShortAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcUnsignedByteAt: index [
+ExternalAddress >> lcUnsignedByteAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -246,7 +246,7 @@ ByteArray >> lcUnsignedByteAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcUnsignedByteAt: index put: value [
+ExternalAddress >> lcUnsignedByteAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -254,7 +254,7 @@ ByteArray >> lcUnsignedByteAt: index put: value [
 			lowcodeOopToInt32;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -267,12 +267,12 @@ ByteArray >> lcUnsignedByteAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcUnsignedLongAt: index [
+ExternalAddress >> lcUnsignedLongAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -284,7 +284,7 @@ ByteArray >> lcUnsignedLongAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcUnsignedLongAt: index put: value [
+ExternalAddress >> lcUnsignedLongAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -292,7 +292,7 @@ ByteArray >> lcUnsignedLongAt: index put: value [
 			lowcodeOopToUInt32;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -305,12 +305,12 @@ ByteArray >> lcUnsignedLongAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcUnsignedLongLongAt: index [
+ExternalAddress >> lcUnsignedLongLongAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -322,7 +322,7 @@ ByteArray >> lcUnsignedLongLongAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcUnsignedLongLongAt: index put: value [
+ExternalAddress >> lcUnsignedLongLongAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -330,7 +330,7 @@ ByteArray >> lcUnsignedLongLongAt: index put: value [
 			lowcodeOopToUInt64;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -343,12 +343,12 @@ ByteArray >> lcUnsignedLongLongAt: index put: value [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcUnsignedShortAt: index [
+ExternalAddress >> lcUnsignedShortAt: index [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;
@@ -360,7 +360,7 @@ ByteArray >> lcUnsignedShortAt: index [
 ]
 
 { #category : #'*Lowcode-MemoryAccessors' }
-ByteArray >> lcUnsignedShortAt: index put: value [
+ExternalAddress >> lcUnsignedShortAt: index put: value [
 	<useLowcodeIRBuilder>
 	^ IRLowcodeBuilder here: [ :builder |
 		builder
@@ -368,7 +368,7 @@ ByteArray >> lcUnsignedShortAt: index put: value [
 			lowcodeOopToInt32;
 	
 			pushReceiver;
-			lowcodeFirstFieldPointer;
+			lowcodeOopToPointer;
 			
 			pushTemp: index;
 			lowcodePointerAddOopIndex;

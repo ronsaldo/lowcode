@@ -127,7 +127,16 @@ IRLowcodeBuilderTest >> byteArrayAtOffsetLoadMethodWith: aBlock [
 
 { #category : #'as yet unclassified' }
 IRLowcodeBuilderTest >> disassemblyMethod: method [
-	self halt
+	| cogit |
+	cogit := Smalltalk globals at: #StackToRegisterMappingCogit.
+	cogit
+	genAndDis: method
+	options: #(COGMTVM false
+				ObjectMemory Spur64BitCoMemoryManager
+				MULTIPLEBYTECODESETS true
+				SistaVM true
+				LowcodeVM true
+				bytecodeTableInitializer initializeBytecodeTableForSqueakV3PlusClosuresSistaV1Hybrid).
 ]
 
 { #category : #helper }

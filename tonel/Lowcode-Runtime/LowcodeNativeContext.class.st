@@ -1,6 +1,7 @@
 Class {
 	#name : #LowcodeNativeContext,
 	#superclass : #Object,
+	#type : #bytes,
 	#classVars : [
 		'SignalingObject'
 	],

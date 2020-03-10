@@ -127,16 +127,18 @@ IRLowcodeBuilderTest >> byteArrayAtOffsetLoadMethodWith: aBlock [
 
 { #category : #'as yet unclassified' }
 IRLowcodeBuilderTest >> disassemblyMethod: method [
-	| cogit |
+	| cogit cogMethod |
+
 	cogit := Smalltalk globals at: #StackToRegisterMappingCogit.
-	cogit
-	genAndDis: method
+	cogMethod := cogit
+	cog: method
 	options: #(COGMTVM false
 				ObjectMemory Spur64BitCoMemoryManager
 				MULTIPLEBYTECODESETS true
 				SistaVM true
 				LowcodeVM true
 				bytecodeTableInitializer initializeBytecodeTableForSqueakV3PlusClosuresSistaV1Hybrid).
+	cogMethod third inspect
 ]
 
 { #category : #helper }
@@ -162,7 +164,8 @@ IRLowcodeBuilderTest >> method: selector arguments: argumentNames buildWith: aBl
 	ir := IRLowcodeBuilder buildIR: [ :builder |
 		builder
 			numArgs: argumentNames size;
-			addTemps: argumentNames.
+			addTemps: argumentNames;
+			addLowcodeRuntimeTemporaries.
 		aBlock value: builder
 	].
 	ir compilationContext encoderClass: EncoderForSistaV1.

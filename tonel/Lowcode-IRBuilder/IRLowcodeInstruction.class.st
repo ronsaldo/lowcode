@@ -336,6 +336,11 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 
 ]
 
+{ #category : #'as yet unclassified' }
+IRLowcodeInstruction class >> mnemonicForPrimitiveIndex: primitiveIndex [
+	^ LowcodeMnemonicTable at: primitiveIndex ifAbsent: [ 'lowcode' , primitiveIndex asString ]
+]
+
 { #category : #visitor }
 IRLowcodeInstruction >> accept: arg1 [
 	^ arg1 visitLowcodeInstruction: self

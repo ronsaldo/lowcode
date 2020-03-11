@@ -115,7 +115,7 @@ LowcodeOpalCompilerGenerator >> generateTo: out instructionArgument: argument in
 ]
 
 { #category : #generation }
-LowcodeOpalCompilerGenerator >> generateTo: out instructionArguments: arguments. [
+LowcodeOpalCompilerGenerator >> generateTo: out instructionArguments: arguments [.
 	arguments ifEmpty: [ ^ self ].
 	
 	arguments doWithIndex: [ :arg :i |

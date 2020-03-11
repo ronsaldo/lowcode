@@ -1185,6 +1185,60 @@ IRLowcodeBuilderTest >> testSubInt64 [
 	self assertMethod: method withArguments: #(1 3) equals: -2.
 ]
 
+{ #category : #tests }
+IRLowcodeBuilderTest >> testUDivInt32 [
+	| method |
+	method := self binaryInt32MethodWith: [ :builder |
+		builder lowcodeUdiv32
+	].
+
+	self assertMethod: method withArguments: #(2 4) equals: 0.
+	self assertMethod: method withArguments: #(4 2) equals: 2.
+	self assertMethod: method withArguments: #(6 3) equals: 2.
+	self assertMethod: method withArguments: #(7 2) equals: 3.
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testUDivInt64 [
+	| method |
+	method := self binaryInt64MethodWith: [ :builder |
+		builder lowcodeUdiv64
+	].
+
+	self assertMethod: method withArguments: #(2 4) equals: 0.
+	self assertMethod: method withArguments: #(4 2) equals: 2.
+	self assertMethod: method withArguments: #(6 3) equals: 2.
+	self assertMethod: method withArguments: #(7 2) equals: 3.
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testUMulInt32 [
+	| method |
+	method := self binaryInt32MethodWith: [ :builder |
+		builder lowcodeUmul32
+	].
+
+	self assertMethod: method withArguments: #(1 0) equals: 0.
+	self assertMethod: method withArguments: #(2 6) equals: 12.
+	self assertMethod: method withArguments: #(4 3) equals: 12.
+	self assertMethod: method withArguments: #(6 3) equals: 18.
+	self assertMethod: method withArguments: #(7 3) equals: 21.
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testUMulInt64 [
+	| method |
+	method := self binaryInt64MethodWith: [ :builder |
+		builder lowcodeUmul64
+	].
+
+	self assertMethod: method withArguments: #(1 0) equals: 0.
+	self assertMethod: method withArguments: #(2 6) equals: 12.
+	self assertMethod: method withArguments: #(4 3) equals: 12.
+	self assertMethod: method withArguments: #(6 3) equals: 18.
+	self assertMethod: method withArguments: #(7 3) equals: 21.
+]
+
 { #category : #helper }
 IRLowcodeBuilderTest >> valueConvertedWith: valueConversionBlock storeAtByteArrayOffsetMethodWith: valueStoreBlock [
 	^ self method: #byteArrayStoreValueAt arguments: #(byteArray offset value) buildWith: [ :builder |

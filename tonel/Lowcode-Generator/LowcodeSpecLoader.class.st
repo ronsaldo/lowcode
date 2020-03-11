@@ -49,7 +49,7 @@ LowcodeSpecLoader >> fromFileNamed: fileName [
 	| stream |
 
 	" Load the XML DOM"
-	stream := FileSystem disk openFileStream: fileName writable: false.
+	stream := fileName asFileReference readStream.
 	[
 		dom := (XMLDOMParser parse: stream)
 	] ensure: [ stream close ].

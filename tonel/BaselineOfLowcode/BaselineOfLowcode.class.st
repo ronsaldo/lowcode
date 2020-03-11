@@ -167,7 +167,7 @@ BaselineOfLowcode >> postloadForRuntime: loader package: packageSpec [
 	Smalltalk recreateSpecialObjectsArray.
 	self flag: 'Hack: until we decide to stabilize these objects and we integrate it into the standard Pharo image.'.
 	Smalltalk specialObjectsArray size < 62 ifTrue: [
-		Author use: 'LowcodeBaseline' during: [ 
+		Author useAuthor: 'LowcodeBaseline' during: [ 
 			| patchSourceCode |
 			patchSourceCode := (self class methodDict at: #newSpecialObjectsArray) sourceCode.
 			Smalltalk class compile: patchSourceCode classified: 'special objects'

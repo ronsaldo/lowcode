@@ -18,8 +18,12 @@ BaselineOfLowcode >> baseline: spec [
 			package: #'Lowcode-Generator' with: [
 				spec requires: #(#'XMLParser' ). ];
 			package: #'Lowcode-IRBuilder';
+			package: #'Lowcode-IRBuilder-Tests' with: [
+				spec requires: #(#'Lowcode-IRBuilder' #'Lowcode-Runtime' ). ];
 			package: #'Lowcode-MemoryAccessors' with: [
 				spec requires: #(#'Lowcode-IRBuilder' #'Lowcode-Runtime' ). ];
+			package: #'Lowcode-MemoryAccessors-Tests' with: [
+				spec requires: #(#'Lowcode-MemoryAccessors'). ];
 			package: #'Lowcode-OpalCompiler' with: [
 				spec requires: #(#'Lowcode-IRBuilder' #'Lowcode-TypeSystem' ). ];
 			package: #'Lowcode-OpalTest' with: [
@@ -34,6 +38,7 @@ BaselineOfLowcode >> baseline: spec [
 			group: #'Runtime' with: #(#'Lowcode-Runtime' );
 			group: #'Core' with: #(#'Runtime' #'Lowcode-IRBuilder'  );
 			group: #'MemoryAccessors' with: #(#'Lowcode-MemoryAccessors'  );
+			group: #'MemoryAccessors-Tests' with: #(#'Lowcode-MemoryAccessors' #'Lowcode-MemoryAccessors-Tests' #'Lowcode-IRBuilder-Tests');
 			group: #'OpalCompiler' with: #(#'Core' #'Lowcode-TypeSystem' #'Lowcode-OpalCompiler' );
 			group: #'Generator' with: #(#'Core' #'Lowcode-Generator' );
 			group: #'UnifiedFFI' with: #(#'Core' #'Lowcode-UnifiedFFI');

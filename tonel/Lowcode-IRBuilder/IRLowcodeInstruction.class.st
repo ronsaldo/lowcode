@@ -64,22 +64,10 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 		10	uint64ToOop
 		1000	add32
 		1001	add64
-		1002	alloca32
-		1003	alloca64
 		1004	and32
 		1005	and64
 		1006	arithmeticRightShift32
 		1007	arithmeticRightShift64
-		1008	beginCall
-		1009	callArgumentFloat32
-		1010	callArgumentFloat64
-		1011	callArgumentInt32
-		1012	callArgumentInt64
-		1013	callArgumentPointer
-		1014	callArgumentSpace
-		1015	callArgumentStructure
-		1016	callInstruction
-		1017	callPhysical
 		1018	checkSessionIdentifier
 		1019	compareAndSwap32
 		1020	div32
@@ -91,8 +79,6 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 		1026	duplicatePointer
 		1027	effectiveAddress32
 		1028	effectiveAddress64
-		1029	endCall
-		1030	endCallNoCleanup
 		1031	float32Add
 		1032	float32Div
 		1033	float32Equal
@@ -152,18 +138,6 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 		1087	leaveLocalFrame
 		1088	leftShift32
 		1089	leftShift64
-		1090	loadArgumentAddress
-		1091	loadArgumentFloat32
-		1092	loadArgumentFloat64
-		1093	loadArgumentInt16
-		1094	loadArgumentInt32
-		1095	loadArgumentInt64
-		1096	loadArgumentInt8
-		1097	loadArgumentPointer
-		1098	loadArgumentUInt16
-		1099	loadArgumentUInt32
-		1100	loadArgumentUInt64
-		1101	loadArgumentUInt8
 		1102	loadFloat32FromMemory
 		1103	loadFloat64FromMemory
 		1104	loadInt16FromMemory
@@ -190,18 +164,12 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 		1125	loadUInt64FromMemory
 		1126	loadUInt8FromMemory
 		1127	localFrameSize
-		1128	lockRegisters
 		1129	lockVM
 		1130	malloc32
 		1131	malloc64
 		1132	memcpy32
 		1133	memcpy64
 		1134	memcpyFixed
-		1135	moveFloat32ToPhysical
-		1136	moveFloat64ToPhysical
-		1137	moveInt32ToPhysical
-		1138	moveInt64ToPhysical
-		1139	movePointerToPhysical
 		1140	mul32
 		1141	mul64
 		1142	neg32
@@ -210,20 +178,6 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 		1145	not64
 		1146	or32
 		1147	or64
-		1148	performCallFloat32
-		1149	performCallFloat64
-		1150	performCallIndirectFloat32
-		1151	performCallIndirectFloat64
-		1152	performCallIndirectInt32
-		1153	performCallIndirectInt64
-		1154	performCallIndirectPointer
-		1155	performCallIndirectStructure
-		1156	performCallIndirectVoid
-		1157	performCallInt32
-		1158	performCallInt64
-		1159	performCallPointer
-		1160	performCallStructure
-		1161	performCallVoid
 		1162	plaftormCode
 		1163	pointerAddConstantOffset
 		1164	pointerAddOffset32
@@ -245,11 +199,6 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 		1180	pushOne64
 		1181	pushOneFloat32
 		1182	pushOneFloat64
-		1183	pushPhysicalFloat32
-		1184	pushPhysicalFloat64
-		1185	pushPhysicalInt32
-		1186	pushPhysicalInt64
-		1187	pushPhysicalPointer
 		1188	pushSessionIdentifier
 		1189	pushZero32
 		1190	pushZero64
@@ -301,7 +250,6 @@ IRLowcodeInstruction class >> lowcodeInstructionTable [
 		1236	uint64ToFloat64
 		1237	umul32
 		1238	umul64
-		1239	unlockRegisters
 		1240	unlockVM
 		1241	urem32
 		1242	urem64

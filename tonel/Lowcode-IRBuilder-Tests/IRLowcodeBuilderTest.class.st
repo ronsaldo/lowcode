@@ -164,8 +164,7 @@ IRLowcodeBuilderTest >> method: selector arguments: argumentNames buildWith: aBl
 	ir := IRLowcodeBuilder buildIR: [ :builder |
 		builder
 			numArgs: argumentNames size;
-			addTemps: argumentNames;
-			addLowcodeRuntimeTemporaries.
+			addTemps: argumentNames.
 		aBlock value: builder
 	].
 	ir compilationContext encoderClass: EncoderForSistaV1.

@@ -19,21 +19,9 @@ IRLowcodeBuilder class >> here: aBlock [
 	^ self buildIR: [ :builder |
 		builder
 			numArgs: argumentNames size;
-			addTemps: argumentNames;
-			addLowcodeRuntimeTemporaries.
+			addTemps: argumentNames.
 		aBlock value: builder
 	]
-]
-
-{ #category : #adding }
-IRLowcodeBuilder >> addLowcodeRuntimeTemporaries [
-	self addTemps: #(
-		__lowcodeContextMark__
-		__lowcodePreviousNativeStackPointer__
-		__lowcodeNativeFramePointer__
-		__lowcodeNativeStackPointer__
-		__lowcodeCalloutState__
-	).
 ]
 
 { #category : #adding }
@@ -72,7 +60,7 @@ IRLowcodeBuilder >> generateSymbol [
 { #category : #initialization }
 IRLowcodeBuilder >> initialize [
 	super initialize.
-	self lowcodeLocalFrameSize: 0.
+	self lowcodeLocalFrameSize: 0 maxDepth: 20.
 	localFrameInstruction := currentSequence last.
 	leaveFrameInstructions := OrderedCollection new.
 	gensymCount := 0.
@@ -85,7 +73,18 @@ IRLowcodeBuilder >> ir [
 	ir allInstructions do: [ :ins |
 		(ins ~~ localFrameInstruction and: [ ins isLowcodeInstruction ]) ifTrue: [ hasLowcodeInstructions := true ].
 	].
-	hasLowcodeInstructions ifFalse: [
+	hasLowcodeInstructions ifTrue: [
+		| implicitTempCount |
+		implicitTempCount := self lowcodeRequiredTemporaries .
+		ir tempMap keysAndValuesDo: [ :key :value |
+			value > ir numArgs ifTrue: [ 
+				ir tempMap at: key put: value + implicitTempCount.
+			].
+		].
+		1 to: implicitTempCount do: [ :i |
+			ir tempMap at: {#lowcodeStorage . i} put: i + ir numArgs
+		].
+	] ifFalse: [
 		self removeLowcodeStuff.
 	].
 	^ super ir
@@ -99,16 +98,6 @@ IRLowcodeBuilder >> lowcodeAdd32 [
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeAdd64 [
 	self add: (IRInstruction lowcodeInstruction: 1001)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeAlloca32 [
-	self add: (IRInstruction lowcodeInstruction: 1002)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeAlloca64 [
-	self add: (IRInstruction lowcodeInstruction: 1003)
 ]
 
 { #category : #'lowcode instructions' }
@@ -132,11 +121,6 @@ IRLowcodeBuilder >> lowcodeArithmeticRightShift64 [
 ]
 
 { #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeBeginCall: a1Nalignment [
-	self add: (IRInstruction lowcodeInstruction: 1008 extendA: a1Nalignment)
-]
-
-{ #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeBoolean32ToOop [
 	self add: (IRInstruction lowcodeInstruction: 0)
 ]
@@ -149,51 +133,6 @@ IRLowcodeBuilder >> lowcodeBoolean64ToOop [
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeByteSizeOf [
 	self add: (IRInstruction lowcodeInstruction: 2000)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallArgumentFloat32 [
-	self add: (IRInstruction lowcodeInstruction: 1009)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallArgumentFloat64 [
-	self add: (IRInstruction lowcodeInstruction: 1010)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallArgumentInt32 [
-	self add: (IRInstruction lowcodeInstruction: 1011)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallArgumentInt64 [
-	self add: (IRInstruction lowcodeInstruction: 1012)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallArgumentPointer [
-	self add: (IRInstruction lowcodeInstruction: 1013)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallArgumentSpace: a1NspaceSize [
-	self add: (IRInstruction lowcodeInstruction: 1014 extendA: a1NspaceSize)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallArgumentStructure: a1NstructureSize [
-	self add: (IRInstruction lowcodeInstruction: 1015 extendA: a1NstructureSize)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallInstruction: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1016 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeCallPhysical: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1017 extendA: a1NregisterID)
 ]
 
 { #category : #'lowcode instructions' }
@@ -249,16 +188,6 @@ IRLowcodeBuilder >> lowcodeEffectiveAddress32 [
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeEffectiveAddress64 [
 	self add: (IRInstruction lowcodeInstruction: 1028)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeEndCall [
-	self add: (IRInstruction lowcodeInstruction: 1029)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeEndCallNoCleanup [
-	self add: (IRInstruction lowcodeInstruction: 1030)
 ]
 
 { #category : #'lowcode instructions' }
@@ -622,66 +551,6 @@ IRLowcodeBuilder >> lowcodeLeftShift64 [
 ]
 
 { #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentAddress: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1090 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentFloat32: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1091 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentFloat64: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1092 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentInt16: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1093 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentInt32: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1094 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentInt64: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1095 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentInt8: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1096 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentPointer: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1097 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentUInt16: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1098 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentUInt32: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1099 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentUInt64: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1100 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLoadArgumentUInt8: a1NbaseOffset [
-	self add: (IRInstruction lowcodeInstruction: 1101 nativeArgument: a1NbaseOffset)
-]
-
-{ #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeLoadFloat32FromMemory [
 	self add: (IRInstruction lowcodeInstruction: 1102)
 ]
@@ -807,13 +676,8 @@ IRLowcodeBuilder >> lowcodeLoadUInt8FromMemory [
 ]
 
 { #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLocalFrameSize: a1Nsize [
-	self add: (IRInstruction lowcodeInstruction: 1127 extendA: a1Nsize)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeLockRegisters [
-	self add: (IRInstruction lowcodeInstruction: 1128)
+IRLowcodeBuilder >> lowcodeLocalFrameSize: a1Nsize maxDepth: a2NmaxDepth [
+	self add: (IRInstruction lowcodeInstruction: 1127 extendA: a1Nsize extendB: a2NmaxDepth)
 ]
 
 { #category : #'lowcode instructions' }
@@ -844,31 +708,6 @@ IRLowcodeBuilder >> lowcodeMemcpy64 [
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeMemcpyFixed: a1Nsize [
 	self add: (IRInstruction lowcodeInstruction: 1134 extendA: a1Nsize)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeMoveFloat32ToPhysical: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1135 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeMoveFloat64ToPhysical: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1136 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeMoveInt32ToPhysical: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1137 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeMoveInt64ToPhysical: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1138 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeMovePointerToPhysical: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1139 extendA: a1NregisterID)
 ]
 
 { #category : #'lowcode instructions' }
@@ -982,86 +821,6 @@ IRLowcodeBuilder >> lowcodeOr64 [
 ]
 
 { #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallFloat32: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1148 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallFloat64: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1149 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectFloat32 [
-	self add: (IRInstruction lowcodeInstruction: 1150)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectFloat64 [
-	self add: (IRInstruction lowcodeInstruction: 1151)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectInt32 [
-	self add: (IRInstruction lowcodeInstruction: 1152)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectInt64 [
-	self add: (IRInstruction lowcodeInstruction: 1153)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectPointer [
-	self add: (IRInstruction lowcodeInstruction: 1154)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectStructure: a1NstructureSize [
-	self add: (IRInstruction lowcodeInstruction: 1155 extendA: a1NstructureSize)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallIndirectVoid [
-	self add: (IRInstruction lowcodeInstruction: 1156)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallInt32: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1157 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallInt64: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1158 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallPointer: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1159 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallStructure: a1Nfunction structureSize: a2NstructureSize [
-	self add: (IRInstruction lowcodeInstruction: 1160 extendA: a1Nfunction extendB: a2NstructureSize)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallVoid: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1161 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCallout: a1Nfunction [
-	self add: (IRInstruction lowcodeInstruction: 1147 extendA: a1Nfunction)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePerformCalloutIndirect [
-	self add: (IRInstruction lowcodeInstruction: 1148)
-]
-
-{ #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodePin [
 	self add: (IRInstruction lowcodeInstruction: 2022)
 ]
@@ -1164,31 +923,6 @@ IRLowcodeBuilder >> lowcodePopPointer [
 ]
 
 { #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushCalloutResultFloat32 [
-	self add: (IRInstruction lowcodeInstruction: 1149)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushCalloutResultFloat64 [
-	self add: (IRInstruction lowcodeInstruction: 1150)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushCalloutResultInt32 [
-	self add: (IRInstruction lowcodeInstruction: 1151)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushCalloutResultInt64 [
-	self add: (IRInstruction lowcodeInstruction: 1152)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushCalloutResultPointer [
-	self add: (IRInstruction lowcodeInstruction: 1153)
-]
-
-{ #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodePushConstantUInt32: a1Nconstant [
 	self add: (IRInstruction lowcodeInstruction: 1176 extendA: a1Nconstant)
 ]
@@ -1224,31 +958,6 @@ IRLowcodeBuilder >> lowcodePushOneFloat64 [
 ]
 
 { #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushPhysicalFloat32: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1183 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushPhysicalFloat64: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1184 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushPhysicalInt32: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1185 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushPhysicalInt64: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1186 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodePushPhysicalPointer: a1NregisterID [
-	self add: (IRInstruction lowcodeInstruction: 1187 extendA: a1NregisterID)
-]
-
-{ #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodePushSessionIdentifier [
 	self add: (IRInstruction lowcodeInstruction: 1188)
 ]
@@ -1281,6 +990,11 @@ IRLowcodeBuilder >> lowcodeRem32 [
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeRem64 [
 	self add: (IRInstruction lowcodeInstruction: 1194)
+]
+
+{ #category : #accessing }
+IRLowcodeBuilder >> lowcodeRequiredTemporaries [
+	^ 2 + localFrameInstruction extendB
 ]
 
 { #category : #'lowcode instructions' }
@@ -1526,11 +1240,6 @@ IRLowcodeBuilder >> lowcodeUmul32 [
 { #category : #'lowcode instructions' }
 IRLowcodeBuilder >> lowcodeUmul64 [
 	self add: (IRInstruction lowcodeInstruction: 1238)
-]
-
-{ #category : #'lowcode instructions' }
-IRLowcodeBuilder >> lowcodeUnlockRegisters [
-	self add: (IRInstruction lowcodeInstruction: 1239)
 ]
 
 { #category : #'lowcode instructions' }

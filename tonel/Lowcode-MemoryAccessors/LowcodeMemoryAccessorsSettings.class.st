@@ -45,13 +45,16 @@ LowcodeMemoryAccessorsSettings class >> installAccessorsWithPrefix: prefix [
 			replacementSelector := (prefix , suffixAndSelector first) asSymbol.
 			selector := suffixAndSelector second.
 			cls methodDict at: replacementSelector ifPresent: [ :replacement |
-				cls methodDict at: selector ifPresent: [ :oldVersion |
-					cls methodDict at: selector put: (replacement copy selector: selector; yourself)
-				]
-			]
+				"cls methodDict at: selector put: (replacement copy selector: selector; yourself)"
+				cls addSelector: selector withMethod: (replacement copy selector: selector; yourself)
+			] ifAbsent: [
+				"cls methodDict removeKey: selector ifAbsent: []"
+				cls removeSelector: selector
+			].
 		]
 	].
-	CompiledMethod flushCache.
+	ByteArray flushCache.
+	ExternalAddress flushCache.
 	] valueUnpreemptively
 ]
 

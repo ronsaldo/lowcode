@@ -1,3 +1,6 @@
+"
+I am a dummy AST node that I am used for replacing the generated code with Lowcode instructions. I am used as a HACK because there is no existing way to register a compiler plugin in the code generation level. When that support is added to the compiler, I should be removed. 
+"
 Class {
 	#name : #LowcodeIRHereDummyAST,
 	#superclass : #Object,

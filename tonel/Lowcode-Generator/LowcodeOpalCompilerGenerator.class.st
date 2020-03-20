@@ -89,7 +89,21 @@ LowcodeOpalCompilerGenerator >> generateInstructionTable [
 		out nextPutAll: 'lowcodeInstructionTable'; cr;
 			tab; nextPutAll: '^ #('; cr.
 		spec instructions do: [ :ins |
-			out tab; tab; print: ins opcode; tab; nextPutAll: ins mnemonic; cr.
+			out tab; tab; print: ins opcode; tab; nextPut: $(; nextPutAll: ins mnemonic.
+			out space; nextPut: $(.
+			ins stackArguments doWithIndex: [ :arg :index |
+				index > 1 ifTrue: [ out space ].
+				out nextPutAll: arg type.
+			].
+			out nextPut: $).			
+
+			out space; nextPut: $(.
+			ins stackResults doWithIndex: [ :result :index |
+				index > 1 ifTrue: [ out space ].
+				out nextPutAll: result type.
+			].
+			out nextPut: $).			
+			out nextPut: $); cr.
 		].
 	
 		out tab; nextPutAll: ')'; cr.

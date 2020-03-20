@@ -994,7 +994,12 @@ IRLowcodeBuilder >> lowcodeRem64 [
 
 { #category : #accessing }
 IRLowcodeBuilder >> lowcodeRequiredTemporaries [
-	^ 2 + localFrameInstruction extendB
+	| requirementeFinder |
+	requirementeFinder := IRLowcodeStackRequirementFinder new.
+	requirementeFinder visitNode: ir.
+	localFrameInstruction extendB: requirementeFinder requiredLowcodeStackTemporaries.
+	
+	^ "contextMark stackSize stackPointer" 3 + localFrameInstruction extendB
 ]
 
 { #category : #'lowcode instructions' }
@@ -1341,4 +1346,9 @@ IRLowcodeBuilder >> returnTop [
 	self lowcodeLeaveLocalFrame.
 	leaveFrameInstructions add: currentSequence last.
 	^ super returnTop.
+]
+
+{ #category : #accessing }
+IRLowcodeBuilder >> visitSequence: node [
+	self halt
 ]

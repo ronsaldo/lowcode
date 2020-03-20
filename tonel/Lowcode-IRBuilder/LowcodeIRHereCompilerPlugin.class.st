@@ -1,3 +1,6 @@
+"
+I am a compiler plugin that supports for using the LowcodeIRBuilder plugin for replacing the content of the method with Lowcode instructions.
+"
 Class {
 	#name : #LowcodeIRHereCompilerPlugin,
 	#superclass : #OCCompilerASTPlugin,

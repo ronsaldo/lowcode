@@ -235,6 +235,61 @@ IRLowcodeBuilderTest >> testAddInt64 [
 ]
 
 { #category : #tests }
+IRLowcodeBuilderTest >> testArithmeticRightShift32 [
+	| method |
+	method := self binaryInt32MethodWith: [ :builder |
+		builder lowcodeArithmeticRightShift32
+	].
+
+	self assertMethod: method withArguments: #(0 0) equals: 0.
+	self assertMethod: method withArguments: #(1 0) equals: 1.
+	self assertMethod: method withArguments: #(2 0) equals: 2.
+	self assertMethod: method withArguments: #(3 0) equals: 3.
+	self assertMethod: method withArguments: #(4 0) equals: 4.
+	self assertMethod: method withArguments: #(-1 0) equals: -1.
+	self assertMethod: method withArguments: #(-2 0) equals: -2.
+	self assertMethod: method withArguments: #(-3 0) equals: -3.
+	self assertMethod: method withArguments: #(-4 0) equals: -4.
+	
+	self assertMethod: method withArguments: #(1 1) equals: 0.
+	self assertMethod: method withArguments: #(2 1) equals: 1.
+	self assertMethod: method withArguments: #(3 1) equals: 1.
+	self assertMethod: method withArguments: #(4 1) equals: 2.
+	self assertMethod: method withArguments: #(-1 1) equals: -1.
+	self assertMethod: method withArguments: #(-2 1) equals: -1.
+	self assertMethod: method withArguments: #(-3 1) equals: -2.
+	self assertMethod: method withArguments: #(-4 1) equals: -2.
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testArithmeticRightShift64 [
+	| method |
+	Smalltalk wordSize = 4 ifTrue: [ ^ self skip ].
+	method := self binaryInt64MethodWith: [ :builder |
+		builder lowcodeArithmeticRightShift64
+	].
+
+	self assertMethod: method withArguments: #(0 0) equals: 0.
+	self assertMethod: method withArguments: #(1 0) equals: 1.
+	self assertMethod: method withArguments: #(2 0) equals: 2.
+	self assertMethod: method withArguments: #(3 0) equals: 3.
+	self assertMethod: method withArguments: #(4 0) equals: 4.
+	self assertMethod: method withArguments: #(-1 0) equals: -1.
+	self assertMethod: method withArguments: #(-2 0) equals: -2.
+	self assertMethod: method withArguments: #(-3 0) equals: -3.
+	self assertMethod: method withArguments: #(-4 0) equals: -4.
+	
+	self assertMethod: method withArguments: #(1 1) equals: 0.
+	self assertMethod: method withArguments: #(2 1) equals: 1.
+	self assertMethod: method withArguments: #(3 1) equals: 1.
+	self assertMethod: method withArguments: #(4 1) equals: 2.
+	self assertMethod: method withArguments: #(-1 1) equals: -1.
+	self assertMethod: method withArguments: #(-2 1) equals: -1.
+	self assertMethod: method withArguments: #(-3 1) equals: -2.
+	self assertMethod: method withArguments: #(-4 1) equals: -2.
+]
+
+{ #category : #tests }
 IRLowcodeBuilderTest >> testByteArrayLoadFloat32 [
 	| method byteArray |
 	method := self byteArrayAtOffsetLoadMethodWith: [ :builder |
@@ -1004,6 +1059,33 @@ IRLowcodeBuilderTest >> testExternalAddressStorePointer [
 	
 	self assert: (externalAddress pointerAt: 1) equals: firstPointer.
 	self assert: (externalAddress pointerAt: 9) equals: secondPointer.
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testLogicalRightShift32 [
+	| method |
+	method := self binaryInt32MethodWith: [ :builder |
+		builder lowcodeRightShift32
+	].
+
+	self assertMethod: method withArguments: #(0 0) equals: 0.
+	self assertMethod: method withArguments: #(1 0) equals: 1.
+	self assertMethod: method withArguments: #(2 0) equals: 2.
+	self assertMethod: method withArguments: #(3 0) equals: 3.
+	self assertMethod: method withArguments: #(4 0) equals: 4.
+	self assertMethod: method withArguments: #(-1 0) equals: -1 & 16rffffffff.
+	self assertMethod: method withArguments: #(-2 0) equals: -2 & 16rffffffff.
+	self assertMethod: method withArguments: #(-3 0) equals: -3 & 16rffffffff.
+	self assertMethod: method withArguments: #(-4 0) equals: -4 & 16rffffffff.
+	
+	self assertMethod: method withArguments: #(1 1) equals: 0.
+	self assertMethod: method withArguments: #(2 1) equals: 1.
+	self assertMethod: method withArguments: #(3 1) equals: 1.
+	self assertMethod: method withArguments: #(4 1) equals: 2.
+	self assertMethod: method withArguments: #(-1 1) equals: -1 & 16rffffffff.
+	self assertMethod: method withArguments: #(-2 1) equals: -1 & 16rffffffff.
+	self assertMethod: method withArguments: #(-3 1) equals: -2 & 16rffffffff.
+	self assertMethod: method withArguments: #(-4 1) equals: -2 & 16rffffffff.
 ]
 
 { #category : #tests }

@@ -109,6 +109,40 @@ IRLowcodeBuilderTest >> binaryInt64MethodWith: aBlock [
 ]
 
 { #category : #helper }
+IRLowcodeBuilderTest >> binaryUInt32MethodWith: aBlock [
+	^ self method: #binaryFloat64 arguments: #(left right) buildWith: [ :builder |
+		builder
+			pushTemp: #left;
+			lowcodeOopToUInt32;
+			pushTemp: #right;
+			lowcodeOopToUInt32.
+
+		aBlock value: builder.
+		
+		builder
+			lowcodeUint32ToOop;
+			returnTop
+	].
+]
+
+{ #category : #helper }
+IRLowcodeBuilderTest >> binaryUInt64MethodWith: aBlock [
+	^ self method: #binaryFloat64 arguments: #(left right) buildWith: [ :builder |
+		builder
+			pushTemp: #left;
+			lowcodeOopToUInt64;
+			pushTemp: #right;
+			lowcodeOopToUInt64.
+
+		aBlock value: builder.
+		
+		builder
+			lowcodeUint64ToOop;
+			returnTop
+	].
+]
+
+{ #category : #helper }
 IRLowcodeBuilderTest >> byteArrayAtOffsetLoadMethodWith: aBlock [
 	^ self method: #byteArrayLoadAt arguments: #(byteArray offset) buildWith: [ :builder |
 		builder
@@ -1064,7 +1098,7 @@ IRLowcodeBuilderTest >> testExternalAddressStorePointer [
 { #category : #tests }
 IRLowcodeBuilderTest >> testLogicalRightShift32 [
 	| method |
-	method := self binaryInt32MethodWith: [ :builder |
+	method := self binaryUInt32MethodWith: [ :builder |
 		builder lowcodeRightShift32
 	].
 
@@ -1073,19 +1107,50 @@ IRLowcodeBuilderTest >> testLogicalRightShift32 [
 	self assertMethod: method withArguments: #(2 0) equals: 2.
 	self assertMethod: method withArguments: #(3 0) equals: 3.
 	self assertMethod: method withArguments: #(4 0) equals: 4.
-	self assertMethod: method withArguments: #(-1 0) equals: -1 & 16rffffffff.
-	self assertMethod: method withArguments: #(-2 0) equals: -2 & 16rffffffff.
-	self assertMethod: method withArguments: #(-3 0) equals: -3 & 16rffffffff.
-	self assertMethod: method withArguments: #(-4 0) equals: -4 & 16rffffffff.
+	self assertMethod: method withArguments: #(16rffffffff 0) equals: 16rffffffff.
+	self assertMethod: method withArguments: #(16rfffffffe 0) equals: 16rfffffffe.
+	self assertMethod: method withArguments: #(16rfffffffd 0) equals: 16rfffffffd.
+	self assertMethod: method withArguments: #(16rfffffffc 0) equals: 16rfffffffc.
 	
 	self assertMethod: method withArguments: #(1 1) equals: 0.
 	self assertMethod: method withArguments: #(2 1) equals: 1.
 	self assertMethod: method withArguments: #(3 1) equals: 1.
 	self assertMethod: method withArguments: #(4 1) equals: 2.
-	self assertMethod: method withArguments: #(-1 1) equals: -1 & 16rffffffff.
-	self assertMethod: method withArguments: #(-2 1) equals: -1 & 16rffffffff.
-	self assertMethod: method withArguments: #(-3 1) equals: -2 & 16rffffffff.
-	self assertMethod: method withArguments: #(-4 1) equals: -2 & 16rffffffff.
+	self assertMethod: method withArguments: #(16rffffffff 1) equals: 16rffffffff >> 1.
+	self assertMethod: method withArguments: #(16rfffffffe 1) equals: 16rfffffffe >> 1.
+	self assertMethod: method withArguments: #(16rfffffffd 1) equals: 16rfffffffd >> 1.
+	self assertMethod: method withArguments: #(16rfffffffc 1) equals: 16rfffffffc >> 1.
+]
+
+{ #category : #tests }
+IRLowcodeBuilderTest >> testLogicalRightShift64 [
+	| method |
+	method := self binaryUInt64MethodWith: [ :builder |
+		builder lowcodeRightShift64
+	].
+
+	self assertMethod: method withArguments: #(0 0) equals: 0.
+	self assertMethod: method withArguments: #(1 0) equals: 1.
+	self assertMethod: method withArguments: #(2 0) equals: 2.
+	self assertMethod: method withArguments: #(3 0) equals: 3.
+	self assertMethod: method withArguments: #(4 0) equals: 4.
+	self assertMethod: method withArguments: #(16rffffffff 0) equals: 16rffffffff.
+	self assertMethod: method withArguments: #(16rfffffffe 0) equals: 16rfffffffe.
+	self assertMethod: method withArguments: #(16rfffffffd 0) equals: 16rfffffffd.
+	self assertMethod: method withArguments: #(16rfffffffc 0) equals: 16rfffffffc.
+	self assertMethod: method withArguments: #(16rffffffffffffffff 0) equals: 16rffffffffffffffff.
+	self assertMethod: method withArguments: #(16rfffffffffffffffe 0) equals: 16rfffffffffffffffe.
+	self assertMethod: method withArguments: #(16rfffffffffffffffd 0) equals: 16rfffffffffffffffd.
+	self assertMethod: method withArguments: #(16rfffffffffffffffc 0) equals: 16rfffffffffffffffc.
+	
+	self assertMethod: method withArguments: #(1 1) equals: 0.
+	self assertMethod: method withArguments: #(2 1) equals: 1.
+	self assertMethod: method withArguments: #(3 1) equals: 1.
+	self assertMethod: method withArguments: #(4 1) equals: 2.
+	self assertMethod: method withArguments: #(16rffffffffffffffff 1) equals: 16rffffffffffffffff >> 1.
+	self assertMethod: method withArguments: #(16rfffffffffffffffe 1) equals: 16rfffffffffffffffe >> 1.
+	self assertMethod: method withArguments: #(16rfffffffffffffffd 1) equals: 16rfffffffffffffffd >> 1.
+	self assertMethod: method withArguments: #(16rfffffffffffffffc 1) equals: 16rfffffffffffffffc >> 1.
 ]
 
 { #category : #tests }

@@ -1,7 +1,7 @@
-Extension { #name : #IRPrinterV2 }
+Extension { #name : #IRPrinter }
 
 { #category : #'*Lowcode-IRBuilder' }
-IRPrinterV2 >> visitLowcodeInstruction: instruction [
+IRPrinter >> visitLowcodeInstruction: instruction [
 	stream nextPutAll: instruction lowcodeMnemonic.
 	(instruction hasLiteral or: [ instruction extendA isNotNil ]) ifTrue: [
 		stream nextPutAll: ': ';
